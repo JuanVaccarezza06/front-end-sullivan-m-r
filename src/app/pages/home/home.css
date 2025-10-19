@@ -1,60 +1,77 @@
-/* contenedor centrado */
-.login-wrap {
+.home {
+  min-height: 60dvh;
+  background: #f0f8ff; /* azul muy claro */
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #DFF7EB; /* azul muy suave */
+  gap: 3rem;
   padding: 2rem;
-
-  height: 100%;
-
+  text-align: center;
 }
 
-/* tarjeta simple */
-.login-card {
-  width: 100%;
-  max-width: 24rem;
-  background: #fff;
-  padding: 2rem;
-  border-radius: 0.6rem;
-  box-shadow: 0 0.2rem 0.6rem rgba(0,0,0,0.08);
-  display: grid;
-  gap: 0.8rem;
+/* sección principal */
+.welcome h1 {
+  font-size: 1.8rem;
+  color: #0b7a3e;
+  margin-bottom: 0.5rem;
 }
 
-/* texto */
-.login-card h2 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.4rem;
-  color: #111827;
-}
-.login-card label {
-  font-size: 0.95rem;
-  color: #374151;
-}
-
-/* inputs */
-.login-card input {
-  padding: 0.7rem;
-  border: 0.1rem solid #d1d5db;
-  border-radius: 0.4rem;
+.welcome p {
   font-size: 1rem;
+  color: #374151;
+  max-width: 40rem;
+  margin: 0 auto 1.5rem;
 }
 
-/* botón */
-.login-card button {
-  margin-top: 0.5rem;
-  padding: 0.75rem;
-  border: 0;
-  border-radius: 0.5rem;
+.welcome button {
   background: #0b7a3e;
-  color: #fff;
-  font-weight: 700;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.8rem 1.2rem;
+  font-size: 1rem;
   cursor: pointer;
 }
-.login-card button:hover { filter: brightness(0.97); }
 
-/* pie */
-.hint { margin: 0.5rem 0 0; font-size: 0.9rem; color: #6b7280; }
-.hint a { color: #0b7a3e; text-decoration: none; }
-.hint a:hover { text-decoration: underline; }
+.welcome button:hover {
+  filter: brightness(0.95);
+}
+
+/* sección inferior con cards */
+.info {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 0.8rem;
+  box-shadow: 0 0.2rem 0.5rem rgba(0,0,0,0.1);
+  max-width: 18rem;
+}
+
+.card h3 {
+  color: #0b7a3e;
+  margin-bottom: 0.5rem;
+}
+
+.card p {
+  color: #374151;
+  font-size: 0.95rem;
+}
+
+/* responsive */
+@media (max-width: 40rem) {
+  .home {
+    gap: 2rem;
+    padding: 1.5rem;
+  }
+  .info {
+    flex-direction: column;
+    align-items: center;
+  }
+}
