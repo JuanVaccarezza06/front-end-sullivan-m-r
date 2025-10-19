@@ -1,0 +1,66 @@
+footer{
+  background-color: #0f5a33;
+}
+
+.brand-logo{
+  height: 5rem;
+  width: 5rem;
+}
+
+.footer-top{
+  display: flex;
+
+
+}
+
+:root{
+  --bg: #0f5a33;        /* verde principal */
+  --bg-2: #125c36;      /* franja inferior */
+  --line: #1a6a41;      /* divisores */
+  --text: #e7f6ec;      /* texto base */
+  --muted: #d9efe2;     /* links/desc */
+  --brand: #b7f0c9;     /* “Sullivan” */
+  --sub: #99c9ac;       /* “Inmobiliaria” */
+}
+
+
+/* bloque superior */
+.footer-top{
+  max-width: 72rem; margin: 0 auto; padding: 2rem 1.5rem;
+  display: grid; gap: 2rem;
+  grid-template-columns: 2fr 1fr 1fr 1fr;   /* 4 columnas */
+}
+
+/* columna marca */
+.brand-row{ display:flex; align-items:center; gap:.8rem; margin-bottom:.8rem; }
+.brand-logo{ width:2rem; height:2rem; object-fit:contain; }
+.brand-title{ margin:0; font-size:1.25rem; font-weight:700; color:var(--brand); }
+.brand-sub{ color:var(--sub); font-weight:600; }
+.brand-text{ margin:0 0 1rem 0; line-height:1.6; color:var(--muted); }
+
+/* listas */
+.footer-title{ margin:0 0 1rem 0; font-size:1.1rem; font-weight:700; }
+.footer-list{ list-style:none; margin:0; padding:0; display:grid; gap:.6rem; }
+.footer-list a{ color:var(--muted); text-decoration:none; }
+.footer-list a:hover,
+.footer-list a:focus-visible{ text-decoration:underline; outline:none; }
+
+/* redes (placeholders Fb/Ig/Tw) */
+.social{ display:flex; gap:1rem; }
+.social a{ color:var(--text); text-decoration:none; font-weight:600; }
+.social a:hover{ text-decoration:underline; }
+
+/* divisor y franja inferior */
+.footer-divider{ height:.05rem; background:var(--line); max-width:72rem; margin:0 auto; }
+.footer-bottom{
+  background:var(--bg-2); border-top:.05rem solid var(--line);
+  max-width:72rem; margin:0 auto; padding:1rem 1.5rem; text-align:center; color:var(--muted);
+}
+
+/* responsive */
+@media (max-width:60rem){
+  .footer-top{ grid-template-columns: 1fr 1fr; }
+}
+@media (max-width:40rem){
+  .footer-top{ grid-template-columns: 1fr; }
+}
