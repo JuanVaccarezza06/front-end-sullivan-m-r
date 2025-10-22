@@ -1,0 +1,144 @@
+/* contenedor centrado */
+.login-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #DFF7EB; /* azul muy suave */
+  padding: 2rem;
+
+  height: 100%;
+
+  margin-bottom: 10rem;
+
+}
+
+/* tarjeta simple */
+.login-card {
+  width: 100%;
+  max-width: 24rem;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 0.6rem;
+  box-shadow: 0 0.2rem 0.6rem rgba(0,0,0,0.08);
+  display: grid;
+  gap: 0.8rem;
+}
+
+/* texto */
+.login-card h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.4rem;
+  color: #111827;
+}
+.login-card label {
+  font-size: 0.95rem;
+  color: #374151;
+}
+
+/* inputs */
+.login-card input {
+  padding: 0.7rem;
+  border: 0.1rem solid #d1d5db;
+  border-radius: 0.4rem;
+  font-size: 1rem;
+}
+
+/* botón */
+.login-card button {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: #0b7a3e;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn.is-invalid {
+  background: gray;
+  cursor: not-allowed;
+  filter: none; /* sin hover */
+}
+
+.login-card button:hover { filter: brightness(0.97); }
+
+.p-error{
+  color: rgb(223, 121, 121);
+}
+
+.p-sucess{
+  color: #0b7a3e;
+  font-weight: 700;
+}
+
+/* pie */
+.hint { margin: 0.5rem 0 0; font-size: 0.9rem; color: #6b7280; }
+.hint a { color: #0b7a3e; text-decoration: none; }
+.hint a:hover { text-decoration: underline; }
+
+label{ font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; }
+
+.phone-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* espacio entre los elementos */
+  margin-top: 0.25rem;
+}
+
+/* Label arriba */
+label[for="numberPhone"] {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-weight: 500;
+}
+
+/* Select de país */
+.phone-group select {
+  width: 90px;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  font-size: 0.95rem;
+}
+
+/* Código de área */
+.phone-group input#areaCode {
+  width: 70px;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+/* Número principal */
+.phone-group input#numberPhone {
+  flex: 1; /* ocupa el resto del espacio */
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+/* Efecto al enfocar */
+.phone-group select:focus,
+.phone-group input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 2px rgba(0, 123, 255, 0.6);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .phone-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .phone-group select,
+  .phone-group input {
+    width: 100%;
+  }
+}
+

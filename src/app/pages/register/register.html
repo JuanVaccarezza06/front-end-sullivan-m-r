@@ -1,0 +1,52 @@
+<main class="login-wrap">
+  <form class="login-card" [formGroup]="formulario" (submit)="onSumbit()">
+    <h2>Registro</h2>
+
+    @if (formulario.get('username')?.hasError('required')) {
+    <p>Este campo es obligatorio</p>
+    }
+    @else if (formulario.get('username')?.hasError('minlength')) {
+    <p>El username debe tener al menos 6 caracteres</p>
+    }
+    @else if (formulario.get('username')?.hasError('maxlength')) {
+    <p>El username debe tener un maximo de 20 caracteres</p>
+    }
+    @else if (formulario.get('username')?.valid) {
+    <p class="username-valid">Username valido</p>
+    }
+    <label for="username">Usuario</label>
+    <input id="username" type="text" placeholder="juan.pablo123" formControlName="username">
+
+    @if (this.formulario.get('password')?.hasError('required')) {
+    <p>Este campo es obligatorio</p>
+    }
+    @else if (this.formulario.get('password')?.hasError('minlength')) {
+    <p>La contraseña debe tener al menos 8 caracteres</p>
+    }
+    @else if (this.formulario.get('password')?.hasError('maxlength')) {
+    <p>La contraseña debe un maximo de 20 caracteres</p>
+    }
+    @else if (this.formulario.get('password')?.hasError('pattern')) {
+    <p class="password-valid">La contraseña debe tener al menos: 1 mayuscula, 1 numero, 1 caracter especial</p>
+    }
+    @else if (this.formulario.get('password')?.valid) {
+    <p class="password-valid">Contraseña válida</p>
+    }
+    <label for="password">Contraseña</label>
+    <input id="password" type="password" placeholder="••••••••"  formControlName="password">
+
+    <button 
+    type="submit" 
+    [disabled]="this.formulario.invalid">
+    Entrar
+  </button>
+    @if (formulario.invalid) {
+    <p>El formulario es inválido.</p>
+    }
+
+    <p class="hint">
+      ¿Olvidaste tu contraseña?
+      <a href="#">Recuperar</a>
+    </p>
+  </form>
+</main>

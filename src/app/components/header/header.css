@@ -3,19 +3,9 @@
   width: 5rem;
 }
 
-:host{
-  border-bottom: 0.05rem solid #e5e7eb;
-
-}
-
-header {
-  background: #fff;
-}
-
 .header-inner {
   display: flex;
   justify-content: space-between;
-
   margin: 0 auto;
   padding: 1rem 1.5rem;
   align-items: center;
@@ -74,6 +64,7 @@ header {
   border: 0;
   border-radius: 0.6rem;
   padding: 0.6rem 1rem;
+  margin: 0.30rem;
 
   font-weight: 800;
 }

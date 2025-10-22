@@ -1,23 +1,23 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { LogInService } from '../../services/log-in-service';
-import CredentialLogIn from '../../models/CredentialLogIn';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RegisterService } from '../../services/register-service';
+import CredentialRegister from '../../models/CredentialRegister';
 
 @Component({
-  selector: 'app-log-in',
+  selector: 'app-register',
   imports: [ReactiveFormsModule],
-  templateUrl: './log-in.html',
-  styleUrl: './log-in.css'
+  templateUrl: './register.html',
+  styleUrl: './register.css'
 })
-export class LogIn {
+export class Register {
 
   formulario!: FormGroup
-  credential! : CredentialLogIn
+  credential! : CredentialRegister
 
   constructor(
     private fb: FormBuilder,
-    private service : LogInService
-  ) { }
+    private service : RegisterService
+  ){}
 
   ngOnInit(): void {
 
@@ -40,13 +40,13 @@ export class LogIn {
   }
 
   onSumbit(){
-    this.credential = this.formulario.value
+    // this.credential = this.formulario.value
     
     
-    this.service.post(this.credential).subscribe({
-      next: (data) => console.log(data),
-      error: (e) => console.log(e)
-    })
+    // this.service.post(this.credential).subscribe({
+    //   next: (data) => console.log(data),
+    //   error: (e) => console.log(e)
+    // })
 
   }
 

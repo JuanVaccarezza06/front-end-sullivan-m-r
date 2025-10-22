@@ -1,0 +1,65 @@
+<main class="login-wrap">
+    <form class="login-card" [formGroup]="formulario" (submit)="onSumbit()">
+
+        <h2>{{this.isRegister ? 'Registro' : 'Inicio de sesion'}} </h2>
+
+        @if (this.isRegister) {
+
+        <label for="firstName">Ingrese su primer nombre</label>
+        <input id="firstName" type="text" placeholder="Carlos" formControlName="firstName">
+        @if (formulario.get('firstName')?.hasError('required')) { <p class="p-error" >Este campo es obligatorio</p> }       
+        @else if (formulario.get('firstName')?.hasError('minlength')) { <p class="p-error" >Este campo tiene un minimo de 3 caracteres</p> }       
+        @else if (formulario.get('firstName')?.hasError('maxlength')) { <p class="p-error" >Este campo tiene un maximo de 20 caracteres</p> }     
+
+        <label for="secondName">Ingrese su segundo nombre</label>
+        <input id="secondName" type="text" placeholder="Saul" formControlName="secondName">
+        @if (formulario.get('secondName')?.hasError('required')) { <p class="p-error" >Este campo es obligatorio</p> } 
+        @else if (formulario.get('secondName')?.hasError('minlength')) { <p class="p-error" >Este campo tiene un minimo de 3 caracteres</p> }      
+        @else if (formulario.get('secondName')?.hasError('maxlength')) { <p class="p-error" >Este campo tiene un maximo de 20 caracteres</p> }      
+
+        <label for="email">Ingrese su email</label>
+        <input id="email" type="email" placeholder="example@email.com" formControlName="email">
+        @if (formulario.get('email')?.hasError('required')) { <p class="p-error" >Este campo es obligatorio</p> } 
+        @if (formulario.get('email')?.hasError('email')) { <p class="p-error" >Debe ingresar un email de contacto</p> } 
+        
+        <label>Teléfono</label>
+        <div class="phone-group">
+            <!-- Código de país -->
+            <select id="countryCode" formControlName="countryCode">
+                <option value="+54">+54 (AR)</option>
+                <option value="+34">+34 (ES)</option>
+                <option value="+1">+1 (US)</option>
+                <option value="+44">+44 (UK)</option>
+                <option value="+55">+55 (BR)</option>
+            </select>
+
+            <input id="areaCode" type="text" placeholder="223" formControlName="areaCode">
+
+            <input id="numberPhone" type="text" placeholder="156232544" formControlName="numberPhone">
+        </div>
+        @if (formulario.get('numberPhone')?.hasError('required')) { <p class="p-error" >Este campo es obligatorio</p> }      
+
+        }
+
+        <label for="username"> {{ this.isRegister ? 'Nuevo usuario' : 'Usuario' }} </label>
+        <input id="username" type="text" placeholder="juan.pablo123" formControlName="username">
+        @if (formulario.get('username')?.hasError('required')) { <p class="p-error" >Este campo es obligatorio</p> }
+        @else if (formulario.get('username')?.hasError('minlength')) { <p class="p-error" >El username debe tener al menos 6 caracteres</p> }
+        @else if (formulario.get('username')?.hasError('maxlength')) { <p class="p-error" >El username debe tener un maximo de 20 caracteres</p> }
+        @else if (formulario.get('username')?.valid) { <p class="p-sucess" >Username valido</p> }
+
+
+        <label for="password"> {{ this.isRegister ? 'Nueva contraseña' : 'Contraseña' }} </label>
+        <input id="password" type="password" placeholder="••••••••" formControlName="password">
+        @if ( this.formulario.get('password')?.hasError('required') ) { <p class="p-error" >Este campo es obligatorio</p> }
+        @else if ( this.formulario.get('password')?.hasError('minlength') ) { <p class="p-error" >La contraseña debe tener al menos 8 caracteres</p> }
+        @else if ( this.formulario.get('password')?.hasError('maxlength') ) { <p class="p-error" >La contraseña debe un maximo de 20 caracteres</p> }
+        @else if ( this.formulario.get('password')?.hasError('pattern') ) { <p class="p-error">La contraseña debe tener al menos: 1 mayuscula, 1 numero, 1 caracter especial</p> }
+        @else if ( this.formulario.get('password')?.valid) { <p class="p-sucess" >Contraseña válida</p> }
+
+        <button type="submit" [disabled]="this.formulario.invalid"> Registrarse </button>
+        @if (formulario.invalid) { <p class="p-error" >El formulario es inválido.</p> }
+
+        <p class="hint"> ¿Olvidaste tu contraseña? <a href="#">Recuperar</a> </p>
+    </form>
+</main>

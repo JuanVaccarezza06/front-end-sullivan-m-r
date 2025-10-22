@@ -1,5 +1,6 @@
 .home {
-  min-height: 60dvh;
+  min-height: 60vh;
+  height: 100%;
   background: #f0f8ff; /* azul muy claro */
   display: flex;
   flex-direction: column;
