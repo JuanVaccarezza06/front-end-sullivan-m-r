@@ -7,6 +7,7 @@ import { AutenticationForm } from './pages/autentication-form/autentication-form
 import { Services } from './pages/services/services';
 
 export const routes: Routes = [
+    
     {path : '', component : Home},
     {path : 'properties', component : Properties},
     {path : 'contact', component : Contact},
