@@ -16,6 +16,7 @@ export class LogInService {
 
   
   post(credential: CredentialLogIn) : Observable<CredentialLogIn>{
+    console.log(credential)
       return this.http.post<CredentialLogIn>(this.url, credential).pipe(
       catchError(err => {
       console.error('Error en POST', err);
