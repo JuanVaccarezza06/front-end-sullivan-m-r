@@ -1,0 +1,189 @@
+/* contenedor centrado */
+.login-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #DFF7EB;
+  height: 100%;
+  margin-bottom: 10rem;
+}
+
+/* tarjeta simple */
+.login-card {
+  width: 100%;
+  max-width: 24rem;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 0.6rem;
+  box-shadow: 0 0.2rem 0.6rem rgba(0,0,0,0.08);
+  display: grid;
+  gap: 0.8rem;
+}
+
+/* texto */
+.login-card h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.4rem;
+  color: #111827;
+}
+
+.login-card label {
+  display: block;
+  font-size: 0.95rem;
+  color: #374151;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  margin-bottom: 0.4rem;
+}
+
+/* fieldset: mantener estructura de columna */
+fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+  min-inline-size: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.div-inputs-phone{
+    display: flex;
+
+}
+
+/* inputs generales */
+.login-card input,
+.login-card select {
+  padding: 0.7rem;
+  border: 0.1rem solid #d1d5db;
+  border-radius: 0.4rem;
+  font-size: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.login-card input:focus,
+.login-card select:focus {
+  outline: none;
+  border-color: #0b7a3e;
+  box-shadow: 0 0 0 0.2rem rgba(11, 122, 62, 0.1);
+}
+
+/* grupo de teléfono */
+.phone-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.phone-group label {
+  margin-bottom: 0.25rem;
+}
+
+.phone-group > div {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+/* Select de país */
+.phone-group select {
+  width: 90px;
+  padding: 0.7rem 0.5rem;
+  flex-shrink: 0;
+}
+
+/* Código de área */
+.phone-group input#areaCode {
+  width: 70px;
+  padding: 0.7rem 0.5rem;
+  flex-shrink: 0;
+}
+
+/* Número principal */
+.phone-group input#numberPhone {
+  flex: 1;
+  padding: 0.7rem;
+}
+
+.btn.is-invalid {
+  background: gray;
+  cursor: not-allowed;
+  filter: none;
+}
+
+/* Mensajes de error y éxito */
+.p-error {
+  color: rgb(223, 121, 121);
+  font-size: 0.85rem;
+  margin: 0.3rem 0 0 0;
+}
+
+.p-sucess {
+  color: #0b7a3e;
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin: 0.3rem 0 0 0;
+}
+
+/* botón */
+.login-card button {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: #0b7a3e;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 0.2s;
+}
+
+.login-card button:hover {
+  filter: brightness(0.97);
+}
+
+.login-card button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  filter: none;
+}
+
+/* pie */
+.hint {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+  color: #6b7280;
+  text-align: center;
+}
+
+.hint a {
+  color: #0b7a3e;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.hint a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 1.5rem;
+    max-width: 90%;
+  }
+
+  .phone-group > div {
+    flex-wrap: wrap;
+  }
+
+  .phone-group select,
+  .phone-group input#areaCode {
+    flex: 1;
+    min-width: 80px;
+  }
+
+  .phone-group input#numberPhone {
+    width: 100%;
+  }
+}

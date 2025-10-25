@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import CredentialRegister from '../models/CredentialRegister';
+import { catchError, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,13 @@ export class RegisterService {
 
   
   post(credential: CredentialRegister){
-    return this.http.post(this.url,credential)
-  }
+        console.log(credential)
+        return this.http.post<CredentialRegister>(this.url, credential).pipe(
+        catchError(err => {
+        console.error('Error en POST', err);
+        return throwError(() => new Error('Error al enviar credenciales'));
+      })
+    );
+    }
 
 }
