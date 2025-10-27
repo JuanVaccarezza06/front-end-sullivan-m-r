@@ -3,10 +3,11 @@ import { Home } from './pages/home/home';
 import { Properties } from './pages/properties/properties';
 import { Contact } from './pages/contact/contact';
 import { AboutUs } from './pages/about-us/about-us';
-import { AutenticationForm } from './pages/autentication-form/autentication-form';
 import { Services } from './pages/services/services';
 import { LogIn } from './pages/log-in/log-in';
 import { Register } from './pages/register/register';
+import { Admin } from './pages/admin/admin';
+import { adminGuardGuard } from './admin-guard-guard';
 
 export const routes: Routes = [
     
@@ -16,7 +17,8 @@ export const routes: Routes = [
     {path : 'about-us', component : AboutUs},
     {path : 'services', component : Services},
     {path : 'log-in', component : LogIn},
-    {path : 'register', component : Register}
+    {path : 'register', component : Register},
+    {path : 'admin', component : Admin, canActivate : [adminGuardGuard] }
 
 
 ];

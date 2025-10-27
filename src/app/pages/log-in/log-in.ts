@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { LogInService } from '../../services/log-in-service';
 import CredentialLogIn from '../../models/CredentialLogIn';
+import { AuthService } from '../../services/auth/auth-service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-log-in',
@@ -16,7 +17,8 @@ export class LogIn{
 
   constructor(
     private fb: FormBuilder,
-    private service : LogInService
+    private service : AuthService,
+    private router : Router
   ) { }
 
   ngOnInit(): void {
@@ -42,12 +44,19 @@ export class LogIn{
   onSumbit(){
     this.credential = this.formulario.value
     
-    
-    this.service.post(this.credential).subscribe({
-      next: (data) => console.log(data),
+    this.service.logIn(this.credential).subscribe({
+      next: (data) => {
+        localStorage.setItem('token', btoa(JSON.stringify(data)))
+        console.log("Token almacenado con exito.")
+        this.router.navigate([''])
+      },
       error: (e) => console.log(e)
     })
 
+  }
+
+  irAdmin(){
+    return this.router.navigate(['/admin'])
   }
 
 

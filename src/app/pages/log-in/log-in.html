@@ -1,6 +1,7 @@
 <main class="login-wrap">
     <form class="login-card" [formGroup]="formulario" (submit)="onSumbit()">
         <h2>Iniciar sesión</h2>
+        <button (click)="irAdmin()">Ir a administracion</button>
 
         <fieldset>
             <label for="username"> Usuario </label>

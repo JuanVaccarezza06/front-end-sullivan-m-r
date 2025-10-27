@@ -5,22 +5,22 @@
       <h1 id="main-title">
         Sullivan <span class="brand-sub">Inmobiliaria</span>
       </h1>
-      <!-- @if(){ <button>Administracion</button> } -->
     </div>
 
     <nav>
-      <div id="nav-box">
+      <div id=" nav-box">
         <a class="link-nav" routerLink="">Inicio</a>
         <a class="link-nav" routerLink="properties">Propiedades</a>
         <a class="link-nav" routerLink="services">Servicios</a>
         <a class="link-nav" routerLink="about-us">Nosotros</a>
         <a class="link-nav" routerLink="contact">Contacto</a>
-      </div>
+    </div>
     </nav>
 
     <div id="image-box">
-      <button type="button" class="cta" routerLink="log-in" >Log in</button>
-      <button type="button" class="cta" routerLink="register" >Register</button>
+      <button type="button" class="cta" routerLink="log-in">Log in</button>
+      <button type="button" class="cta" routerLink="register">Register</button>
+      <button type="button" class="cta" (click)="logOut()">Log out</button>
     </div>
   </div>
 </header>
