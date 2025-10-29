@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import CredentialRegister from '../../models/CredentialRegister';
-import { AuthService } from '../../services/auth/auth-service';
+import { AuthService } from '../../services/auth/authService/auth-service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -24,49 +24,15 @@ export class Register {
   ngOnInit(): void {
 
     this.formulario = this.fb.group({
-      
-      username: ['', [
-        Validators.minLength(6),
-        Validators.maxLength(20),
-        Validators.required
-      ]
-      ],
-      password: ['', [
-        Validators.minLength(6),
-        Validators.maxLength(20),
-        Validators.required,
-        Validators.pattern(/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=<>?{}[\]~])[A-Za-z\d!@#$%^&*()_\-+=<>?{}[\]~]+$/)
-      ]
-      ],
-      firstName: ['', [
-        Validators.required,
-        Validators.maxLength(20),
-        Validators.minLength(3)
-      ]
-      ],
-      surname: ['', [
-        Validators.required,
-        Validators.maxLength(20),
-        Validators.minLength(3)
-      ]
-      ],
-      email: ['', [
-        Validators.required,
-        Validators.email
-      ]
-      ],
-      countryCode: ['', [
-        Validators.required
-      ]
-      ],
-      areaCode: ['', [
-        Validators.required
-      ]
-      ],
-      numberPhone: ['', [
-        Validators.required
-      ]
-      ],
+
+      username: ['', [Validators.minLength(6), Validators.maxLength(20), Validators.required]],
+      password: ['', [Validators.minLength(6), Validators.maxLength(20), Validators.required,
+      Validators.pattern(/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=<>?{}[\]~]).+$/),
+      ]],
+      firstName: ['', [Validators.required, Validators.maxLength(20), Validators.minLength(3)]],
+      surname: ['', [Validators.required, Validators.maxLength(20), Validators.minLength(3)]],
+      email: ['', [Validators.required, Validators.email, Validators.maxLength(254), Validators.minLength(6)]],
+      numberPhone: ['', [Validators.required, Validators.pattern(/^\+?[0-9\s\-]+$/), Validators.maxLength(20), Validators.minLength(3)]]
     })
   }
 
@@ -77,7 +43,9 @@ export class Register {
       next: (data) => {
         localStorage.setItem('token', btoa(JSON.stringify(data)))
         console.log("Token almacenado con exito.")
-        this.router.navigate([''])
+        this.router.navigate([''], {
+          state: { message: 'Usuario registrado correctamente.' }
+        });
       },
       error: (e) => console.log(e)
     })

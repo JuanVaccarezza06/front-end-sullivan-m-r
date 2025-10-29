@@ -9,7 +9,7 @@
             <h2>Envíanos un mensaje</h2>
 
             <fieldset class="form-group">
-                <label>Nombre</label>
+                <label>Nombre completo</label>
                 <input type="text" placeholder="Tu nombre" formControlName="name">
             </fieldset>
             @if (formulario.get('name')?.hasError('required') && formulario.get('name')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
@@ -27,11 +27,11 @@
                 <label>Teléfono</label>
                 <input type="tel" placeholder="+54 9 11 1234-5678" formControlName="numberPhone">
             </fieldset>
-            @if (formulario.get('numberPhone')?.hasError('required') && formulario.get('numberPhone')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
-            @if (formulario.get('numberPhone')?.hasError('pattern') && formulario.get('numberPhone')?.touched ) { <p class="p-error">Este campo solo permite numeros</p> }
-            @if (formulario.get('numberPhone')?.hasError('minlength') && formulario.get('numberPhone')?.touched ) { <p class="p-error">Este campo tiene un minimo de 6 digitos</p> }
-            @if (formulario.get('numberPhone')?.hasError('maxlength') && formulario.get('numberPhone')?.touched ) { <p class="p-error">Este campo tiene un maximo de 20 digitos</p> }
-
+                @if (formulario.get('numberPhone')?.hasError('required') && formulario.get('numberPhone')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
+                @else if (formulario.get('numberPhone')?.hasError('pattern') && formulario.get('numberPhone')?.touched ) { <p class="p-error">El telefono solo puede tener numeros, espacios y el signo '+'</p> }
+                @else if (formulario.get('numberPhone')?.hasError('maxlength') && formulario.get('numberPhone')?.touched ) { <p class="p-error"> El telefono debe tener al menos 10 caracteres</p> }
+                @else if (formulario.get('numberPhone')?.hasError('minlength') && formulario.get('numberPhone')?.touched ) { <p class="p-error"> El telefono debe tener como maximo 20 caracteres</p> }
+            
             <fieldset class="form-group">
                 <label>Motivo</label>
                 <select formControlName="motive" class="form-select">

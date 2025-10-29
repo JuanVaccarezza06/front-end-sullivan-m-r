@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import CredentialRegister from '../../models/CredentialRegister';
-import CredentialLogIn from '../../models/CredentialLogIn';
+import CredentialRegister from '../../../models/CredentialRegister';
+import CredentialLogIn from '../../../models/CredentialLogIn';
 import { jwtDecode } from 'jwt-decode';
 
 @Injectable({

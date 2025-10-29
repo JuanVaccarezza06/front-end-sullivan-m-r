@@ -1,24 +1,99 @@
 <main class="home">
-  <section class="welcome">
-    <h1>Bienvenido a Sullivan Inmobiliaria</h1>
-    <p>Tu espacio ideal te está esperando. Explora nuestras propiedades y descubrí el lugar perfecto para vos.</p>
-    <button routerLink="properties">Ver Propiedades</button>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Encuentra tu hogar ideal con el encanto irlandés</h1>
+      <p>En Sullivan Propiedades, combinamos la calidez irlandesa con el profesionalismo inmobiliario para ofrecerte las
+        mejores opciones.</p>
+      <div class="hero-buttons">
+        <button class="btn-primary">Ver Propiedades</button>
+        <button class="btn-secondary">Contactar</button>
+      </div>
+    </div>
   </section>
 
-  <section class="info">
-    <div class="card">
-      <h3>Propiedades Destacadas</h3>
-      <p>Encontrá las mejores oportunidades del mercado, seleccionadas especialmente para vos.</p>
-    </div>
+  <section class="search-section">
+    <h2>Encuentra tu propiedad ideal</h2>
+    <form class="search-form">
+      <div class="form-group">
+        <label for="operation">Tipo de Operación</label>
+        <select id="operation">
+          <option>Comprar</option>
+          <option>Alquilar</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="property-type">Tipo de Propiedad</label>
+        <select id="property-type">
+          <option>Casa</option>
+          <option>Departamento</option>
+          <option>Terreno</option>
+          <option>Local Comercial</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="location">Ubicación</label>
+        <input type="text" id="location" placeholder="Barrio o zona">
+      </div>
+      <button type="submit" class="btn-search">🔍 Buscar</button>
+    </form>
+  </section>
 
-    <div class="card">
-      <h3>Asesoramiento Personalizado</h3>
-      <p>Te ayudamos a tomar las mejores decisiones con el respaldo de profesionales expertos.</p>
+  <section class="featured-section">
+    <div class="section-header">
+      <h2>Propiedades Destacadas</h2>
+      <a href="#" class="view-all">Ver todas →</a>
     </div>
+    <div class="properties-grid">
 
-    <div class="card">
-      <h3>Confianza y Trayectoria</h3>
-      <p>Más de 20 años ofreciendo soluciones inmobiliarias en todo el país.</p>
+      <!-- @for (p of properties; track p.id) {-->
+      <div class="card">
+        <div class="image">
+          <span class="badge">Venta</span>
+        </div>
+
+        <div class="content">
+          <h2>Mansión Clonmel</h2>
+
+          <div class="location">
+            <svg width="16" height="16" fill="#0d9e6d" viewBox="0 0 20 20">
+              <path fill-rule="evenodd"
+                d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" />
+            </svg>
+            <span>Palermo, Buenos Aires</span>
+          </div>
+
+          <p>Espectacular mansión de estilo irlandés con amplios jardines, 5 dormitorios y piscina.</p>
+
+          <div class="footer">
+            <div class="price">$1,250,000</div>
+
+            <div class="features">
+
+              <div class="feature">
+
+                <svg width="20" height="20" fill="#0d9e6d" viewBox="0 0 20 20">
+                  <path
+                    d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                </svg>
+                <span>5</span>
+
+              </div>
+
+              <div class="feature">
+                <svg width="20" height="20" fill="#0d9e6d" viewBox="0 0 20 20">
+                  <path
+                    d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+                </svg>
+                <span>4</span>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--  } -->
+
     </div>
   </section>
 </main>

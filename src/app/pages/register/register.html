@@ -25,27 +25,19 @@
             <input id="email" type="email" placeholder="example@email.com" formControlName="email">
             @if (formulario.get('email')?.hasError('required') && formulario.get('email')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
             @else if (formulario.get('email')?.hasError('email') && formulario.get('email')?.touched ) { <p class="p-error">Debe ingresar un email de contacto</p> }
+            @else if (formulario.get('email')?.hasError('maxlength') && formulario.get('email')?.touched ) { <p class="p-error">Este campo debe tener un minimo de 6 caracteres</p> }
+            @else if (formulario.get('email')?.hasError('minlength') && formulario.get('email')?.touched ) { <p class="p-error">Este campo debe tener un maximo de 254 caracteres</p> }
         </fieldset>
 
 
         <fieldset class="phone-group">
             <label>Teléfono</label>
-            <div class="div-inputs-">
-
-                <!-- Código de país -->
-                <select id="countryCode" formControlName="countryCode">
-                    <option value="+54">+54 (AR)</option>
-                    <option value="+34">+34 (ES)</option>
-                    <option value="+1">+1 (US)</option>
-                    <option value="+44">+44 (UK)</option>
-                    <option value="+55">+55 (BR)</option>
-                </select>
-
-                <input id="areaCode" type="text" placeholder="223" formControlName="areaCode">
-                <input id="numberPhone" type="text" placeholder="156232544" formControlName="numberPhone">
-            </div>
+            <input id="numberPhone" type="text" placeholder="+54 (223) 154-123321" formControlName="numberPhone">
         </fieldset>
         @if (formulario.get('numberPhone')?.hasError('required') && formulario.get('numberPhone')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
+        @else if (formulario.get('numberPhone')?.hasError('pattern') && formulario.get('numberPhone')?.touched ) { <p class="p-error">El telefono solo puede tener numeros, espacios y el signo '+'</p> }
+        @else if (formulario.get('numberPhone')?.hasError('minlength') && formulario.get('numberPhone')?.touched ) { <p class="p-error"> El telefono debe tener al menos 10 caracteres</p> }
+        @else if (formulario.get('numberPhone')?.hasError('maxlength') && formulario.get('numberPhone')?.touched ) { <p class="p-error"> El telefono debe tener como maximo 20 caracteres</p> }
 
 
         <fieldset>
@@ -68,7 +60,7 @@
         </fieldset>
 
         <button type="submit" [disabled]="this.formulario.invalid"> Registrarse </button>
-        @if (formulario.invalid && formulario.get('firstName')?.touched ) { <p class="p-error">El formulario es inválido.</p> }
+        @if (formulario.invalid) { <p class="p-error">El formulario es inválido.</p> }
 
         <p class="hint"> ¿Olvidaste tu contraseña? <a href="#">Recuperar</a> </p>
     </form>

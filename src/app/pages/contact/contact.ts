@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import GeneralInquiry from '../../models/GeneralInquiry';
 import { Router } from '@angular/router';
-import { ContactService } from '../../services/auth/contact-service';
+import { ContactService } from '../../services/auth/contactService/contact-service';
 import { dateTimestampProvider } from 'rxjs/internal/scheduler/dateTimestampProvider';
 
 @Component({
@@ -31,7 +31,7 @@ export class Contact {
     this.formulario = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(40)]],
       email: ['', [Validators.required, Validators.email]],
-      numberPhone: ['', [Validators.required,   Validators.pattern('^[0-9 ]+$'), Validators.minLength(6), Validators.maxLength(20)] ], // solo números, entre 6 y 15 dígitos 
+      numberPhone: ['', [Validators.required, Validators.pattern(/^\+?[0-9\s\-]+$/), Validators.maxLength(20), Validators.minLength(3)]],
       description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
       motive: ['', [Validators.required]],
       state: ['PENDIENTE']
@@ -41,9 +41,11 @@ export class Contact {
 
   onSubmit(): void {
 
-    const fullName = this.formulario.value.name.trim(); // por seguridad
-    const [first_name, ...rest] = fullName.split(' ');
-    const surname = rest.join(' '); // por si hay apellidos compuestos
+    const fullName = this.formulario.value.name;
+
+    const lastSpace = fullName.lastIndexOf(' ');
+    const name = lastSpace !== -1 ? fullName.slice(0, lastSpace) : fullName;
+    const surname = lastSpace !== -1 ? fullName.slice(lastSpace + 1) : '';
 
     const today = new Date();
     const formattedDate = today.toISOString().split('T')[0]; // "2025-10-27"
@@ -53,7 +55,7 @@ export class Contact {
       description: this.formulario.value.description,
       state: this.formulario.value.state,
       userDTO: {
-        firstName: first_name, // suponiendo que "name" es el nombre del usuario
+        firstName: name, // suponiendo que "name" es el nombre del usuario
         surname: surname, // completar si tenés el campo
         email: this.formulario.value.email,
         numberPhone: this.formulario.value.numberPhone.trim()
@@ -68,5 +70,4 @@ export class Contact {
       error: (e) => console.log(e)
     })
   }
-
 }

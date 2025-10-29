@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink } from "@angular/router";
-import { AuthService } from '../../services/auth/auth-service';
+import { AuthService } from '../../services/auth/authService/auth-service';
 
 @Component({
   selector: 'app-header',
@@ -15,7 +15,6 @@ export class Header {
     private authService : AuthService
   ){}
 
-
    isLogged(){
     return this.authService.isLoggedIn();
   }
@@ -25,5 +24,6 @@ export class Header {
     this.authService.logout();
     console.log("Token revocado con exito.")
   }
+
 
 }

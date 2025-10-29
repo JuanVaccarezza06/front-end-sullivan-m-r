@@ -1,5 +1,5 @@
 export default interface CredentialRegister {
-    firstname: string
+    firstName: string
     surname: string
     email : string
     numberPhone : string

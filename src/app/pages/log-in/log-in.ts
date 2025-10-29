@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import CredentialLogIn from '../../models/CredentialLogIn';
-import { AuthService } from '../../services/auth/auth-service';
+import { AuthService } from '../../services/auth/authService/auth-service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -34,7 +34,7 @@ export class LogIn{
         Validators.minLength(6),
         Validators.maxLength(20),
         Validators.required,
-        Validators.pattern(/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=<>?{}[\]~])[A-Za-z\d!@#$%^&*()_\-+=<>?{}[\]~]+$/)
+        Validators.pattern(/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=<>?{}[\]~]).+$/),
       ]
       ]
     })
@@ -48,7 +48,9 @@ export class LogIn{
       next: (data) => {
         localStorage.setItem('token', btoa(JSON.stringify(data)))
         console.log("Token almacenado con exito.")
-        this.router.navigate([''])
+        this.router.navigate([''], {
+          state: { message: 'Usuario logeado correctamente.' }
+        });
       },
       error: (e) => console.log(e)
     })
