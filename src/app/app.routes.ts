@@ -7,7 +7,6 @@ import { Services } from './pages/services/services';
 import { LogIn } from './pages/log-in/log-in';
 import { Register } from './pages/register/register';
 import { Admin } from './pages/admin/admin';
-import { adminGuardGuard } from './admin-guard-guard';
 
 export const routes: Routes = [
     
@@ -18,7 +17,7 @@ export const routes: Routes = [
     {path : 'services', component : Services},
     {path : 'log-in', component : LogIn},
     {path : 'register', component : Register},
-    {path : 'admin', component : Admin, canActivate : [adminGuardGuard] }
+    {path : 'admin', component : Admin}
 
 
 ];

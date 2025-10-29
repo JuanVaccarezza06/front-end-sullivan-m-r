@@ -1,1 +1,35 @@
-<p>admin works!</p>
+<div class="uploader-container">
+  <h3>Panel de Admin: Cargar Imagen</h3>
+
+  <input 
+  type="file" 
+  accept="image/png, image/jpeg" 
+  (change)="onFileSelected($event)" 
+  [disabled]="uploading" 
+  />
+
+  @if (uploading) {
+  <div class="status loading">
+    <p>Subiendo imagen...</p>
+  </div>
+  }
+
+  @if (uploadResponse) {
+  <div class="status success">
+    <h4>¡Imagen subida!</h4>
+    <p>
+      <strong>URL:</strong>
+      <a [href]="uploadResponse.data.url" target="_blank">{{ uploadResponse.data.url }}</a>
+    </p>
+    <img [src]="uploadResponse.data.url" alt="Miniatura">
+  </div>
+  }
+
+  @if (errorMessage) {
+  <div class="status error">
+    <p>{{ errorMessage }}</p>
+  </div>
+  }
+
+
+</div>
