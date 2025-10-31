@@ -1,6 +1,12 @@
 <main class="home">
 
   <section class="hero">
+    @if (isLogged) {
+    <div class="message-box">
+      <h1 class="message-log">{{mensajeExito}}</h1>
+    </div>
+    }
+
     <div class="hero-content">
       <h1>Encuentra tu hogar ideal con el encanto irlandés</h1>
       <p>En Sullivan Propiedades, combinamos la calidez irlandesa con el profesionalismo inmobiliario para ofrecerte las
@@ -41,32 +47,33 @@
 
   <section class="featured-section">
     <div class="section-header">
-      <h2>Propiedades Destacadas</h2>
+      <h2 class="header-featured-section-title">Propiedades Destacadas</h2>
       <a href="#" class="view-all">Ver todas →</a>
     </div>
     <div class="properties-grid">
 
-      <!-- @for (p of properties; track p.id) {-->
+      @for (p of propertiesfeature; track p.id) {
       <div class="card">
         <div class="image">
-          <span class="badge">Venta</span>
+        <img class="property-img" src="{{p.mainImage}}" alt="property">
+          <span class="badge">{{p.operationTypeDTO.operationName}}</span>
         </div>
 
         <div class="content">
-          <h2>Mansión Clonmel</h2>
+          <h2>{{p.title}}</h2>
 
           <div class="location">
             <svg width="16" height="16" fill="#0d9e6d" viewBox="0 0 20 20">
               <path fill-rule="evenodd"
                 d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" />
             </svg>
-            <span>Palermo, Buenos Aires</span>
+            <span>{{p.zoneDTO.zoneName}}</span>
           </div>
 
-          <p>Espectacular mansión de estilo irlandés con amplios jardines, 5 dormitorios y piscina.</p>
+          <p>{{p.description}}</p>
 
           <div class="footer">
-            <div class="price">$1,250,000</div>
+            <div class="price">${{p.price}}</div>
 
             <div class="features">
 
@@ -76,7 +83,7 @@
                   <path
                     d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
                 </svg>
-                <span>5</span>
+                <span>{{p.rooms}}</span>
 
               </div>
 
@@ -85,15 +92,14 @@
                   <path
                     d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
                 </svg>
-                <span>4</span>
+                <span>{{p.bathrooms}}</span>
               </div>
 
             </div>
           </div>
         </div>
       </div>
-      <!--  } -->
-
+      }
     </div>
   </section>
 </main>

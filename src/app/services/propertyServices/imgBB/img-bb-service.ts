@@ -1,11 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import ResponseImgBb from '../../../models/property/ResponseImgBb';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ImgBb {
+export class ImgBbService {
 
     // 2. La API key vive en el servicio, no en el componente
   // ¡RECUERDA! Mueve esto a tus archivos 'environments' por seguridad
@@ -17,7 +18,7 @@ export class ImgBb {
   ){}
 
 
-  uploadImage(file: File): Observable<any> {
+  uploadImage(file: File) {
 
     // FormData is a class from the navegator 
     // It represents a set of key/value pairs, where the values ​​can be strings or files.
@@ -32,5 +33,9 @@ export class ImgBb {
     // 5. El servicio crea y RETORNA la petición POST.
     // OJO: NO nos suscribimos (subscribe) aquí. El componente lo hará.
     return this.http.post(apiUrl, formData);
+  }
+
+  getNotFound(){
+    return "https://i.ibb.co/cK0kNgRj/NOT-FOUND-INDIO.png"
   }
 }

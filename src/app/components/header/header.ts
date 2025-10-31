@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink } from "@angular/router";
-import { AuthService } from '../../services/auth/authService/auth-service';
+import { AuthService } from '../../services/authService/auth-service';
 
 @Component({
   selector: 'app-header',
@@ -11,18 +11,22 @@ import { AuthService } from '../../services/auth/authService/auth-service';
 export class Header {
 
   constructor(
-    public router : Router,
-    private authService : AuthService
-  ){}
+    public router: Router,
+    private authService: AuthService
+  ) { }
 
-   isLogged(){
+  isLogged() {
     return this.authService.isLoggedIn();
   }
 
 
-  logOut(){
+  logOut() {
     this.authService.logout();
     console.log("Token revocado con exito.")
+    this.router.navigate([''], {
+      state: { message: 'Cierre de sesion exitoso' }
+    });
+
   }
 
 

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import CredentialLogIn from '../../models/CredentialLogIn';
-import { AuthService } from '../../services/auth/authService/auth-service';
+import CredentialLogIn from '../../models/security/CredentialLogIn';
+import { AuthService } from '../../services/authService/auth-service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -10,40 +10,39 @@ import { Router } from '@angular/router';
   templateUrl: './log-in.html',
   styleUrl: './log-in.css'
 })
-export class LogIn{
+export class LogIn {
 
   formulario!: FormGroup
-  credential! : CredentialLogIn
+  credential!: CredentialLogIn
 
   constructor(
     private fb: FormBuilder,
-    private service : AuthService,
-    private router : Router
+    private service: AuthService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
 
-    this.formulario = this.fb.group({
-      username: ['', [
-        Validators.minLength(6),
-        Validators.maxLength(20),
-        Validators.required
-      ]
-      ],
-      password: ['', [
-        Validators.minLength(6),
-        Validators.maxLength(20),
-        Validators.required,
-        Validators.pattern(/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=<>?{}[\]~]).+$/),
-      ]
-      ]
-    })
-
+      this.formulario = this.fb.group({
+        username: ['', [
+          Validators.minLength(6),
+          Validators.maxLength(20),
+          Validators.required
+        ]
+        ],
+        password: ['', [
+          Validators.minLength(6),
+          Validators.maxLength(20),
+          Validators.required,
+          Validators.pattern(/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=<>?{}[\]~]).+$/),
+        ]
+        ]
+      })
   }
 
-  onSumbit(){
+  onSumbit() {
     this.credential = this.formulario.value
-    
+
     this.service.logIn(this.credential).subscribe({
       next: (data) => {
         localStorage.setItem('token', btoa(JSON.stringify(data)))
@@ -57,7 +56,7 @@ export class LogIn{
 
   }
 
-  irAdmin(){
+  irAdmin() {
     return this.router.navigate(['/admin'])
   }
 

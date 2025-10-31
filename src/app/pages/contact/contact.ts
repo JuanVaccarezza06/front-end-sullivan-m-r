@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import GeneralInquiry from '../../models/GeneralInquiry';
+import GeneralInquiry from '../../models/contact/GeneralInquiry';
 import { Router } from '@angular/router';
-import { ContactService } from '../../services/auth/contactService/contact-service';
-import { dateTimestampProvider } from 'rxjs/internal/scheduler/dateTimestampProvider';
+import { ContactService } from '../../services/contactService/contact-service';
 
 @Component({
   selector: 'app-contact',

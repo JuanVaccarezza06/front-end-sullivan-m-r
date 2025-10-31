@@ -1,5 +1,5 @@
-import MotiveDTO from "./MotiveDTO";
-import User from "./User";
+import MotiveDTO from "../contact/MotiveDTO";
+import User from "../actors/User";
 
 export default interface GeneralInquiry {
     date : string,

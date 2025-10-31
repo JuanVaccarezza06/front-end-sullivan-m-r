@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ImgBb } from '../../services/auth/imgBB/img-bb';
+import { ImgBbService } from '../../services/propertyServices/imgBB/img-bb-service';
 import { finalize } from 'rxjs';
 import { CommonModule } from '@angular/common';
 
@@ -18,7 +18,7 @@ export class Admin{
   errorMessage: string | null = null;
 
 
-  constructor(private imgService : ImgBb)
+  constructor(private imgService : ImgBbService)
   {}
 
   /**

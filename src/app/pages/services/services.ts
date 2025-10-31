@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
-import { Admin } from '../admin/admin';
 
 @Component({
   selector: 'app-services',
-  imports: [Admin],
+  imports: [],
   templateUrl: './services.html',
   styleUrl: './services.css'
 })

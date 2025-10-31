@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import GeneralInquiry from '../../../models/GeneralInquiry';
+import GeneralInquiry from '../../models/contact/GeneralInquiry';
 
 @Injectable({
   providedIn: 'root'
