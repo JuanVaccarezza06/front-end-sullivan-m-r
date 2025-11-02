@@ -446,3 +446,25 @@
 .card{
   min-width: 27rem;
 }
+
+fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+  min-inline-size: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.btn-search:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-search:disabled:hover {
+  background: #9ca3af;
+  transform: none;
+  box-shadow: none;
+}

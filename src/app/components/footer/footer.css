@@ -13,6 +13,7 @@ footer{
 
 .logo-x, .logo-instagram, .logo-facebook{
   height: 2rem;
+  width: 2rem;
 }
 
 :root{
