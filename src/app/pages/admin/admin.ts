@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-admin',
-  imports: [ReactiveFormsModule,CommonModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './admin.html',
   styleUrl: './admin.css'
 })

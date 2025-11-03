@@ -4,6 +4,7 @@ import Property from '../../../models/property/Property';
 import Zone from '../../../models/property/Zone';
 import OperationType from '../../../models/property/OperationType';
 import PropertyType from '../../../models/property/PropertyType';
+import Amenity from '../../../models/property/Amenity';
 
 @Injectable({
   providedIn: 'root'
@@ -36,7 +37,11 @@ export class PropertyService {
     return this.http.get<PropertyType[]>(`${this.API_URL}/available-property-types`);
   }
 
-  applyFilter(){
+  getAvailableAmenities() {
+    return this.http.get<Amenity[]>(`${this.API_URL}/available-amenities`);
+  }
+
+  applyFilter() {
     return this.http.get<Property[]>(`${this.API_URL}/filter`,);
   }
 

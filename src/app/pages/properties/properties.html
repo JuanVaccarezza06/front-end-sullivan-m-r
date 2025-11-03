@@ -1,1 +1,142 @@
-<p>properties works!</p>
+<main>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Nuestras Propiedades</h1>
+      <p>Descubre nuestra selección de propiedades con auténtico carácter irlandés. Cada hogar ha sido cuidadosamente
+        seleccionado para ofrecerte lo mejor en confort, diseño y ubicación.</p>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <div class="container">
+    <!-- Filtros Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>Filtros</h2>
+        <button type="button" class="btn-link" (click)="filterClear()" >Limpiar filtros</button>
+      </div>
+
+      <form class="form" [formGroup]="form">
+        <!-- Tipo de operación -->
+        <fieldset>
+          <legend>Tipo de operación</legend>
+          @for (item of operationTypes; track $index) {
+          <label>
+            <input 
+            type="checkbox" 
+            formControlName="operationType" 
+            value="{{item.operationName}}"
+            (change)="addOrDeleteOperationTypesCheckBox(item.operationName.toString() ,$event.target.checked)">
+            <span>{{item.operationName}}</span>
+          </label>
+          }
+        </fieldset>
+
+        <!-- Rango de precio -->
+        <fieldset>
+          <legend>Rango de precio</legend>
+          <div class="precio-grid">
+            <div>
+              <label for="minPrice">Mínimo</label>
+              <select id="minPrice" formControlName="minPrice">
+                <option value="0">€0</option>
+                <option value="50000">€50,000</option>
+                <option value="100000">€100,000</option>
+                <option value="200000">€200,000</option>
+              </select>
+            </div>
+            <div>
+              <label for="maxPrice">Máximo</label>
+              <select id="maxPrice" formControlName="maxPrice">
+                <option value="0">Sin límite</option>
+                <option value="200000">€200,000</option>
+                <option value="500000">€500,000</option>
+                <option value="1000000">€1,000,000</option>
+              </select>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Habitaciones -->
+        <fieldset>
+          <legend>Ambientes</legend>
+          <div class="rooms">
+            @for (item of numberRooms; track $index) {
+            <button type="button" [class.seleccionado]="item === numberRoomsSelect"
+              (click)="setRoomsValuee(item)">{{item}}+</button>
+            }
+          </div>
+        </fieldset>
+
+        <!-- Características -->
+        <fieldset>
+          <legend>Características</legend>
+          @for (item of amenities; track $index) {
+          <label>
+            <input 
+            type="checkbox" 
+            formControlName="amenities" 
+            value="{{item.amenityName}}" 
+            (change)="addOrDeleteAmenitiesCheckBox(item.amenityName.toString() ,$event.target.checked)">
+            <span>{{item.amenityName}}</span>
+          </label>
+        }
+        </fieldset>
+
+        <button type="submit" class="btn-primary" (click)="onSumbit()">Aplicar filtros</button>
+      </form>
+    </aside>
+
+    <!-- Propiedades -->
+    <main class="content">
+      <div class="content-header">
+        <p>Mostrando 15 propiedades</p>
+        <label>
+          <span>Ordenar por:</span>
+          <select name="orden">
+            <option>Más recientes</option>
+            <option>Precio: menor a mayor</option>
+            <option>Precio: mayor a menor</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="grid">
+        @for (p of properties; track $index) {
+
+        <article class="card">
+
+          <div class="card-image">
+            <img src="{{p.mainImage}}" alt="Propiedad">
+            <div class="badges">
+              <span class="badge-destacado">Destacado</span>
+              <span class="badge-precio">{{p.price}}</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <h3>{{p.title}}</h3>
+            <p class="ubicacion">{{p.zoneDTO}}</p>
+            <div class="specs">
+              <span>🛏️ {{p.bedrooms}}</span>
+              <span>🚿 {{p.bathrooms}}</span>
+              <span>📐 {{p.totalArea}}</span>
+            </div>
+            <button class="btn-secondary">Ver detalles</button>
+          </div>
+        </article>
+        }
+
+      </div>
+    </main>
+  </div>
+
+  <!-- CTA -->
+  <section class="cta">
+    <h2>¿No encuentras lo que buscas?</h2>
+    <p>Contacta con nuestro equipo de expertos y te ayudaremos a encontrar la propiedad perfecta para ti.</p>
+    <button class="btn-cta">Contactar ahora</button>
+  </section>
+
+</main>
