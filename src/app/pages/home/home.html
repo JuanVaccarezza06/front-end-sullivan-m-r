@@ -24,7 +24,7 @@
 
       <fieldset class="form-group">
         <label for="operation">Tipo de Operación</label>
-        <select id="operation" formControlName="operationType">
+        <select id="operation" formControlName="operationTypes">
           <option value="" disabled selected>-- Selecciona un tipo --</option>
           @for (ot of operationTypeArray; track $index ){
           <option>{{ot.operationName}}</option>
@@ -34,7 +34,7 @@
 
       <fieldset class="form-group">
         <label for="property-type">Tipo de Propiedad</label>
-        <select id="property-type" formControlName="propertyType">
+        <select id="property-type" formControlName="propertyTypes">
           <option value="" disabled selected>-- Selecciona un tipo --</option>
           @for (pt of propertyTypesArray; track $index) {
           <option>{{pt.typeName}}</option>
@@ -52,14 +52,14 @@
         </select>
       </fieldset>
 
-      <button [disabled]="form.invalid" type="submit" class="btn-search">Buscar</button>
+      <button [disabled]="form.invalid" type="submit" class="btn-search" (click)="makeFilter()" >Buscar</button>
     </form>
   </section>
 
   <section class="featured-section">
     <div class="section-header">
       <h2 class="header-featured-section-title">Propiedades Destacadas</h2>
-      <a href="properties" class="view-all">Ver todas →</a>
+      <a routerLink="properties" class="view-all">Ver todas →</a>
     </div>
     <div class="properties-grid">
 

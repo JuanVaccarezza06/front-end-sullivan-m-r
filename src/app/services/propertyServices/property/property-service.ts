@@ -5,6 +5,7 @@ import Zone from '../../../models/property/Zone';
 import OperationType from '../../../models/property/OperationType';
 import PropertyType from '../../../models/property/PropertyType';
 import Amenity from '../../../models/property/Amenity';
+import PropertiesFilter from '../../../models/property/PropertiesFilter';
 
 @Injectable({
   providedIn: 'root'
@@ -41,8 +42,8 @@ export class PropertyService {
     return this.http.get<Amenity[]>(`${this.API_URL}/available-amenities`);
   }
 
-  applyFilter() {
-    return this.http.get<Property[]>(`${this.API_URL}/filter`,);
+  applyFilter(filter : PropertiesFilter) {
+    return this.http.post<Property[]>(`${this.API_URL}/filter`,filter);
   }
 
   post(property: Property) {

@@ -7,6 +7,9 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import Zone from '../../models/property/Zone';
 import PropertyType from '../../models/property/PropertyType';
 import OperationType from '../../models/property/OperationType';
+import { Properties } from '../properties/properties';
+import { errorContext } from 'rxjs/internal/util/errorContext';
+import PropertiesFilter from '../../models/property/PropertiesFilter';
 
 @Component({
   selector: 'app-home',
@@ -24,7 +27,9 @@ export class Home implements OnInit {
 
   zoneArray!: Zone[]
   propertyTypesArray!: PropertyType[]
+
   operationTypeArray!: OperationType[]
+
 
   form!: FormGroup
 
@@ -33,7 +38,7 @@ export class Home implements OnInit {
     private service: PropertyService,
     private imgService: ImgBbService,
     private router: Router,
-    private fb : FormBuilder
+    private fb: FormBuilder
   ) { }
 
   ngOnInit(): void {
@@ -54,10 +59,10 @@ export class Home implements OnInit {
 
   }
 
-  formInitializer(){
-      this.form = this.fb.group({
-      operationType: ['', [Validators.required]],
-      propertyType: ['', [Validators.required]],
+  formInitializer() {
+    this.form = this.fb.group({
+      operationTypes: ['', [Validators.required]],
+      propertyTypes: ['', [Validators.required]],
       zone: ['', [Validators.required, Validators.maxLength(20), Validators.minLength(3)]]
     });
   }
@@ -90,7 +95,7 @@ export class Home implements OnInit {
     });
   }
 
-    loadAvailablesZones() {
+  loadAvailablesZones() {
     this.service.getAvailableZones().subscribe({
       next: (data) => {
         this.zoneArray = data;
@@ -115,8 +120,35 @@ export class Home implements OnInit {
     else p.mainImage = p.imageDTOList.find(img => img.name.includes("Portada"))?.url // If the image array has the 'portada' image, it returs
   }
 
-  onSumbit(){
-    let formularieee = this.form.value;
-    console.log(formularieee)
+  makeFilter() {
+    const filterResult = {
+      operationTypeDTOList: [
+        { "operationName": this.form.get('operationTypes')?.value }
+      ],
+      propertyTypeDTOList: [
+        { "typeName": this.form.get('propertyTypes')?.value }
+
+      ],
+      zoneDTOList: [
+        { "zoneName": this.form.get('zone')?.value }
+      ],
+      minPrice: 0,
+      maxPrice: 0,
+      rooms: 0,
+      amenityDTOList: []
+    } as PropertiesFilter
+
+    this.service.applyFilter(filterResult).subscribe({
+      next: (data) => {
+        console.log(data)
+        this.router.navigate(['properties'], {
+        state: { filterHomeArray: data }
+      })
+    },
+      error: (e) => console.log(e)
+    })
+  }
+
+  onSumbit() {
   }
 }
