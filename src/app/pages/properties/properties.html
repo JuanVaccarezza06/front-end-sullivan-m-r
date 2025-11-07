@@ -15,7 +15,7 @@
         @if (isFilter) {
         <div class="header-properties">
           <p>Propiedades que cumplen con el filtro aplicado recientemente</p>
-          <button (click)="filterClear()" class="btn-link" style="display:none;">Limpiar filtro</button>
+          <button (click)="onResetClick()" class="btn-link" style="display:none;">Limpiar filtro</button>
         </div>
         }
         @else { <p>Mostrando 10 propiedades</p> }
@@ -79,100 +79,15 @@
   <aside class="sidebar">
     <div class="sidebar-header">
       <h2>Filtros</h2>
-      <button type="button" class="btn-link" (click)="filterClear()">Limpiar filtros</button>
+      <button type="button" class="btn-link" (click)="onResetClick()">Limpiar filtros</button>
     </div>
-
-    <form class="filter-form" [formGroup]="form">
-      <!-- Tipo de operación -->
-      <fieldset>
-        <legend>Tipo de operación</legend>
-        <div class="form-group">
-          <select id="operation-type" formControlName="operationTypes">
-            <option value="" disabled selected >Seleccionar operación</option>
-            @for (operation of operationTypes; track $index) {
-            <option>{{operation.operationName}}</option>
-            }
-          </select>
-        </div>
-      </fieldset>
-
-      <!-- Tipo de propiedad -->
-      <fieldset>
-        <legend>Tipo de Propiedad</legend>
-        <div class="form-group">
-          <select id="property-type" formControlName="propertyTypes">
-            <option value="" disabled selected>Seleccionar tipo</option>
-            @for (type of propertyTypes; track $index) {
-            <option>{{type.typeName}}</option>
-            }
-          </select>
-        </div>
-      </fieldset>
-
-      <!-- Zona -->
-      <fieldset>
-        <legend>Zona</legend>
-        <div class="form-group">
-          <select id="zone" formControlName="zones">
-            <option value="" disabled selected>Seleccionar zona</option>
-            @for (zone of zones; track $index) {
-            <option>{{zone.zoneName}}</option>
-            }
-          </select>
-        </div>
-      </fieldset>
-
-      <!-- Rango de precio -->
-      <fieldset>
-        <legend>Rango de precio</legend>
-        <div class="price-grid">
-          <div class="form-group">
-            <label for="minPrice">Mínimo</label>
-            <select id="minPrice" formControlName="minPrice">
-              <option value="0">€0</option>
-              <option value="50000">€50,000</option>
-              <option value="100000">€100,000</option>
-              <option value="200000">€200,000</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="maxPrice">Máximo</label>
-            <select id="maxPrice" formControlName="maxPrice">
-              <option value="0">Sin límite</option>
-              <option value="200000">€200,000</option>
-              <option value="500000">€500,000</option>
-              <option value="1000000">€1,000,000</option>
-            </select>
-          </div>
-        </div>
-      </fieldset>
-
-      <!-- Habitaciones -->
-      <fieldset>
-        <legend>Ambientes</legend>
-        <div class="rooms">
-          @for (num of numberRooms; track $index) {
-          <button type="button" [class.seleccionado]="num === numberRoomsSelect"
-            (click)="setRoomsValuee(num)">{{num}}+</button>
-          }
-        </div>
-      </fieldset>
-
-      <!-- Características -->
-      <fieldset>
-        <legend>Características</legend>
-        <div class="amenities">
-          @for (am of amenities; track $index){
-          <label class="checkbox-label">
-            <input type="checkbox" formControlName="amenities">
-            <span>{{am.amenityName}}</span>
-          </label>
-          }
-        </div>
-      </fieldset>
-
-      <button type="submit" class="btn-primary" (click)="onSumbit()">Aplicar filtros</button>
-    </form>
+    
+    <app-filter-properties-page 
+    class="filter-form" 
+    [resetTrigger]="resetFilters"
+    (thereIsFilter)="loadFilterProperties($event)"
+    (filterClean)="loadProperties()"
+    ></app-filter-properties-page>
   </aside>
 </div>
 
