@@ -1,0 +1,237 @@
+ /* FORM CONTAINER */
+ .form-container {
+     padding: 2rem;
+ }
+
+ .form-header {
+     display: flex;
+     justify-content: space-between;
+     align-items: flex-start;
+     margin-bottom: 2rem;
+ }
+
+ .form-title h1 {
+     font-size: 1.75rem;
+     margin-bottom: 0.25rem;
+ }
+
+ .form-subtitle {
+     color: #666;
+     font-size: 0.9rem;
+ }
+
+ .cancel-btn {
+     background: none;
+     border: none;
+     color: #666;
+     cursor: pointer;
+     font-size: 0.9rem;
+     padding: 0.5rem 1rem;
+ }
+
+ .cancel-btn:hover {
+     color: #333;
+ }
+
+ /* FORM SECTIONS */
+ .form-section {
+     background-color: #fff;
+     padding: 2rem;
+     border-radius: 8px;
+     margin-bottom: 1.5rem;
+ }
+
+ .section-title {
+     font-size: 1.1rem;
+     font-weight: 600;
+     margin-bottom: 1.5rem;
+ }
+
+ .form-grid {
+     display: grid;
+     grid-template-columns: 1fr 1fr;
+     gap: 1.5rem;
+ }
+
+ .form-group {
+     display: flex;
+     flex-direction: column;
+     gap: 0.5rem;
+ }
+
+ .form-group.full-width {
+     grid-column: 1 / -1;
+ }
+
+ label {
+     font-size: 0.9rem;
+     font-weight: 500;
+     color: #333;
+ }
+
+ label .required {
+     color: #ef4444;
+ }
+
+ input[type="text"],
+ input[type="number"],
+ select,
+ textarea {
+     padding: 0.75rem;
+     border: 1px solid #d1d5db;
+     border-radius: 6px;
+     font-size: 0.9rem;
+     font-family: inherit;
+ }
+
+ input:focus,
+ select:focus,
+ textarea:focus {
+     outline: none;
+     border-color: #10b981;
+ }
+
+ textarea {
+     resize: vertical;
+     min-height: 100px;
+ }
+
+ .checkbox-group {
+     display: flex;
+     align-items: center;
+     gap: 0.5rem;
+     margin-top: 1rem;
+ }
+
+ .checkbox-group input[type="checkbox"] {
+     width: 16px;
+     height: 16px;
+     cursor: pointer;
+ }
+
+ .checkbox-group label {
+     font-weight: normal;
+     cursor: pointer;
+ }
+
+
+ /* FOOTER BUTTONS */
+ .form-footer {
+     display: flex;
+     justify-content: flex-end;
+     gap: 1rem;
+     padding: 2rem;
+ }
+
+ .btn {
+     padding: 0.75rem 1.5rem;
+     border-radius: 6px;
+     font-size: 0.9rem;
+     font-weight: 500;
+     cursor: pointer;
+     border: none;
+     transition: all 0.2s;
+ }
+
+ .btn-secondary {
+     background-color: #fff;
+     border: 1px solid #d1d5db;
+     color: #333;
+ }
+
+ .btn-secondary:hover:not(:disabled) {
+     background-color: #f5f5f5;
+ }
+
+ .btn-primary {
+     background-color: #10b981;
+     color: white;
+ }
+
+ .btn-primary:hover:not(:disabled) {
+     background-color: #059669;
+ }
+
+ .btn:disabled {
+     opacity: 0.5;
+     cursor: not-allowed;
+ }
+
+
+
+ /* --- CONTENEDOR PRINCIPAL: SOLUCIÓN GRID --- */
+ #components-container {
+     display: grid;
+     gap: 1.25rem;
+     /* 20px -> 1.25rem (Espacio entre los componentes) */
+     padding: 0.625rem;
+     /* 10px -> 0.625rem */
+     border-radius: 0.75rem;
+     /* 12px -> 0.75rem */
+     box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.08);
+     /* 0 4px 12px -> 0 0.25rem 0.75rem */
+ }
+
+ /*
+        * 1. Definición para pantallas grandes (desktop): Dos columnas lado a lado.
+        */
+ @media (min-width: 48rem) {
+
+     /* 768px -> 48rem */
+     #components-container {
+         /* Definimos una sola fila y dos columnas */
+         grid-template-areas: 'amenities images';
+
+         /* El ancho se divide: 50% / 50% */
+         grid-template-columns: 1fr 1fr;
+
+         background-color: #fff;
+     }
+
+     #component-input-amenities {
+         grid-area: amenities;
+     }
+
+     #component-input-images {
+         grid-area: images;
+     }
+ }
+
+ /*
+        * 2. Definición para pantallas pequeñas (móvil): Una columna debajo de la otra.
+        */
+ @media (max-width: 47.9375rem) {
+
+     /* 767px -> 47.9375rem */
+     #components-container {
+         /* En móvil, los apilamos en una columna */
+         grid-template-areas:
+             'amenities'
+             'images';
+         /* Una sola columna que ocupa todo el ancho */
+         grid-template-columns: 100%;
+     }
+ }
+
+
+ /* --- ESTILOS DE DEMOSTRACIÓN --- */
+
+ /* Estilos base para los componentes para que se visualicen */
+ app-input-amenities,
+ app-input-images {
+     display: block;
+     /* Asegura que se comporten como bloques */
+     padding: 1.25rem;
+     /* 20px -> 1.25rem */
+     border-radius: 0.5rem;
+     /* 8px -> 0.5rem */
+     min-height: 15.625rem;
+     /* 250px -> 15.625rem */
+ }
+
+
+
+ h3 {
+     margin-top: 0;
+     color: #1f3d7a;
+ }

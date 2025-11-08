@@ -1,4 +1,3 @@
-export default interface Amenity {
+export default interface Amenity{   
       amenityName: string;
-
 }

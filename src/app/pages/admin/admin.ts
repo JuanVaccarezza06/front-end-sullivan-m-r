@@ -2,11 +2,11 @@ import { Component } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ImgBbService } from '../../services/propertyServices/imgBB/img-bb-service';
 import { finalize } from 'rxjs';
-import { CommonModule } from '@angular/common';
+import { FormProperty } from '../../components/form-property/form-property';
 
 @Component({
   selector: 'app-admin',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule,FormProperty],
   templateUrl: './admin.html',
   styleUrl: './admin.css'
 })

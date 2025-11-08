@@ -1,0 +1,33 @@
+    <div class="images-section">
+        <h2 class="section-title">Imágenes</h2>
+
+        <!-- ÁREA DE SUBIDA -->
+        <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">📤</div>
+            <div class="upload-text">Seleccionar imágenes</div>
+            <div class="upload-subtext">o arrastra y suelta aquí</div>
+            <input 
+                type="file" 
+                id="fileInput" 
+                class="file-input" 
+                accept="image/*" 
+                multiple
+            >
+        </div>
+
+        <!-- VISTA PREVIA -->
+        <div class="preview-container" id="previewContainer" style="display: none;">
+            <div class="preview-header">
+                <div class="preview-title">
+                    Vista previa
+                    <span class="images-count" id="imagesCount">0</span>
+                </div>
+                <button class="clear-all-button" onclick="clearAllImages()">
+                    🗑️ Eliminar todas
+                </button>
+            </div>
+            <div class="images-grid" id="imagesGrid">
+                <!-- Aquí se mostrarán las imágenes -->
+            </div>
+        </div>
+    </div>
