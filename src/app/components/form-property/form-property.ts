@@ -7,6 +7,7 @@ import { InputImages } from '../input-images/input-images';
 import { PageResponse } from '../../models/pagable/PageResponse';
 import Property from '../../models/property/Property';
 import { PropertyService } from '../../services/propertyServices/property/property-service';
+import Zone from '../../models/property/Zone';
 
 @Component({
   selector: 'app-form-property',
@@ -18,6 +19,8 @@ export class FormProperty implements OnInit {
 
   operationsTypesArray: OperationType[] = []
   propertyTypesArray: PropertyType[] = []
+
+  zones: Zone[] = []
 
   form!: FormGroup
 

@@ -90,6 +90,7 @@ export class Properties implements OnInit {
 
   onResetClick() {
     this.isFilter = false
+    this.loadProperties()
     this.resetFilters.emit();
   }
 
