@@ -27,6 +27,8 @@ export class Properties implements OnInit {
   properties!: Property[]
 
   resetFilters = new EventEmitter<void>();
+
+  numberPage : number = 0;
   
 
   ngOnInit(): void {
@@ -55,9 +57,9 @@ export class Properties implements OnInit {
   }
 
   loadProperties() {
-    this.propertyService.getAll().subscribe({
-      next: (data) => {
-        this.properties = data
+    this.propertyService.getAll(this.numberPage).subscribe({
+      next: (data : any) => {
+        this.properties = data.content 
         this.properties.forEach((value) => this.choiceMainImage(value))
       },
       error: (e) => console.log(e)

@@ -6,6 +6,8 @@ import OperationType from '../../../models/property/OperationType';
 import PropertyType from '../../../models/property/PropertyType';
 import Amenity from '../../../models/property/Amenity';
 import PropertiesFilter from '../../../models/property/PropertiesFilter';
+import { Observable } from 'rxjs';
+import { PageResponse } from '../../../models/pagable/PageResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -18,8 +20,8 @@ export class PropertyService {
     private http: HttpClient
   ) { }
 
-  getAll() {
-    return this.http.get<Property[]>(`${this.API_URL}/find-all`);
+  getAll(page : number) {
+    return this.http.get<PageResponse<Property>>(`${this.API_URL}/find-all?page=${page}&size=8`);
   }
 
   getFeaturedProperties() {
