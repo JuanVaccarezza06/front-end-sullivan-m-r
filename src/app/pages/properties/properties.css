@@ -461,3 +461,70 @@ body {
 
 
 
+        /* Navegación de páginas */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .pagination__info {
+            font-size: 14px;
+            color: #666;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .pagination__button {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .pagination__button:hover:not(:disabled) {
+            background: #f0f0f0;
+            border-color: #999;
+            transform: scale(1.05);
+        }
+
+        .pagination__button:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+
+        .pagination__button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* Variante con flechas más minimalistas */
+        .pagination--minimal .pagination__button {
+            border: none;
+            background: transparent;
+            font-size: 24px;
+            color: #666;
+        }
+
+        .pagination--minimal .pagination__button:hover:not(:disabled) {
+            background: #f0f0f0;
+            color: #000;
+        }
+
+
+
+
+
+
+

@@ -28,13 +28,19 @@ export class Properties implements OnInit {
 
   resetFilters = new EventEmitter<void>();
 
-  numberPage : number = 0;
-  
+  numberPagesInDatabase: number = 0
+  numberOfPropertiesLoadInArray: number = 0
+  pageSelected: number = 0
+  lastPage: number = 0
+
 
   ngOnInit(): void {
 
     const state = this.router.lastSuccessfulNavigation?.extras?.state as { filterHomeArray?: Property[] };
     const propertiesArray = state?.filterHomeArray;
+
+    this.pageSelected = 0;
+    this.lastPage = 0;
 
     this.loadFilterProperties(propertiesArray as Property[])
 
@@ -47,6 +53,9 @@ export class Properties implements OnInit {
       this.properties = propertiesArray;
       this.properties.forEach((value) => this.choiceMainImage(value))
       this.isFilter = true
+      this.pageSelected = 0;
+      this.lastPage = 0;
+      this.numberOfPropertiesLoadInArray = this.properties.length
       console.log("Properties load from filter.");
     }
     else {
@@ -57,9 +66,16 @@ export class Properties implements OnInit {
   }
 
   loadProperties() {
-    this.propertyService.getAll(this.numberPage).subscribe({
-      next: (data : any) => {
-        this.properties = data.content 
+    this.propertyService.getAll(this.pageSelected).subscribe({
+      next: (data) => {
+        this.lastPage = data.totalPages-1
+        this.pageSelected = data.number
+        this.properties = data.content
+        this.numberOfPropertiesLoadInArray = this.properties.length
+        console.log(`Total properties per page ${this.numberOfPropertiesLoadInArray}`)
+        console.log(`Page end ${this.lastPage}`)
+        console.log(`Page number  ${this.pageSelected}`)
+
         this.properties.forEach((value) => this.choiceMainImage(value))
       },
       error: (e) => console.log(e)
@@ -73,9 +89,19 @@ export class Properties implements OnInit {
   }
 
   onResetClick() {
+    this.isFilter = false
     this.resetFilters.emit();
   }
 
-}
+  changePage(signal: boolean) {
+    if (signal && this.pageSelected < this.lastPage) {
+      this.pageSelected++
+      this.loadProperties()
+    } else if (!signal && this.pageSelected > 0) {
+      this.pageSelected--
+      this.loadProperties()
+    }
 
+  }
+}
 

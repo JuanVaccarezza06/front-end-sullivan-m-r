@@ -18,17 +18,20 @@
           <button (click)="onResetClick()" class="btn-link" style="display:none;">Limpiar filtro</button>
         </div>
         }
-        @else { <p>Mostrando 10 propiedades</p> }
+        @else { <p>Mostrando {{numberOfPropertiesLoadInArray}} propiedades</p> }
       </div>
 
-      <label>
-        <span>Ordenar por:</span>
-        <select>
-          <option>Más recientes</option>
-          <option>Precio: menor a mayor</option>
-          <option>Precio: mayor a menor</option>
-        </select>
-      </label>
+      <div class="pagination pagination--minimal">
+        <button class="pagination__button" id="prevBtn2" (click)="changePage(false)">
+          ‹
+        </button>
+        <span class="pagination__info">
+          Página <span>{{pageSelected}}</span> de <span >{{lastPage}}</span>
+        </span>
+        <button class="pagination__button" id="nextBtn2" (click)="changePage(true)">
+          ›
+        </button>
+      </div>
     </div>
 
     <div class="grid">
@@ -81,13 +84,9 @@
       <h2>Filtros</h2>
       <button type="button" class="btn-link" (click)="onResetClick()">Limpiar filtros</button>
     </div>
-    
-    <app-filter-properties-page 
-    class="filter-form" 
-    [resetTrigger]="resetFilters"
-    (thereIsFilter)="loadFilterProperties($event)"
-    (filterClean)="loadProperties()"
-    ></app-filter-properties-page>
+
+    <app-filter-properties-page class="filter-form" [resetTrigger]="resetFilters"
+      (thereIsFilter)="loadFilterProperties($event)" (filterClean)="loadProperties()"></app-filter-properties-page>
   </aside>
 </div>
 

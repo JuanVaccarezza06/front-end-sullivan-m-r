@@ -20,7 +20,7 @@ export class PropertyService {
     private http: HttpClient
   ) { }
 
-  getAll(page : number) {
+  getAll(page : number) : Observable<PageResponse<Property>> {
     return this.http.get<PageResponse<Property>>(`${this.API_URL}/find-all?page=${page}&size=8`);
   }
 

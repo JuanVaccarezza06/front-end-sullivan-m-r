@@ -4,6 +4,9 @@ import OperationType from '../../models/property/OperationType';
 import PropertyType from '../../models/property/PropertyType';
 import { InputAmenities } from '../input-amenities/input-amenities';
 import { InputImages } from '../input-images/input-images';
+import { PageResponse } from '../../models/pagable/PageResponse';
+import Property from '../../models/property/Property';
+import { PropertyService } from '../../services/propertyServices/property/property-service';
 
 @Component({
   selector: 'app-form-property',
@@ -19,7 +22,8 @@ export class FormProperty implements OnInit {
   form!: FormGroup
 
   constructor(
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private service : PropertyService
   ) { }
 
   ngOnInit(): void {
@@ -89,6 +93,21 @@ export class FormProperty implements OnInit {
       imageDTOList: this.fb.array([
       ])
     });
+  }
+
+  getAllTest() {
+    let requestResponse: PageResponse<Property>
+
+    this.service.getAll(0).subscribe({
+      next: (data) => {
+        requestResponse = data
+        if (requestResponse) console.log("La data NO es nula.")
+        if (requestResponse.content) console.log("El contenido no es nulo NO es nula.")
+        if (requestResponse) console.log(requestResponse.totalPages)
+        console.log(requestResponse)
+      },
+      error: (e) => console.log(e)
+    })
   }
 
 }
