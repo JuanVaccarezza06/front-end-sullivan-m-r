@@ -85,8 +85,12 @@
       <button type="button" class="btn-link" (click)="onResetClick()">Limpiar filtros</button>
     </div>
 
-    <app-filter-properties-page class="filter-form" [resetTrigger]="resetFilters"
-      (thereIsFilter)="loadFilterProperties($event)" (filterClean)="loadProperties()"></app-filter-properties-page>
+    <app-filter-properties-page 
+    class="filter-form" 
+    [resetTrigger]="resetFilters"
+    (thereIsFilter)="loadFilterProperties($event)" 
+    (filterClean)="loadProperties('Elimine el filtro desde filter-properties-page')">
+    </app-filter-properties-page>
   </aside>
 </div>
 

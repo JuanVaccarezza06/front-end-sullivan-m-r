@@ -5,9 +5,9 @@
     <div class="form-group">
       <select id="operation-type" formControlName="operationTypes">
         <option value="" disabled selected>Seleccionar operación</option>
-        @for (operation of operationTypes; track $index) {
-        <option>{{operation.operationName}}</option>
-        }
+                @for (operation of operationTypesArray; track $index) {
+                <option [ngValue]="operation.operationName">{{operation.operationName}}</option>
+                }
       </select>
     </div>
   </fieldset>
@@ -18,7 +18,7 @@
     <div class="form-group">
       <select id="property-type" formControlName="propertyTypes">
         <option value="" disabled selected>Seleccionar tipo</option>
-        @for (type of propertyTypes; track $index) {
+        @for (type of propertyTypesArray; track $index) {
         <option>{{type.typeName}}</option>
         }
       </select>
@@ -29,10 +29,14 @@
   <fieldset>
     <legend>Zona</legend>
     <div class="form-group">
-      <select id="zone" formControlName="zones">
+      <select id="zone" formControlName="zone">
         <option value="" disabled selected>Seleccionar zona</option>
-        @for (zone of zones; track $index) {
-        <option>{{zone.zoneName}}</option>
+        @for (z of zoneArray; track $index) {
+        <option [ngValue]="z">
+          {{z.zoneName}}, {{z.cityDTO.cityName}},
+          {{z.cityDTO.provinceDTO.provinceName}},
+          {{z.cityDTO.provinceDTO.countryDTO.countryName}}
+        </option>
         }
       </select>
     </div>
@@ -75,13 +79,13 @@
   </fieldset>
 
   <!-- Características -->
-  <!-- Características -->
   <fieldset formArrayName="amenities">
     <legend>Características</legend>
     <div class="amenities">
-      @for (am of amenities; track $index) {
+      @for (am of amenitiesArray; track $index) {
       <label class="checkbox-label">
         <input type="checkbox" [formControlName]="$index">
+
         <span>{{ am.amenityName }}</span>
       </label>
       }

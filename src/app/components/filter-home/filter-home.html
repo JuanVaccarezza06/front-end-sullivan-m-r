@@ -25,10 +25,15 @@
     <select id="location" formControlName="zone">
       <option value="" disabled selected>-- Selecciona un tipo --</option>
       @for (z of zoneArray; track $index) {
-      <option>{{z.zoneName}}</option>
+      <option [ngValue]="z">
+        {{z.zoneName}},
+        {{z.cityDTO.cityName}},
+        {{z.cityDTO.provinceDTO.provinceName}},
+        {{z.cityDTO.provinceDTO.countryDTO.countryName}}
+      </option>
       }
     </select>
   </fieldset>
 
-  <button [disabled]="form.invalid" type="submit" class="btn-search" (click)="makeFilter()">Buscar</button>
+  <button [disabled]="form.invalid" type="submit" class="btn-search" >Buscar</button>
 </form>

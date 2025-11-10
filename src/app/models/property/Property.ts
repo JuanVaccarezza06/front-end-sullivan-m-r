@@ -1,10 +1,10 @@
 import Owner from "../actors/Owner";
-import Address from "./Address";
-import Amenity from "./Amenity";
-import Image from "./Image";
-import OperationType from "./OperationType";
-import PropertyType from "./PropertyType";
-import Zone from "./Zone";
+import Address from "./geography/Address";
+import Amenity from "./complements/Amenity";
+import Image from "./complements/Image";
+import OperationType from "./types/OperationType";
+import PropertyType from "./types/PropertyType";
+import ZoneDTO from "./geography/Zone";
 
 export default interface Property{
   id: number;
@@ -20,7 +20,7 @@ export default interface Property{
   operationTypeDTO: OperationType;
 
   amenitiesList: Amenity[];
-  zoneDTO: Zone;
+  zoneDTO: ZoneDTO;
   addressDTO: Address;
   imageDTOList: Image[];
 

@@ -1,13 +1,14 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import OperationType from '../../models/property/OperationType';
-import PropertyType from '../../models/property/PropertyType';
 import { InputAmenities } from '../input-amenities/input-amenities';
 import { InputImages } from '../input-images/input-images';
-import { PageResponse } from '../../models/pagable/PageResponse';
-import Property from '../../models/property/Property';
+import OperationType from '../../models/property/types/OperationType';
+import PropertyType from '../../models/property/types/PropertyType';
+import ZoneDTO from '../../models/property/geography/Zone';
 import { PropertyService } from '../../services/propertyServices/property/property-service';
-import Zone from '../../models/property/Zone';
+import Property from '../../models/property/Property';
+import { PageResponse } from '../../models/pagable/PageResponse';
+
 
 @Component({
   selector: 'app-form-property',
@@ -20,7 +21,7 @@ export class FormProperty implements OnInit {
   operationsTypesArray: OperationType[] = []
   propertyTypesArray: PropertyType[] = []
 
-  zones: Zone[] = []
+  zones: ZoneDTO[] = []
 
   form!: FormGroup
 

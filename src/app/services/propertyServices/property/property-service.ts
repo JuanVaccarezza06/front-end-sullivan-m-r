@@ -1,13 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import Property from '../../../models/property/Property';
-import Zone from '../../../models/property/Zone';
-import OperationType from '../../../models/property/OperationType';
-import PropertyType from '../../../models/property/PropertyType';
-import Amenity from '../../../models/property/Amenity';
-import PropertiesFilter from '../../../models/property/PropertiesFilter';
+import ZoneDTO from '../../../models/property/geography/Zone';
+import OperationType from '../../../models/property/types/OperationType';
+import PropertyType from '../../../models/property/types/PropertyType';
+import Amenity from '../../../models/property/complements/Amenity';
 import { Observable } from 'rxjs';
 import { PageResponse } from '../../../models/pagable/PageResponse';
+import PropertiesFilter from '../../../models/property/request-response/PropertiesFilter';
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +29,7 @@ export class PropertyService {
   }
 
   getAvailableZones() {
-    return this.http.get<Zone[]>(`${this.API_URL}/available-zones`);
+    return this.http.get<ZoneDTO[]>(`${this.API_URL}/available-zones`);
   }
 
   getAvailablesOperationTypes() {
@@ -45,6 +45,8 @@ export class PropertyService {
   }
 
   applyFilter(filter : PropertiesFilter) {
+    console.log("DEBAJO ESTA EL JSON QUE SE ENVIA")
+    console.log(filter)
     return this.http.post<Property[]>(`${this.API_URL}/filter`,filter);
   }
 

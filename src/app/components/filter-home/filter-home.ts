@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PropertyService } from '../../services/propertyServices/property/property-service';
 import { Router } from '@angular/router';
-import PropertiesFilter from '../../models/property/PropertiesFilter';
-import Zone from '../../models/property/Zone';
-import PropertyType from '../../models/property/PropertyType';
-import OperationType from '../../models/property/OperationType';
+import ZoneDTO from '../../models/property/geography/Zone';
+import PropertyType from '../../models/property/types/PropertyType';
+import OperationType from '../../models/property/types/OperationType';
+import PropertiesFilter from '../../models/property/request-response/PropertiesFilter';
 
 @Component({
   selector: 'app-filter-home',
@@ -16,7 +16,7 @@ import OperationType from '../../models/property/OperationType';
 export class FilterHome implements OnInit {
 
   form!: FormGroup
-  zoneArray!: Zone[]
+  zoneArray!: ZoneDTO[]
   propertyTypesArray!: PropertyType[]
 
   operationTypeArray!: OperationType[]
@@ -38,10 +38,30 @@ export class FilterHome implements OnInit {
   }
 
   formInitializer() {
+
+    const countryForm = this.fb.group({
+      countryName: ['', Validators.required]
+    });
+
+    const provinceForm = this.fb.group({
+      provinceName: ['', Validators.required],
+      countryDTO: countryForm
+    });
+
+    const cityForm = this.fb.group({
+      cityName: ['', Validators.required],
+      provinceDTO: provinceForm
+    });
+
+    const zoneForm = this.fb.group({
+      zoneName: ['', Validators.required],
+      cityDTO: cityForm
+    });
+
     this.form = this.fb.group({
       operationTypes: ['', [Validators.required]],
       propertyTypes: ['', [Validators.required]],
-      zone: ['', [Validators.required, Validators.maxLength(20), Validators.minLength(3)]]
+      zone: [zoneForm, [Validators.required, Validators.maxLength(20), Validators.minLength(3)]]
     });
   }
 
@@ -67,28 +87,41 @@ export class FilterHome implements OnInit {
     this.service.getAvailableZones().subscribe({
       next: (data) => {
         this.zoneArray = data;
+        console.log("ESTAS SON LAS AVAIBLE ZONES DE FILTER-HOME")
+        console.log(data)
       },
       error: (e) => console.log(e)
     });
   }
 
   makeFilter() {
-    const filterResult = {
-      operationTypeDTOList: [
-        { "operationName": this.form.get('operationTypes')?.value }
-      ],
-      propertyTypeDTOList: [
-        { "typeName": this.form.get('propertyTypes')?.value }
 
-      ],
-      zoneDTOList: [
-        { "zoneName": this.form.get('zone')?.value }
-      ],
+    console.log("DEBAJO VA A ESTAR EL VALOR DE ZONE")
+    console.log(this.form.get('zone')?.value)
+
+    const filterResult = {
+      operationTypeDTO: { "operationName": this.form.get('operationTypes')?.value },
+      propertyTypeDTO: { "typeName": this.form.get('propertyTypes')?.value },
+      zoneDTO: {
+          "zoneName": this.form.get('zone')?.value.zoneName,
+          "cityDTO": {
+            "cityName": this.form.get('zone')?.value.cityDTO.cityName,
+            "provinceDTO": {
+              "provinceName": this.form.get('zone')?.value.cityDTO.provinceDTO.provinceName,
+              "countryDTO": {
+                "countryName": this.form.get('zone')?.value.cityDTO.provinceDTO.countryDTO.countryName
+              }
+            }
+          }
+        },
       minPrice: 0,
       maxPrice: 0,
       rooms: 0,
       amenityDTOList: []
     } as PropertiesFilter
+
+    console.log("ESTE ES EL PROPETRTIES FILTER")
+    console.log(filterResult)
 
     this.service.applyFilter(filterResult).subscribe({
       next: (data) => {
@@ -100,5 +133,6 @@ export class FilterHome implements OnInit {
       error: (e) => console.log(e)
     })
   }
+
 
 }

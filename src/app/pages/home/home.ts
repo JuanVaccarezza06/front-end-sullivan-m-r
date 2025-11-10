@@ -3,13 +3,7 @@ import { Router, RouterLink } from "@angular/router";
 import Property from '../../models/property/Property';
 import { PropertyService } from '../../services/propertyServices/property/property-service';
 import { ImgBbService } from '../../services/propertyServices/imgBB/img-bb-service';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import Zone from '../../models/property/Zone';
-import PropertyType from '../../models/property/PropertyType';
-import OperationType from '../../models/property/OperationType';
-import { Properties } from '../properties/properties';
-import { errorContext } from 'rxjs/internal/util/errorContext';
-import PropertiesFilter from '../../models/property/PropertiesFilter';
+import { ReactiveFormsModule,  } from '@angular/forms';
 import { FilterHome } from '../../components/filter-home/filter-home';
 
 @Component({

@@ -59,13 +59,14 @@ export class Properties implements OnInit {
       console.log("Properties load from filter.");
     }
     else {
-      this.loadProperties()
+      this.loadProperties('Carge las propiedades desde el loadFilterProperties (ELSE)')
       console.log("Properties load from database.");
       this.isFilter = false;
     }
   }
 
-  loadProperties() {
+  loadProperties(mensaje : string) {
+    console.log(mensaje)
     this.propertyService.getAll(this.pageSelected).subscribe({
       next: (data) => {
         this.lastPage = data.totalPages-1
@@ -90,17 +91,17 @@ export class Properties implements OnInit {
 
   onResetClick() {
     this.isFilter = false
-    this.loadProperties()
+    this.loadProperties('Cargue las propiedades desde el Filtro del propeties component')
     this.resetFilters.emit();
   }
 
   changePage(signal: boolean) {
     if (signal && this.pageSelected < this.lastPage) {
       this.pageSelected++
-      this.loadProperties()
+      this.loadProperties('Carge las propiedades desde el back page')
     } else if (!signal && this.pageSelected > 0) {
       this.pageSelected--
-      this.loadProperties()
+      this.loadProperties('Carge las propiedades desde el next page')
     }
 
   }

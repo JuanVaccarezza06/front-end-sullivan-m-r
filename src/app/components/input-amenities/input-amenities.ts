@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import Amenity from '../../models/property/Amenity';
+import Amenity from '../../models/property/complements/Amenity';
 import { PropertyService } from '../../services/propertyServices/property/property-service';
 import { PageResponse } from '../../models/pagable/PageResponse';
 import Property from '../../models/property/Property';
