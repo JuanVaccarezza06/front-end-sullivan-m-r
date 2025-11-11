@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FormProperty } from './form-property';
+import { FormOwner } from './form-owner';
 
-describe('FormProperty', () => {
-  let component: FormProperty;
-  let fixture: ComponentFixture<FormProperty>;
+describe('FormOwner', () => {
+  let component: FormOwner;
+  let fixture: ComponentFixture<FormOwner>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FormProperty]
+      imports: [FormOwner]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(FormProperty);
+    fixture = TestBed.createComponent(FormOwner);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

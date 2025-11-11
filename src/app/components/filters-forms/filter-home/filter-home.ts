@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { PropertyService } from '../../services/propertyServices/property/property-service';
 import { Router } from '@angular/router';
-import ZoneDTO from '../../models/property/geography/Zone';
-import PropertyType from '../../models/property/types/PropertyType';
-import OperationType from '../../models/property/types/OperationType';
-import PropertiesFilter from '../../models/property/request-response/PropertiesFilter';
+import PropertyType from '../../../models/property/types/PropertyType';
+import ZoneDTO from '../../../models/property/geography/Zone';
+import OperationType from '../../../models/property/types/OperationType';
+import { PropertyService } from '../../../services/propertyServices/property/property-service';
+import PropertiesFilter from '../../../models/property/request-response/PropertiesFilter';
+
 
 @Component({
   selector: 'app-filter-home',

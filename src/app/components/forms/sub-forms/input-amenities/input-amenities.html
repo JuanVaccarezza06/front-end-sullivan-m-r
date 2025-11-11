@@ -1,0 +1,41 @@
+<div class="amenities-section" [formGroup]="group">
+    <h2 class="section-title">Amenities de la Propiedad</h2>
+
+    <!-- INPUTS -->
+    <div class="inputs-container">
+        <!-- Input para amenity existente -->
+        <div class="input-group">
+            <label class="input-label"> Amenity Existente </label>
+            <select class="amenity-select">
+                <option value="">Seleccionar amenity...</option>
+                @for (am of amenitiesArray; track $index) {
+                <option value="{{ am.amenityName }}">{{ am.amenityName }}</option>
+                }
+            </select>
+            <button class="add-button" (click)="addExistingAmenity()"> Agregar </button>
+        </div>
+
+        <!-- Input para nueva amenity -->
+        <div class="input-group">
+            <label class="input-label"> Nueva Amenity </label>
+            <input 
+            type="text" 
+            class="amenity-input" 
+            placeholder="Ej: Balcón con vista...">
+            <button class="add-button" (click)="addNewAmenity()"> Crear y Agregar </button>
+        </div>
+    </div>
+
+    <!-- LISTA DE AMENITIES AGREGADAS -->
+    <div class="amenities-list">
+        <div class="list-header">
+            Amenities agregadas
+            <span class="amenities-count" >0</span>
+        </div>
+        <div class="tags-container" id="tagsContainer">
+            <div class="empty-message">
+                No hay amenities agregadas aún. ¡Comienza agregando algunas!
+            </div>
+        </div>
+    </div>
+</div>

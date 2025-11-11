@@ -4,7 +4,7 @@ import Property from '../../models/property/Property';
 import { PropertyService } from '../../services/propertyServices/property/property-service';
 import { ImgBbService } from '../../services/propertyServices/imgBB/img-bb-service';
 import { ReactiveFormsModule,  } from '@angular/forms';
-import { FilterHome } from '../../components/filter-home/filter-home';
+import { FilterHome } from '../../components/filters-forms/filter-home/filter-home';
 
 @Component({
   selector: 'app-home',

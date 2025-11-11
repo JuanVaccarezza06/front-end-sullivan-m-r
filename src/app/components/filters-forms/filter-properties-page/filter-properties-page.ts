@@ -1,13 +1,14 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import Property from '../../models/property/Property';
-import OperationType from '../../models/property/types/OperationType';
-import PropertyType from '../../models/property/types/PropertyType';
-import Amenity from '../../models/property/complements/Amenity';
-import { PropertyService } from '../../services/propertyServices/property/property-service';
+import OperationType from '../../../models/property/types/OperationType';
+import PropertyType from '../../../models/property/types/PropertyType';
+import ZoneDTO from '../../../models/property/geography/Zone';
+import Amenity from '../../../models/property/complements/Amenity';
+import Property from '../../../models/property/Property';
 import { Subscription } from 'rxjs';
-import ZoneDTO from '../../models/property/geography/Zone';
-import PropertiesFilter from '../../models/property/request-response/PropertiesFilter';
+import { PropertyService } from '../../../services/propertyServices/property/property-service';
+import PropertiesFilter from '../../../models/property/request-response/PropertiesFilter';
+
 
 @Component({
   selector: 'app-filter-properties-page',

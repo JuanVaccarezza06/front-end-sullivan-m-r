@@ -4,7 +4,7 @@ import Property from '../../models/property/Property';
 import { PropertyService } from '../../services/propertyServices/property/property-service';
 import { ImgBbService } from '../../services/propertyServices/imgBB/img-bb-service';
 import { Router, RouterLink } from '@angular/router';
-import { FilterPropertiesPage } from '../../components/filter-properties-page/filter-properties-page';
+import { FilterPropertiesPage } from '../../components/filters-forms/filter-properties-page/filter-properties-page';
 
 @Component({
   selector: 'app-properties',

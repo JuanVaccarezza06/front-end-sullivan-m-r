@@ -3,15 +3,15 @@
         <aside class="sidebar">
             
             <ul class="nav-menu">
-                <li class="nav-item">🏢 Propiedades</li>
+                <li class="nav-item">Propiedades</li>
                 <button class="nav-item submenu">Todas las propiedades</button>
                 <button class="nav-item submenu active">✚ Añadir nueva</button>
-                <li class="nav-item">💬 Comunicaciones</li>
+                <li class="nav-item">Comunicaciones</li>
                 <button class="nav-item submenu">Consultas de propiedades</button>
                 <button class="nav-item submenu">Mensajes de contacto</button>
             </ul>
 
-            <div class="logout">🚪 Cerrar sesión</div>
+            <div class="logout">Cerrar sesión</div>
         </aside>
 
         <!-- MAIN CONTENT -->
@@ -19,35 +19,3 @@
         <app-form-property></app-form-property>
         </main>
     </div>
-
-    <script>
-        const form = document.getElementById('propertyForm');
-        const submitBtn = document.getElementById('submitBtn');
-
-        // Validación del formulario
-        function validateForm() {
-            const requiredFields = form.querySelectorAll('[required]');
-            let isValid = true;
-
-            requiredFields.forEach(field => {
-                if (!field.value.trim()) {
-                    isValid = false;
-                }
-            });
-
-            submitBtn.disabled = !isValid;
-        }
-
-        // Escuchar cambios en el formulario
-        form.addEventListener('input', validateForm);
-        form.addEventListener('change', validateForm);
-
-        // Manejar envío del formulario
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            alert('¡Propiedad guardada exitosamente!');
-        });
-
-        // Validación inicial
-        validateForm();
-    </script>

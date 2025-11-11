@@ -8,75 +8,64 @@
         <button class="cancel-btn">✕ Cancelar</button>
     </div>
 
-    <form id="propertyForm">
+    <form id="propertyForm" [formGroup]="form" (submit)="onSubmit()">
         <!-- INFORMACIÓN BÁSICA -->
         <section class="form-section">
             <h2 class="section-title">Información Básica</h2>
             <div class="form-grid">
-                <div class="form-group full-width">
-                    <label>Título de la Propiedad <span class="required">*</span></label>
-                    <input type="text" name="title" required>
-                </div>
 
                 <div class="form-group">
-                    <label>Tipo de Operación <span class="required">*</span></label>
-                    <select name="operation" required>
-                        <option value="">Seleccionar...</option>
-                        <option value="venta">Venta</option>
-                        <option value="alquiler">Alquiler</option>
-                        <option value="temporal">Alquiler Temporal</option>
-                    </select>
+                    <label>Título de la Propiedad <span class="required">*</span></label>
+                    <input type="text" formControlName="title">
                 </div>
 
                 <div class="form-group">
                     <label>Precio <span class="required">*</span></label>
-                    <input type="text" name="price" placeholder="€450,000 o €2,500/mes" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Ubicacion <span class="required">*</span></label>
-                    <select name="location" required>
-                        <option value="">Seleccionar...</option>
-                        @for (i of zones; track $index) {
-                        <option value="{{i.zoneName}}">{{i.zoneName}}, {{i.cityDTO.cityName}},
-                            {{i.cityDTO.provinceDTO.provinceName}}, {{i.cityDTO.provinceDTO.countryDTO.countryName}}</option>
-                        }
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Agregar una nueva ubicacion <span class="required">*</span></label>
-                    <input type="text" name="location" required>
+                    <input type="text" formControlName="price" placeholder="€450,000 o €2,500/mes">
                 </div>
 
                 <div class="form-group">
                     <label>Anio de construccion <span class="required">*</span></label>
-                    <input type="text" name="location" required>
+                    <input type="number" formControlName="yearConstruction">
+                </div>
+
+                <div class="form-group">
+                    <label>Ambientes <span class="required">*</span></label>
+                    <input type="number" formControlName="rooms">
                 </div>
 
                 <div class="form-group">
                     <label>Habitaciones <span class="required">*</span></label>
-                    <input type="number" name="rooms" min="0" required>
+                    <input type="number" formControlName="bedrooms">
                 </div>
 
                 <div class="form-group">
                     <label>Baños <span class="required">*</span></label>
-                    <input type="number" name="bathrooms" min="0" required>
+                    <input type="number" formControlName="bathrooms">
                 </div>
 
                 <div class="form-group">
                     <label>Área total (m²) <span class="required">*</span></label>
-                    <input type="number" name="area" min="0" required>
+                    <input type="number" formControlName="totalArea">
                 </div>
 
                 <div class="form-group">
                     <label>Área de construccion (m²) <span class="required">*</span></label>
-                    <input type="number" name="area" min="0" required>
+                    <input type="number" formControlName="areaStructure" >
                 </div>
+
+                <!-- ACA ESTA EL ZONE -->
+                <app-form-zone [group]="form"></app-form-zone>
+
+                <!-- ACA ESTA EL ADDRESS -->
+                <app-form-address [group]="form"></app-form-address>
+
+                <!-- ACA ESTA EL OWNER -->
+                <app-form-owner [group]="form"></app-form-owner>
 
                 <div class="form-group">
                     <label>Tipo de operacion <span class="required">*</span></label>
-                    <select name="status" required>
+                    <select formControlName="operationTypes">
                         <option value="">Seleccionar...</option>
                         @for (i of operationsTypesArray; track $index) {
                         <option value="{{i.operationName}}">{{i.operationName}}</option>
@@ -84,9 +73,10 @@
                     </select>
                 </div>
 
+
                 <div class="form-group">
                     <label>Tipo de propiedad <span class="required">*</span></label>
-                    <select name="status" required>
+                    <select formControlName="propertyTypes">
                         <option value="">Seleccionar...</option>
                         @for (i of propertyTypesArray; track $index) {
                         <option value="{{i.typeName}}">{{i.typeName}}</option>
@@ -96,32 +86,29 @@
 
                 <div class="form-group full-width">
                     <label>Descripción <span class="required">*</span></label>
-                    <textarea name="description" required></textarea>
+                    <textarea formControlName="description" required></textarea>
                 </div>
 
-                <div class="checkbox-group full-width">
-                    <input type="checkbox" id="featured" name="featured">
-                    <label for="featured">Marcar como propiedad destacada</label>
-                </div>
             </div>
         </section>
 
         <!-- El contenedor es el elemento que lleva 'display: grid' -->
+
+
         <section id="components-container">
 
             <!-- CARACTERISTICAS (Amenity Component) -->
-            <app-input-amenities id="component-input-amenities"></app-input-amenities>
+            <!--  <app-input-amenities id="component-input-amenities" [group]="form"></app-input-amenities>-->
 
             <!-- IMÁGENES (Images Component) -->
-            <app-input-images id="component-input-images"></app-input-images>
+            <!-- <app-input-images id="component-input-images"></app-input-images>-->
 
         </section>
-
 
         <!-- FOOTER -->
         <div class="form-footer">
             <button type="button" class="btn btn-secondary">Cancelar</button>
-            <button type="submit" class="btn btn-primary" id="submitBtn" disabled>💾 Guardar Propiedad</button>
+            <button type="submit" class="btn btn-primary" id="submitBtn">💾 Guardar Propiedad</button>
         </div>
     </form>
 </div>

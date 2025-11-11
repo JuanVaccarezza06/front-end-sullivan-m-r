@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ImgBbService } from '../../services/propertyServices/imgBB/img-bb-service';
 import { finalize } from 'rxjs';
-import { FormProperty } from '../../components/form-property/form-property';
+import { FormProperty } from '../../components/forms/form-post-property/form-post-property';
 
 @Component({
   selector: 'app-admin',
