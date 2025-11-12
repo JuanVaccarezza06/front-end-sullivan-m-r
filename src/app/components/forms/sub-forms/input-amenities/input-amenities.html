@@ -6,23 +6,21 @@
         <!-- Input para amenity existente -->
         <div class="input-group">
             <label class="input-label"> Amenity Existente </label>
-            <select class="amenity-select">
+            <select class="amenity-select" [formControl]="amenitySeleccionado">
                 <option value="">Seleccionar amenity...</option>
                 @for (am of amenitiesArray; track $index) {
                 <option value="{{ am.amenityName }}">{{ am.amenityName }}</option>
                 }
             </select>
-            <button class="add-button" (click)="addExistingAmenity()"> Agregar </button>
+            <button class="add-button" type="button" (click)="addExistingAmenity()"> Agregar </button>
         </div>
 
         <!-- Input para nueva amenity -->
         <div class="input-group">
             <label class="input-label"> Nueva Amenity </label>
-            <input 
-            type="text" 
-            class="amenity-input" 
-            placeholder="Ej: Balcón con vista...">
-            <button class="add-button" (click)="addNewAmenity()"> Crear y Agregar </button>
+            <input type="text" class="amenity-input" placeholder="Ej: Balcón con vista..."
+                [formControl]="amenitySeleccionado">
+            <button class="add-button" type="button" (click)="addNewAmenity()"> Crear y Agregar </button>
         </div>
     </div>
 
@@ -30,12 +28,23 @@
     <div class="amenities-list">
         <div class="list-header">
             Amenities agregadas
-            <span class="amenities-count" >0</span>
+            <span class="amenities-count">{{amenitiesLoad.length}}</span>
         </div>
         <div class="tags-container" id="tagsContainer">
+            @if (amenitiesLoad.length == 0) {
             <div class="empty-message">
                 No hay amenities agregadas aún. ¡Comienza agregando algunas!
             </div>
+            } @else if(amenitiesLoad.length > 0) {
+            @for (item of amenitiesLoad; track $index) {
+            <div class="amenity-card">
+                <span class="amenity-name">{{item.amenityName}}</span>
+                <button class="delete-card-button" type="button" (click)="deleteAmenityFromArray(item.amenityName)">
+                    ×
+                </button>
+            </div>
+            }
+            }
         </div>
     </div>
 </div>

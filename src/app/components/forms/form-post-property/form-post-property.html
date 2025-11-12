@@ -51,11 +51,14 @@
 
                 <div class="form-group">
                     <label>Área de construccion (m²) <span class="required">*</span></label>
-                    <input type="number" formControlName="areaStructure" >
+                    <input type="number" formControlName="areaStructure">
                 </div>
 
                 <!-- ACA ESTA EL ZONE -->
-                <app-form-zone [group]="form"></app-form-zone>
+                <!-- From the father we say to zone form: 
+                Still looking this variable, when it change, will be my signal -->
+                <app-form-zone [group]="form" [signalUpdateControls]="signalZoneFormTrigger"
+                    (zoneControlsUpdated)="onZoneControlsUpdated($event)"></app-form-zone>
 
                 <!-- ACA ESTA EL ADDRESS -->
                 <app-form-address [group]="form"></app-form-address>
@@ -98,7 +101,10 @@
         <section id="components-container">
 
             <!-- CARACTERISTICAS (Amenity Component) -->
-            <!--  <app-input-amenities id="component-input-amenities" [group]="form"></app-input-amenities>-->
+            <app-input-amenities id="component-input-amenities" 
+                [group]="form"
+                [signalUpdateControls]="signalAmenityFormTrigger"
+                (amenitiesControlsUpdated)="onAmenitiesControlsUpdated($event)"></app-input-amenities>
 
             <!-- IMÁGENES (Images Component) -->
             <!-- <app-input-images id="component-input-images"></app-input-images>-->
@@ -108,7 +114,7 @@
         <!-- FOOTER -->
         <div class="form-footer">
             <button type="button" class="btn btn-secondary">Cancelar</button>
-            <button type="submit" class="btn btn-primary" id="submitBtn">💾 Guardar Propiedad</button>
+            <button type="submit" class="btn btn-primary" id="submitBtn">Guardar Propiedad</button>
         </div>
     </form>
 </div>

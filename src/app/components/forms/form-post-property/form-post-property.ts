@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InputAmenities } from '../sub-forms/input-amenities/input-amenities';
 import { InputImages } from '../sub-forms/input-images/input-images';
@@ -12,6 +12,7 @@ import Amenity from '../../../models/property/complements/Amenity';
 import { FormZone } from '../sub-forms/form-zone/form-zone';
 import { FormAddress } from '../sub-forms/form-address/form-address';
 import { FormOwner } from '../sub-forms/form-owner/form-owner';
+import { flatMap } from 'rxjs';
 
 
 @Component({
@@ -32,6 +33,12 @@ export class FormProperty implements OnInit {
   propertyTypesArray: PropertyType[] = []
 
   form!: FormGroup
+
+  signalAmenityFormTrigger: number = 0;
+  signalZoneFormTrigger: number = 0;
+
+  signalFromChildZone: boolean = false;
+  signalFromChildAmenity: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -76,9 +83,8 @@ export class FormProperty implements OnInit {
       surname: ['', Validators.required],
       email: ['', [Validators.required]],
       numberPhone: ['', Validators.required],
-      // amenities: this.fb.array([])
-      // imageDTOList: this.fb.array([
-      // ])
+      amenities: ['', Validators.required],
+      // imageDTOList: this.fb.array([])
     });
   }
 
@@ -107,6 +113,44 @@ export class FormProperty implements OnInit {
     // let selectedAmenitiesDTO: Amenity[] = this.amenitiesArray
     //   .filter((amenity, index) => selectedBooleans[index]);
 
+    // The variable changes, so the signal is done
+    this.signalZoneFormTrigger++;
+    this.signalAmenityFormTrigger++;
+
+    if (this.signalFromChildZone && this.signalFromChildAmenity) {
+      this.finishSubmit()
+      return;
+    }
+
+    this.signalFromChildZone = false
+    this.signalFromChildAmenity = false
+    this.signalZoneFormTrigger++
+    this.signalAmenityFormTrigger++
+
+  }
+
+  onZoneControlsUpdated(isReady: boolean) {
+    this.signalFromChildZone = isReady;
+
+    if (isReady) {
+      // Si el hijo avisa que terminó, llamamos a la lógica final.
+      console.log("El hijo (zone) avisó que terminó. Disparando submit final...");
+      this.finishSubmit()
+    }
+  }
+
+  onAmenitiesControlsUpdated(isReady: boolean) {
+    this.signalFromChildAmenity = isReady;
+
+    if (isReady) {
+      // Si el hijo avisa que terminó, llamamos a la lógica final.
+      console.log("El hijo (amenity) avisó que terminó. Disparando submit final...");
+      this.finishSubmit()
+    }
+  }
+
+  finishSubmit() {
+
     let finalZone = {
       "zoneName": this.form.get('zone')?.value,
       "cityDTO": {
@@ -120,51 +164,55 @@ export class FormProperty implements OnInit {
       }
     } as ZoneDTO
 
-  let result = {
-    id: null,
-    title: this.form.get('title')?.value,
-    description: this.form.get('description')?.value,
-    price: this.form.get('price')?.value,
-    publicationDate: "",
-    yearConstruction: this.form.get('yearConstruction')?.value,
-    areaStructure: this.form.get('areaStructure')?.value,
-    totalArea: this.form.get('totalArea')?.value,
-    rooms: this.form.get('rooms')?.value,
-    bathrooms: this.form.get('bathrooms')?.value,
-    bedrooms: this.form.get('bedrooms')?.value,
+    let finalAmenities = this.form.get('amenities')?.value
 
-    propertyTypes: this.form.get('propertyTypes')?.value,
-    operationTypes: this.form.get('operationTypes')?.value,
+    let result = {
+      id: null,
+      title: this.form.get('title')?.value,
+      description: this.form.get('description')?.value,
+      price: this.form.get('price')?.value,
+      publicationDate: "",
+      yearConstruction: this.form.get('yearConstruction')?.value,
+      areaStructure: this.form.get('areaStructure')?.value,
+      totalArea: this.form.get('totalArea')?.value,
+      rooms: this.form.get('rooms')?.value,
+      bathrooms: this.form.get('bathrooms')?.value,
+      bedrooms: this.form.get('bedrooms')?.value,
 
-    zone: finalZone,
+      propertyTypes: this.form.get('propertyTypes')?.value,
+      operationTypes: this.form.get('operationTypes')?.value,
 
-    mainStreet: this.form.get('mainStreet')?.value,
-    secondaryStreet: this.form.get('secondaryStreet')?.value,
-    numbering: this.form.get('numbering')?.value,
+      zone: finalZone,
 
-    firstName: this.form.get('firstName')?.value,
-    surname: this.form.get('surname')?.value,
-    email: this.form.get('email')?.value,
-    numberPhone: this.form.get('numberPhone')?.value,
+      mainStreet: this.form.get('mainStreet')?.value,
+      secondaryStreet: this.form.get('secondaryStreet')?.value,
+      numbering: this.form.get('numbering')?.value,
 
-    // amenities: selectedAmenitiesDTO
+      firstName: this.form.get('firstName')?.value,
+      surname: this.form.get('surname')?.value,
+      email: this.form.get('email')?.value,
+      numberPhone: this.form.get('numberPhone')?.value,
+
+      amenities: finalAmenities
+    }
+
+    console.log(result)
+
   }
-  console.log(result)
-}
 
-getAllTest() {
-  let requestResponse: PageResponse<Property>
+  getAllTest() {
+    let requestResponse: PageResponse<Property>
 
-  this.service.getAll(0).subscribe({
-    next: (data) => {
-      requestResponse = data
-      if (requestResponse) console.log("La data NO es nula.")
-      if (requestResponse.content) console.log("El contenido no es nulo NO es nula.")
-      if (requestResponse) console.log(requestResponse.totalPages)
-      console.log(requestResponse)
-    },
-    error: (e) => console.log(e)
-  })
-}
+    this.service.getAll(0).subscribe({
+      next: (data) => {
+        requestResponse = data
+        if (requestResponse) console.log("La data NO es nula.")
+        if (requestResponse.content) console.log("El contenido no es nulo NO es nula.")
+        if (requestResponse) console.log(requestResponse.totalPages)
+        console.log(requestResponse)
+      },
+      error: (e) => console.log(e)
+    })
+  }
 
 }

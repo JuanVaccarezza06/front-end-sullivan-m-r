@@ -1,9 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import Amenity from '../../../../models/property/complements/Amenity';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PropertyService } from '../../../../services/propertyServices/property/property-service';
-import { PageResponse } from '../../../../models/pagable/PageResponse';
-import Property from '../../../../models/property/Property';
+import { AmenityService } from '../../../../services/propertyServices/amenity/amenity-service';
+import Amenity from '../../../../models/property/complements/Amenity';
 
 @Component({
   selector: 'app-input-amenities',
@@ -11,43 +10,94 @@ import Property from '../../../../models/property/Property';
   templateUrl: './input-amenities.html',
   styleUrl: './input-amenities.css',
 })
-export class InputAmenities implements OnInit{
+export class InputAmenities implements OnInit, OnChanges {
 
   @Input() group!: FormGroup;
 
+  @Input() signalUpdateControls!: number;
+
+  @Output() amenitiesControlsUpdated = new EventEmitter<boolean>();
+
   amenitiesArray: Amenity[] = []
 
+  amenitiesLoad: Amenity[] = []
+
+  amenitySeleccionado = new FormControl('', [Validators.required]);
+
   constructor(
-    private fb : FormBuilder,
-    private service : PropertyService
+    private fb: FormBuilder,
+    private service: PropertyService,
+    private amenityService: AmenityService
   ) { }
 
   ngOnInit(): void {
     this.loadAmenities()
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    // 1. Verifica si el Input cambió
+    if (changes['signalUpdateControls']) {
+
+      // 2. Opcional: Solo ejecutamos si el valor es mayor a 0 (es decir, ya se hizo un submit)
+      // O solo ejecutamos si NO es la primera vez que se inicializa.
+      if (!changes['signalUpdateControls'].firstChange) {
+        console.log("Soy amenities, me setee!")
+        this.setAmenitiesWithFrom();
+      }
+    }
+  }
+
   loadAmenities() {
     this.service.getAvailableAmenities().subscribe({
       next: (data) => {
         this.amenitiesArray = data;
-
-        // It is a control form array, by every amenitie, will create an control in false.
-        // The result is an form control with false, once false by amenitie.
-        const amenityControls = this.amenitiesArray.map(() => this.fb.control(false));
-
-        // The form array is setting into de form array from form group.
-        this.group.setControl('amenities', this.fb.array(amenityControls));
       },
       error: (e) => console.log(e)
     });
   }
 
-  addExistingAmenity(){
-    
+  addExistingAmenity() {
+    let amenity = {
+      amenityName: this.amenitySeleccionado.value
+    } as Amenity
+    if (amenity) this.amenitiesLoad.push(amenity)
+    else console.log("No hay valor en el value")
+
   }
 
-  addNewAmenity(){
-    
+  deleteAmenityFromArray(name: string) {
+
+    let newAmenities = this.amenitiesLoad.filter((value) => value.amenityName != name)
+
+    if (newAmenities) this.amenitiesLoad = newAmenities
+    else console.log("No hay valor en el name llegado por parametro")
+
+  }
+
+
+  addNewAmenity() {
+    let amenity = {
+      amenityName: this.amenitySeleccionado.value
+    } as Amenity
+
+    if (!amenity) {
+      console.log("Input null")
+      return
+    }
+
+    if (amenity) this.amenityService.post(amenity).subscribe({
+      next: (data) => {
+        this.amenitiesLoad.push(data)
+      }
+      ,
+      error: (e) => console.log(e)
+    })
+    else console.log("No hay valor en el value")
+  }
+
+  setAmenitiesWithFrom() {
+    this.group.get('amenities')?.setValue(this.amenitiesLoad)
+    this.amenitiesControlsUpdated.emit(true)
   }
 
 

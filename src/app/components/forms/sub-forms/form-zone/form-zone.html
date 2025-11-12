@@ -30,7 +30,7 @@
         <select formControlName="zone">
             <option value="">Seleccionar ubicación...</option>
             @for (z of zoneArray; track $index) {
-            <option [ngValue]="z.zoneName">
+            <option value="{{z.zoneName}}">
                 {{z.zoneName}},
                 {{z.cityDTO.cityName}},
                 {{z.cityDTO.provinceDTO.provinceName}},

@@ -218,3 +218,65 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+/* CARTITAS DE AMENITIES */
+.amenity-card {
+    position: relative;
+    background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1rem 2.5rem 1rem 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.amenity-card:hover {
+    border-color: #10b981;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+    transform: translateY(-2px);
+}
+
+.amenity-name {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #1f2937;
+    display: block;
+}
+
+/* BOTÓN DE ELIMINAR (CRUZ) */
+.delete-card-button {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background-color: #fee2e2;
+    color: #ef4444;
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    font-weight: 600;
+}
+
+.delete-card-button:hover {
+    background-color: #ef4444;
+    color: white;
+    transform: rotate(90deg) scale(1.1);
+}
+
+.delete-card-button:active {
+    transform: rotate(90deg) scale(0.95);
+}
+
+/* Ajuste del contenedor de tags para grid */
+.tags-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
