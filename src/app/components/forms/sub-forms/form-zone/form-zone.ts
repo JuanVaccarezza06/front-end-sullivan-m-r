@@ -53,20 +53,22 @@ export class FormZone implements OnInit, OnChanges {
 
   setOthersValues() {
 
-    if (!this.addZone) {
+    if (!this.addZone){ // if the add is about an existing zone
 
-      let finalZone = this.zoneArray.find((value) => value.zoneName === this.group.get('zone')?.value) as ZoneDTO
-      this.group.get('city')?.setValue(finalZone.cityDTO.cityName)
-      this.group.get('province')?.setValue(finalZone.cityDTO.provinceDTO.provinceName)
-      this.group.get('country')?.setValue(finalZone.cityDTO.provinceDTO.countryDTO.countryName)
-      console.log("Zone input. Ya termine de setear los group.")
-      this.finishEvent.emit(true);
+      let finalZone = this.zoneArray
+        .find(
+          (value) => value.zoneName == this.group.get('zone')?.value
+        ) as ZoneDTO
 
-    } else {
-      console.log("Amenity input. Ya termine de setear los group. Era todo null")
-      this.finishEvent.emit(true);
+      if (finalZone) {
+        this.group.get('city')?.setValue(finalZone.cityDTO.cityName)
+        this.group.get('province')?.setValue(finalZone.cityDTO.provinceDTO.provinceName)
+        this.group.get('country')?.setValue(finalZone.cityDTO.provinceDTO.countryDTO.countryName)
 
+      } else console.log("No se encontro la zona existente.")
     }
+    
+    this.finishEvent.emit(true);
 
   }
 }

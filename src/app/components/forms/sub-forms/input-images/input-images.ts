@@ -4,6 +4,7 @@ import Image from '../../../../models/property/complements/Image';
 import { ImgBbService } from '../../../../services/propertyServices/imgBB/img-bb-service';
 import ResponseImgBb from '../../../../models/property/request-response/ResponseImgBb';
 import { forkJoin } from 'rxjs';
+import ImagePreview from '../../../../models/property/complements/ImagePreview';
 
 @Component({
   selector: 'app-input-images',
@@ -77,6 +78,13 @@ export class InputImages implements OnChanges {
       // Creamos la URL de previsualización
       const previewUrl = URL.createObjectURL(file);
 
+      if (this.imagePreviews.some(item =>
+        item.file.name === file.name &&
+        item.file.size === file.size
+      )) {
+        console.log("⚠️ Esta imagen ya fue agregada: " + file.name);
+        return;
+      }
       // Añadimos al arreglo
       this.imagePreviews.push({
         file: file, // El objeto File (para subirlo después)
@@ -146,7 +154,7 @@ export class InputImages implements OnChanges {
       },
       error: (err) => {
         console.error('Error al subir alguna de las imágenes:', err);
-        this.finishEvent.emit
+        this.finishEvent.emit()
         // Aquí podrías mostrar una alerta al usuario
       }
     });

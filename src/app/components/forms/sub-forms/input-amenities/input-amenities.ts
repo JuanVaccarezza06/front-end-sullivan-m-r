@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } 
 import { PropertyService } from '../../../../services/propertyServices/property/property-service';
 import { AmenityService } from '../../../../services/propertyServices/amenity/amenity-service';
 import Amenity from '../../../../models/property/complements/Amenity';
+import { animationFrameProvider } from 'rxjs/internal/scheduler/animationFrameProvider';
 
 @Component({
   selector: 'app-input-amenities',
@@ -22,7 +23,8 @@ export class InputAmenities implements OnInit, OnChanges {
 
   amenitiesLoad: Amenity[] = []
 
-  amenitySeleccionado = new FormControl('', [Validators.required]);
+  amenityControlNew = new FormControl('', [Validators.required]);
+  amenityControlExisting = new FormControl('', [Validators.required]);
 
   constructor(
     private fb: FormBuilder,
@@ -57,11 +59,13 @@ export class InputAmenities implements OnInit, OnChanges {
 
   addExistingAmenity() {
     let amenity = {
-      amenityName: this.amenitySeleccionado.value
+      amenityName: this.amenityControlExisting.value
     } as Amenity
-    if (amenity) this.amenitiesLoad.push(amenity)
-    else console.log("No hay valor en el value")
 
+    if (amenity.amenityName == undefined || amenity.amenityName == "") return
+
+    if (!this.amenitiesLoad.find((value) => value.amenityName == amenity.amenityName)) this.amenitiesLoad.push(amenity)
+    
   }
 
   deleteAmenityFromArray(name: string) {
@@ -76,28 +80,28 @@ export class InputAmenities implements OnInit, OnChanges {
 
   addNewAmenity() {
     let amenity = {
-      amenityName: this.amenitySeleccionado.value
+      amenityName: this.amenityControlNew.value
     } as Amenity
 
-    if (!amenity) {
-      console.log("Input null")
-      return
-    }
+    if (amenity.amenityName == undefined || amenity.amenityName == "") return
 
-    if (amenity) this.amenityService.post(amenity).subscribe({
-      next: (data) => {
-        this.amenitiesLoad.push(data)
-      }
-      ,
-      error: (e) => console.log(e)
-    })
-    else console.log("No hay valor en el value")
+    if (!this.amenitiesLoad.find(
+      (value) => value.amenityName == amenity.amenityName
+    )) {
+      this.amenityService
+        .post(amenity)
+        .subscribe({
+          next: (data) => this.amenitiesLoad.push(data),
+          error: (e) => console.log(e)
+        })
+    } else return
+
   }
 
   setAmenitiesWithFrom() {
     this.group.get('amenities')?.setValue(this.amenitiesLoad)
     console.log("Amenity input. Ya termine de setear los group.")
-    this.finishEvent.emit() 
+    this.finishEvent.emit()
   }
 
 

@@ -6,7 +6,7 @@
         <!-- Input para amenity existente -->
         <div class="input-group">
             <label class="input-label"> Amenity Existente </label>
-            <select class="amenity-select" [formControl]="amenitySeleccionado">
+            <select class="amenity-select" [formControl]="amenityControlExisting">
                 <option value="">Seleccionar amenity...</option>
                 @for (am of amenitiesArray; track $index) {
                 <option value="{{ am.amenityName }}">{{ am.amenityName }}</option>
@@ -19,7 +19,7 @@
         <div class="input-group">
             <label class="input-label"> Nueva Amenity </label>
             <input type="text" class="amenity-input" placeholder="Ej: Balcón con vista..."
-                [formControl]="amenitySeleccionado">
+                [formControl]="amenityControlNew">
             <button class="add-button" type="button" (click)="addNewAmenity()"> Crear y Agregar </button>
         </div>
     </div>
