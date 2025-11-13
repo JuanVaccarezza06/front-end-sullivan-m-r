@@ -17,11 +17,9 @@ export class FormZone implements OnInit, OnChanges {
 
   @Input() group!: FormGroup;
 
-  // This variable is a signals catch, when the signal 
-  // is done form the father, this input, catch him
-  @Input() signalUpdateControls!: number;
+  @Input() startSignal!: number;
 
-  @Output() zoneControlsUpdated = new EventEmitter<boolean>();
+  @Output() finishEvent = new EventEmitter<boolean>();
 
   constructor(
     private service: PropertyService
@@ -43,12 +41,11 @@ export class FormZone implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
 
     // 1. Verifica si el Input cambió
-    if (changes['signalUpdateControls']) {
+    if (changes['startSignal']) {
 
       // 2. Opcional: Solo ejecutamos si el valor es mayor a 0 (es decir, ya se hizo un submit)
       // O solo ejecutamos si NO es la primera vez que se inicializa.
-      if (!changes['signalUpdateControls'].firstChange) {
-        console.log("ME SETEE!")
+      if (!changes['startSignal'].firstChange) {
         this.setOthersValues();
       }
     }
@@ -58,18 +55,18 @@ export class FormZone implements OnInit, OnChanges {
 
     if (!this.addZone) {
 
-
       let finalZone = this.zoneArray.find((value) => value.zoneName === this.group.get('zone')?.value) as ZoneDTO
       this.group.get('city')?.setValue(finalZone.cityDTO.cityName)
       this.group.get('province')?.setValue(finalZone.cityDTO.provinceDTO.provinceName)
       this.group.get('country')?.setValue(finalZone.cityDTO.provinceDTO.countryDTO.countryName)
-      console.log("ESTE ES EL FINAL ")
+      console.log("Zone input. Ya termine de setear los group.")
+      this.finishEvent.emit(true);
 
-      this.zoneControlsUpdated.emit(true);
+    } else {
+      console.log("Amenity input. Ya termine de setear los group. Era todo null")
+      this.finishEvent.emit(true);
 
-    } else this.zoneControlsUpdated.emit(true);
-    
+    }
 
   }
-
 }

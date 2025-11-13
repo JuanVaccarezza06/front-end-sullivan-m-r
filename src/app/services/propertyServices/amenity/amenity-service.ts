@@ -14,7 +14,6 @@ export class AmenityService {
   ) { }
 
   post(amenity: Amenity){
-    console.log(amenity)
     return this.http.post<Amenity>(`${this.API_URL}/post`,amenity);
   }
 

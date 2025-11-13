@@ -8,7 +8,7 @@
         <button class="cancel-btn">✕ Cancelar</button>
     </div>
 
-    <form id="propertyForm" [formGroup]="form" (submit)="onSubmit()">
+    <form id="propertyForm" [formGroup]="form" (submit)="startProcess()">
         <!-- INFORMACIÓN BÁSICA -->
         <section class="form-section">
             <h2 class="section-title">Información Básica</h2>
@@ -57,8 +57,9 @@
                 <!-- ACA ESTA EL ZONE -->
                 <!-- From the father we say to zone form: 
                 Still looking this variable, when it change, will be my signal -->
-                <app-form-zone [group]="form" [signalUpdateControls]="signalZoneFormTrigger"
-                    (zoneControlsUpdated)="onZoneControlsUpdated($event)"></app-form-zone>
+                <app-form-zone [group]="form" 
+                [startSignal]="startSignal"
+                (finishEvent)="onOneChildFinished()"></app-form-zone>
 
                 <!-- ACA ESTA EL ADDRESS -->
                 <app-form-address [group]="form"></app-form-address>
@@ -101,13 +102,14 @@
         <section id="components-container">
 
             <!-- CARACTERISTICAS (Amenity Component) -->
-            <app-input-amenities id="component-input-amenities" 
-                [group]="form"
-                [signalUpdateControls]="signalAmenityFormTrigger"
-                (amenitiesControlsUpdated)="onAmenitiesControlsUpdated($event)"></app-input-amenities>
+            <app-input-amenities id="component-input-amenities" [group]="form"
+                [startSignal]="startSignal"
+                (finishEvent)="onOneChildFinished()"></app-input-amenities>
 
             <!-- IMÁGENES (Images Component) -->
-            <!-- <app-input-images id="component-input-images"></app-input-images>-->
+            <app-input-images id="component-input-images" [group]="form"
+                [startSignal]="startSignal"
+                (finishEvent)="onOneChildFinished()"></app-input-images>
 
         </section>
 

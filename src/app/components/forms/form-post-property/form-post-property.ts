@@ -8,11 +8,11 @@ import ZoneDTO from '../../../models/property/geography/Zone';
 import { PropertyService } from '../../../services/propertyServices/property/property-service';
 import Property from '../../../models/property/Property';
 import { PageResponse } from '../../../models/pagable/PageResponse';
-import Amenity from '../../../models/property/complements/Amenity';
 import { FormZone } from '../sub-forms/form-zone/form-zone';
 import { FormAddress } from '../sub-forms/form-address/form-address';
 import { FormOwner } from '../sub-forms/form-owner/form-owner';
-import { flatMap } from 'rxjs';
+import Amenity from '../../../models/property/complements/Amenity';
+import Image from '../../../models/property/complements/Image';
 
 
 @Component({
@@ -34,11 +34,14 @@ export class FormProperty implements OnInit {
 
   form!: FormGroup
 
-  signalAmenityFormTrigger: number = 0;
-  signalZoneFormTrigger: number = 0;
+  // Supongamos que tienes 3 hijos en tu HTML (o el length de tu array si es *ngFor)
+  totalChildren = 3;
 
-  signalFromChildZone: boolean = false;
-  signalFromChildAmenity: boolean = false;
+  // Un contador que empieza en 0
+  finishedChildrenCount = 0;
+
+  // Variable para disparar a los hijos (tu signal)
+  startSignal = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -84,7 +87,7 @@ export class FormProperty implements OnInit {
       email: ['', [Validators.required]],
       numberPhone: ['', Validators.required],
       amenities: ['', Validators.required],
-      // imageDTOList: this.fb.array([])
+      images: ['', Validators.required],
     });
   }
 
@@ -106,46 +109,23 @@ export class FormProperty implements OnInit {
     });
   }
 
-  onSubmit() {
-    // // It get a boolean array order by the original values from the amenitiesArray
-    // const selectedBooleans: boolean[] = this.form.get('amenities')?.value;
-    // // It transform or parse the booleans to amenity real info!! So easy but complex
-    // let selectedAmenitiesDTO: Amenity[] = this.amenitiesArray
-    //   .filter((amenity, index) => selectedBooleans[index]);
+  startProcess() {
+    // 1. Reseteamos el contador por si acaso
+    this.finishedChildrenCount = 0;
 
-    // The variable changes, so the signal is done
-    this.signalZoneFormTrigger++;
-    this.signalAmenityFormTrigger++;
-
-    if (this.signalFromChildZone && this.signalFromChildAmenity) {
-      this.finishSubmit()
-      return;
-    }
-
-    this.signalFromChildZone = false
-    this.signalFromChildAmenity = false
-    this.signalZoneFormTrigger++
-    this.signalAmenityFormTrigger++
-
+    // 2. Avisamos a los hijos que arranquen (tu lógica actual)
+    this.startSignal++;
   }
 
-  onZoneControlsUpdated(isReady: boolean) {
-    this.signalFromChildZone = isReady;
+  onOneChildFinished() {
 
-    if (isReady) {
-      // Si el hijo avisa que terminó, llamamos a la lógica final.
-      console.log("El hijo (zone) avisó que terminó. Disparando submit final...");
-      this.finishSubmit()
-    }
-  }
+    // 1. Sumamos uno al contador
+    this.finishedChildrenCount++;
+    console.log(`Terminó un hijo. Llevamos ${this.finishedChildrenCount} de ${this.totalChildren}`);
 
-  onAmenitiesControlsUpdated(isReady: boolean) {
-    this.signalFromChildAmenity = isReady;
-
-    if (isReady) {
-      // Si el hijo avisa que terminó, llamamos a la lógica final.
-      console.log("El hijo (amenity) avisó que terminó. Disparando submit final...");
-      this.finishSubmit()
+    // 2. Preguntamos: ¿Ya están todos?
+    if (this.finishedChildrenCount === this.totalChildren) {
+      this.finishSubmit();
     }
   }
 
@@ -164,7 +144,8 @@ export class FormProperty implements OnInit {
       }
     } as ZoneDTO
 
-    let finalAmenities = this.form.get('amenities')?.value
+    let finalAmenities = this.form.get('amenities')?.value as Amenity[]
+    let finalImages = this.form.get('images')?.value as Image[]
 
     let result = {
       id: null,
@@ -179,21 +160,30 @@ export class FormProperty implements OnInit {
       bathrooms: this.form.get('bathrooms')?.value,
       bedrooms: this.form.get('bedrooms')?.value,
 
-      propertyTypes: this.form.get('propertyTypes')?.value,
-      operationTypes: this.form.get('operationTypes')?.value,
+      propertyTypeDTO: {
+        "operationName": this.form.get('propertyTypes')?.value
+      },
+      operationTypeDTO: {
+        "typeName": this.form.get('operationTypes')?.value,
+      },
 
       zone: finalZone,
 
-      mainStreet: this.form.get('mainStreet')?.value,
-      secondaryStreet: this.form.get('secondaryStreet')?.value,
-      numbering: this.form.get('numbering')?.value,
+      addressDTO: {
+        "mainStreet": this.form.get('mainStreet')?.value,
+        "secondaryStreet": this.form.get('secondaryStreet')?.value,
+        "numbering": this.form.get('numbering')?.value,
+      },
 
-      firstName: this.form.get('firstName')?.value,
-      surname: this.form.get('surname')?.value,
-      email: this.form.get('email')?.value,
-      numberPhone: this.form.get('numberPhone')?.value,
+      ownerDTO: {
+        "firstName": this.form.get('firstName')?.value,
+        "surname": this.form.get('surname')?.value,
+        "email": this.form.get('email')?.value,
+        "numberPhone": this.form.get('numberPhone')?.value
+      },
 
-      amenities: finalAmenities
+      amenitiesList: finalAmenities,
+      imageDTOList: finalImages
     }
 
     console.log(result)

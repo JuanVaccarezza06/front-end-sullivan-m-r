@@ -14,9 +14,9 @@ export class InputAmenities implements OnInit, OnChanges {
 
   @Input() group!: FormGroup;
 
-  @Input() signalUpdateControls!: number;
+  @Input() startSignal!: number;
 
-  @Output() amenitiesControlsUpdated = new EventEmitter<boolean>();
+  @Output() finishEvent = new EventEmitter<boolean>();
 
   amenitiesArray: Amenity[] = []
 
@@ -36,12 +36,11 @@ export class InputAmenities implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     // 1. Verifica si el Input cambió
-    if (changes['signalUpdateControls']) {
+    if (changes['startSignal']) {
 
       // 2. Opcional: Solo ejecutamos si el valor es mayor a 0 (es decir, ya se hizo un submit)
       // O solo ejecutamos si NO es la primera vez que se inicializa.
-      if (!changes['signalUpdateControls'].firstChange) {
-        console.log("Soy amenities, me setee!")
+      if (!changes['startSignal'].firstChange) {
         this.setAmenitiesWithFrom();
       }
     }
@@ -97,7 +96,8 @@ export class InputAmenities implements OnInit, OnChanges {
 
   setAmenitiesWithFrom() {
     this.group.get('amenities')?.setValue(this.amenitiesLoad)
-    this.amenitiesControlsUpdated.emit(true)
+    console.log("Amenity input. Ya termine de setear los group.")
+    this.finishEvent.emit() 
   }
 
 

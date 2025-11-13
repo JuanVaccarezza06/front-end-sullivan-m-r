@@ -18,7 +18,7 @@ export class ImgBbService {
   ){}
 
 
-  uploadImage(file: File) {
+  uploadImage(file: File) : Observable<ResponseImgBb>{
 
     // FormData is a class from the navegator 
     // It represents a set of key/value pairs, where the values ​​can be strings or files.
@@ -32,7 +32,7 @@ export class ImgBbService {
 
     // 5. El servicio crea y RETORNA la petición POST.
     // OJO: NO nos suscribimos (subscribe) aquí. El componente lo hará.
-    return this.http.post(apiUrl, formData);
+    return this.http.post<ResponseImgBb>(apiUrl, formData);
   }
 
   getNotFound(){

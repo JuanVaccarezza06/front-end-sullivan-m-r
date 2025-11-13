@@ -157,35 +157,21 @@
      cursor: not-allowed;
  }
 
-
-form-
  /* --- CONTENEDOR PRINCIPAL: SOLUCIÓN GRID --- */
  #components-container {
      display: grid;
      gap: 1.25rem;
-     /* 20px -> 1.25rem (Espacio entre los componentes) */
      padding: 0.625rem;
-     /* 10px -> 0.625rem */
      border-radius: 0.75rem;
-     /* 12px -> 0.75rem */
      box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.08);
-     /* 0 4px 12px -> 0 0.25rem 0.75rem */
+     background-color: #f5f7fa;
  }
 
- /*
-        * 1. Definición para pantallas grandes (desktop): Dos columnas lado a lado.
-        */
- @media (min-width: 48rem) {
-
-     /* 768px -> 48rem */
+ /* Pantallas grandes: lado a lado */
+ @media (min-width: 768px) {
      #components-container {
-         /* Definimos una sola fila y dos columnas */
-         grid-template-areas: 'amenities images';
-
-         /* El ancho se divide: 50% / 50% */
          grid-template-columns: 1fr 1fr;
-
-         background-color: #fff;
+         grid-template-areas: 'amenities images';
      }
 
      #component-input-amenities {
@@ -197,42 +183,20 @@ form-
      }
  }
 
- /*
-        * 2. Definición para pantallas pequeñas (móvil): Una columna debajo de la otra.
-        */
- @media (max-width: 47.9375rem) {
-
-     /* 767px -> 47.9375rem */
+ /* Pantallas pequeñas: uno debajo del otro */
+ @media (max-width: 767px) {
      #components-container {
-         /* En móvil, los apilamos en una columna */
+         grid-template-columns: 1fr;
          grid-template-areas:
              'amenities'
              'images';
-         /* Una sola columna que ocupa todo el ancho */
-         grid-template-columns: 100%;
      }
  }
 
-
- /* --- ESTILOS DE DEMOSTRACIÓN --- */
-
- /* Estilos base para los componentes para que se visualicen */
+ /* Asegurar que los componentes se adapten */
  app-input-amenities,
  app-input-images {
      display: block;
-     /* Asegura que se comporten como bloques */
-     padding: 1.25rem;
-     /* 20px -> 1.25rem */
-     border-radius: 0.5rem;
-     /* 8px -> 0.5rem */
-     min-height: 15.625rem;
-     /* 250px -> 15.625rem */
+     min-width: 0;
+     /* Importante para que el grid no se rompa */
  }
-
- h3 {
-     margin-top: 0;
-     color: #1f3d7a;
- }
-
-
-
