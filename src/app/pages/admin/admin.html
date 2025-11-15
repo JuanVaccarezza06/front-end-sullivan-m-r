@@ -4,18 +4,17 @@
             
             <ul class="nav-menu">
                 <li class="nav-item">Propiedades</li>
-                <button class="nav-item submenu">Todas las propiedades</button>
-                <button class="nav-item submenu active">✚ Añadir nueva</button>
+                <button class="nav-item">Ver todas las propiedades</button>
+                <button class="nav-item">Añadir nueva</button>
                 <li class="nav-item">Comunicaciones</li>
-                <button class="nav-item submenu">Consultas de propiedades</button>
-                <button class="nav-item submenu">Mensajes de contacto</button>
+                <button class="nav-item">Ver consultas de propiedades</button>
+                <button class="nav-item">Ver mensajes de contacto</button>
             </ul>
 
-            <div class="logout">Cerrar sesión</div>
         </aside>
 
         <!-- MAIN CONTENT -->
         <main class="main-content">
-        <app-form-property></app-form-property>
+        <router-outlet></router-outlet>
         </main>
     </div>

@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InputAmenities } from '../sub-forms/input-amenities/input-amenities';
 import { InputImages } from '../sub-forms/input-images/input-images';
@@ -13,7 +13,6 @@ import { FormAddress } from '../sub-forms/form-address/form-address';
 import { FormOwner } from '../sub-forms/form-owner/form-owner';
 import Amenity from '../../../models/property/complements/Amenity';
 import Image from '../../../models/property/complements/Image';
-import { AuthService } from '../../../services/authService/auth-service';
 
 
 @Component({
@@ -28,7 +27,7 @@ import { AuthService } from '../../../services/authService/auth-service';
   templateUrl: './form-post-property.html',
   styleUrl: './form-post-property.css',
 })
-export class FormProperty implements OnInit {
+export class FormPostProperty implements OnInit {
 
   operationsTypesArray: OperationType[] = []
   propertyTypesArray: PropertyType[] = []
