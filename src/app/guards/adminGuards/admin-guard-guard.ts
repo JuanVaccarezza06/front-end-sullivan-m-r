@@ -8,10 +8,8 @@ export const adminGuardGuard: CanActivateFn = (route, state) => {
   const router = inject(Router)
 
   if (!service.hasRoleAdmin()) {
-    console.log("No sos admin, no podes entrar.")
     router.navigate([''])
     return false
   }
-
   return true;
 };

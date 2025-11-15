@@ -14,16 +14,24 @@
         <a class="link-nav" routerLink="services">Servicios</a>
         <a class="link-nav" routerLink="about-us">Nosotros</a>
         <a class="link-nav" routerLink="contact">Contacto</a>
-    </div>
+      </div>
     </nav>
 
     <div id="image-box">
-      @if (isLogged()) {
-        <button type="button" class="cta" (click)="logOut()">Log out</button>
+
+
+      @if (isLogged()){
+        @if(isAdmin()){
+        <button type="button" class="cta" routerLink="admin">Administracion</button>
+        }
+      <button type="button" class="cta" (click)="logOut()">Log out</button>
+
       }@else {
-        <button type="button" class="cta" routerLink="log-in">Log in</button>
-        <button type="button" class="cta" routerLink="register">Register</button>
+      <button type="button" class="cta" routerLink="log-in">Log in</button>
+      <button type="button" class="cta" routerLink="register">Register</button>
       }
+
+
 
     </div>
   </div>

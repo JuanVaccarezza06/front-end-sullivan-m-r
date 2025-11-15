@@ -13,6 +13,7 @@ import { FormAddress } from '../sub-forms/form-address/form-address';
 import { FormOwner } from '../sub-forms/form-owner/form-owner';
 import Amenity from '../../../models/property/complements/Amenity';
 import Image from '../../../models/property/complements/Image';
+import { AuthService } from '../../../services/authService/auth-service';
 
 
 @Component({
@@ -86,6 +87,7 @@ export class FormProperty implements OnInit {
       surname: ['', Validators.required],
       email: ['', [Validators.required]],
       numberPhone: ['', Validators.required],
+
       amenities: ['', Validators.required],
       images: ['', Validators.required],
     });
@@ -148,7 +150,6 @@ export class FormProperty implements OnInit {
     let finalImages = this.form.get('images')?.value as Image[]
 
     let result = {
-      id: null,
       title: this.form.get('title')?.value,
       description: this.form.get('description')?.value,
       price: this.form.get('price')?.value,
@@ -161,13 +162,13 @@ export class FormProperty implements OnInit {
       bedrooms: this.form.get('bedrooms')?.value,
 
       propertyTypeDTO: {
-        "operationName": this.form.get('propertyTypes')?.value
+        "typeName": this.form.get('propertyTypes')?.value
       },
       operationTypeDTO: {
-        "typeName": this.form.get('operationTypes')?.value,
+        "operationName": this.form.get('operationTypes')?.value,
       },
 
-      zone: finalZone,
+      zoneDTO: finalZone,
 
       addressDTO: {
         "mainStreet": this.form.get('mainStreet')?.value,
@@ -186,7 +187,11 @@ export class FormProperty implements OnInit {
       imageDTOList: finalImages
     }
 
-    console.log(result)
+    this.service.post(result)?.subscribe({
+      next: (data) => console.log(data),
+      error: (e) => console.log(e)
+    })
+
 
   }
 
@@ -203,6 +208,36 @@ export class FormProperty implements OnInit {
       },
       error: (e) => console.log(e)
     })
+  }
+
+  cargarForm() {
+    let result = {
+      title: "Titulo hermoso",
+      description: "Esta es la desc",
+      price: 230000,
+      publicationDate: "",
+      yearConstruction: 2002,
+      areaStructure: 250,
+      totalArea: 300,
+      rooms: 5,
+      bathrooms: 5,
+      bedrooms: 4,
+
+      propertyTypes: "Casa",
+
+      operationTypes: "Venta",
+
+      mainStreet: "Carasa",
+      secondaryStreet: "Aguado",
+      numbering: 6789,
+
+      firstName: "Santiago",
+      surname: "Vaccarezza",
+      email: "jprvs@gmail.com",
+      numberPhone: 12345678,
+    }
+
+    this.form.patchValue(result)
   }
 
 }

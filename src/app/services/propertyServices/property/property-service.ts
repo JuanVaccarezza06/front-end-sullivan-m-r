@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import Property from '../../../models/property/Property';
 import ZoneDTO from '../../../models/property/geography/Zone';
@@ -8,6 +8,8 @@ import Amenity from '../../../models/property/complements/Amenity';
 import { Observable } from 'rxjs';
 import { PageResponse } from '../../../models/pagable/PageResponse';
 import PropertiesFilter from '../../../models/property/request-response/PropertiesFilter';
+import { AuthService } from '../../authService/auth-service';
+import PropertyPost from '../../../models/property/PropertyPost';
 
 @Injectable({
   providedIn: 'root'
@@ -16,11 +18,14 @@ export class PropertyService {
 
   readonly API_URL = "http://localhost:8080/property"
 
+  readonly TOKEN_KEY = "token"
+
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private authService: AuthService
   ) { }
 
-  getAll(page : number) : Observable<PageResponse<Property>> {
+  getAll(page: number): Observable<PageResponse<Property>> {
     return this.http.get<PageResponse<Property>>(`${this.API_URL}/find-all?page=${page}&size=8`);
   }
 
@@ -44,15 +49,26 @@ export class PropertyService {
     return this.http.get<Amenity[]>(`${this.API_URL}/available-amenities`);
   }
 
-  applyFilter(filter : PropertiesFilter) {
+  applyFilter(filter: PropertiesFilter) {
     console.log("DEBAJO ESTA EL JSON QUE SE ENVIA")
     console.log(filter)
-    return this.http.post<Property[]>(`${this.API_URL}/filter`,filter);
+    return this.http.post<Property[]>(`${this.API_URL}/filter`, filter);
   }
 
-  post(property: Property) {
-    return this.http.post<Property>(`${this.API_URL}/post`, property);
-  }
+  post(property: PropertyPost) {
 
+    const token = localStorage.getItem(this.TOKEN_KEY)
+    if (!token) return
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+
+    const url = `${this.API_URL}/post`;
+
+    return this.http.post(url, property, { headers: headers });
+
+  }
 
 }

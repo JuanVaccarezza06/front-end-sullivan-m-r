@@ -41,15 +41,19 @@ export class Register {
 
     this.service.register(this.credential).subscribe({
       next: (data) => {
-        localStorage.setItem('token', btoa(JSON.stringify(data)))
-        console.log("Token almacenado con exito.")
-        this.router.navigate([''], {
-          state: { message: 'Usuario registrado correctamente.' }
-        });
+        const token = data.token
+        if (token) {
+          this.service.saveToken(token)
+          console.log("Token almacenado con exito.")
+
+          this.router.navigate([''], {
+            state: { message: 'Usuario registrado correctamente.' }
+          });
+        }
+
       },
       error: (e) => console.log(e)
     })
-
   }
 
 }

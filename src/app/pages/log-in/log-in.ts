@@ -18,26 +18,28 @@ export class LogIn {
   constructor(
     private fb: FormBuilder,
     private service: AuthService,
-    private router: Router
+    private router: Router,
+    public authService: AuthService
+
   ) { }
 
   ngOnInit(): void {
 
-      this.formulario = this.fb.group({
-        username: ['', [
-          Validators.minLength(6),
-          Validators.maxLength(20),
-          Validators.required
-        ]
-        ],
-        password: ['', [
-          Validators.minLength(6),
-          Validators.maxLength(20),
-          Validators.required,
-          Validators.pattern(/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=<>?{}[\]~]).+$/),
-        ]
-        ]
-      })
+    this.formulario = this.fb.group({
+      username: ['', [
+        Validators.minLength(6),
+        Validators.maxLength(20),
+        Validators.required
+      ]
+      ],
+      password: ['', [
+        Validators.minLength(6),
+        Validators.maxLength(20),
+        Validators.required,
+        Validators.pattern(/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=<>?{}[\]~]).+$/),
+      ]
+      ]
+    })
   }
 
   onSumbit() {
@@ -45,19 +47,30 @@ export class LogIn {
 
     this.service.logIn(this.credential).subscribe({
       next: (data) => {
-        localStorage.setItem('token', btoa(JSON.stringify(data)))
-        console.log("Token almacenado con exito.")
-        this.router.navigate([''], {
-          state: { message: 'Usuario logeado correctamente.' }
-        });
+        const token = data.token
+        if (token) {
+          this.authService.saveToken(token)
+          console.log("Token almacenado con exito.")
+          
+          this.router.navigate([''], {
+            state: { message: 'Usuario logeado correctamente.' }
+          });
+        }
+
       },
       error: (e) => console.log(e)
     })
-
   }
 
   irAdmin() {
     return this.router.navigate(['/admin'])
+  }
+
+  autoLog() {
+    this.formulario.patchValue({
+      username: "Sonia123#",
+      password: "#123Secreto"
+    })
   }
 
 

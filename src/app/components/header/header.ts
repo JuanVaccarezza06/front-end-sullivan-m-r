@@ -19,6 +19,10 @@ export class Header {
     return this.authService.isLoggedIn();
   }
 
+  isAdmin(){
+    return this.authService.hasRoleAdmin()
+  }
+
 
   logOut() {
     this.authService.logout();

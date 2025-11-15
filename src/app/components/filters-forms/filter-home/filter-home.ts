@@ -88,17 +88,12 @@ export class FilterHome implements OnInit {
     this.service.getAvailableZones().subscribe({
       next: (data) => {
         this.zoneArray = data;
-        console.log("ESTAS SON LAS AVAIBLE ZONES DE FILTER-HOME")
-        console.log(data)
       },
       error: (e) => console.log(e)
     });
   }
 
   makeFilter() {
-
-    console.log("DEBAJO VA A ESTAR EL VALOR DE ZONE")
-    console.log(this.form.get('zone')?.value)
 
     const filterResult = {
       operationTypeDTO: { "operationName": this.form.get('operationTypes')?.value },
