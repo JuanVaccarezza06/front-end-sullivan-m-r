@@ -17,6 +17,8 @@ export class InputAmenities implements OnInit, OnChanges {
 
   @Input() startSignal!: number;
 
+  @Input() isUpdate!: boolean;
+
   @Output() finishEvent = new EventEmitter<boolean>();
 
   amenitiesArray: Amenity[] = []
@@ -34,6 +36,7 @@ export class InputAmenities implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.loadAmenities()
+    if (this.isUpdate) this.patchValues()
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -65,7 +68,7 @@ export class InputAmenities implements OnInit, OnChanges {
     if (amenity.amenityName == undefined || amenity.amenityName == "") return
 
     if (!this.amenitiesLoad.find((value) => value.amenityName == amenity.amenityName)) this.amenitiesLoad.push(amenity)
-    
+
   }
 
   deleteAmenityFromArray(name: string) {
@@ -102,6 +105,19 @@ export class InputAmenities implements OnInit, OnChanges {
     this.group.get('amenities')?.setValue(this.amenitiesLoad)
     console.log("Amenity input. Ya termine de setear los group.")
     this.finishEvent.emit()
+  }
+
+  patchValues() {
+    if (this.isUpdate) {
+      // Tengo solo las imagenes en formato image, que es una url (la de imgbb) y un nombre, NO tengo la url de preview!!!!!
+      const amenities = this.group.get('amenities')?.value as Amenity[]
+      amenities.forEach(value => {
+        this.amenitiesLoad.push({
+          amenityName: value.amenityName
+        })
+      })
+
+    }
   }
 
 

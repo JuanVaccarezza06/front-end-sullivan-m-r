@@ -13,6 +13,7 @@ import { FormAddress } from '../sub-forms/form-address/form-address';
 import { FormOwner } from '../sub-forms/form-owner/form-owner';
 import Amenity from '../../../models/property/complements/Amenity';
 import Image from '../../../models/property/complements/Image';
+import { ActivatedRoute, Route, Router } from '@angular/router';
 
 
 @Component({
@@ -34,6 +35,9 @@ export class FormPostProperty implements OnInit {
 
   form!: FormGroup
 
+  isUpdate!: boolean
+  propertyUpdate!: Property
+
   // Supongamos que tienes 3 hijos en tu HTML (o el length de tu array si es *ngFor)
   totalChildren = 3;
 
@@ -45,14 +49,27 @@ export class FormPostProperty implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private service: PropertyService
+    private service: PropertyService,
+    private route: ActivatedRoute,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
-    this.formInitilizer()
 
+    this.formInitilizer()
     this.loadAvailablesOperationTypes()
     this.loadPropertyTypes()
+
+    const state = this.router.lastSuccessfulNavigation?.extras?.state as { info?: Property };
+    let property = state?.info || undefined;
+
+    if (!property) console.error("La property llegada por el router es null")
+    else {
+      this.propertyUpdate = property
+      this.isUpdate = true
+      this.patchValues()
+    }
+
   }
 
   formInitilizer() {
@@ -186,27 +203,16 @@ export class FormPostProperty implements OnInit {
       imageDTOList: finalImages
     }
 
-    this.service.post(result)?.subscribe({
+    if (this.isUpdate) this.service.put(result)?.subscribe({
+      next: (data) => console.log(data),
+      error: (e) => console.log(e)
+    })
+    else this.service.post(result)?.subscribe({
       next: (data) => console.log(data),
       error: (e) => console.log(e)
     })
 
 
-  }
-
-  getAllTest() {
-    let requestResponse: PageResponse<Property>
-
-    this.service.getAll(0).subscribe({
-      next: (data) => {
-        requestResponse = data
-        if (requestResponse) console.log("La data NO es nula.")
-        if (requestResponse.content) console.log("El contenido no es nulo NO es nula.")
-        if (requestResponse) console.log(requestResponse.totalPages)
-        console.log(requestResponse)
-      },
-      error: (e) => console.log(e)
-    })
   }
 
   cargarForm() {
@@ -234,6 +240,45 @@ export class FormPostProperty implements OnInit {
       surname: "Vaccarezza",
       email: "jprvs@gmail.com",
       numberPhone: 12345678,
+    }
+
+    this.form.patchValue(result)
+  }
+
+  patchValues() {
+
+    let result = {
+      title: this.propertyUpdate.title,
+      description: this.propertyUpdate.description,
+      price: this.propertyUpdate.price,
+      publicationDate: this.propertyUpdate.publicationDate,
+      yearConstruction: this.propertyUpdate.yearConstruction,
+      areaStructure: this.propertyUpdate.areaStructure,
+      totalArea: this.propertyUpdate.totalArea,
+      rooms: this.propertyUpdate.rooms,
+      bathrooms: this.propertyUpdate.bathrooms,
+      bedrooms: this.propertyUpdate.bedrooms,
+
+      propertyTypes: this.propertyUpdate.propertyTypeDTO.typeName,
+
+      operationTypes: this.propertyUpdate.operationTypeDTO.operationName,
+
+      zone: this.propertyUpdate.zoneDTO.zoneName,
+      city: this.propertyUpdate.zoneDTO.cityDTO.cityName,
+      province: this.propertyUpdate.zoneDTO.cityDTO.provinceDTO.provinceName,
+      country: this.propertyUpdate.zoneDTO.cityDTO.provinceDTO.countryDTO.countryName,
+
+      mainStreet: this.propertyUpdate.addressDTO.mainStreet,
+      secondaryStreet: this.propertyUpdate.addressDTO.secondaryStreet,
+      numbering: this.propertyUpdate.addressDTO.numbering,
+
+      firstName: this.propertyUpdate.ownerDTO.firstName,
+      surname: this.propertyUpdate.ownerDTO.surname,
+      email: this.propertyUpdate.ownerDTO.email,
+      numberPhone: this.propertyUpdate.ownerDTO.numberPhone,
+
+      amenities: this.propertyUpdate.amenitiesList,
+      images: this.propertyUpdate.imageDTOList
     }
 
     this.form.patchValue(result)

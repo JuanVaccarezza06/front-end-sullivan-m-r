@@ -3,11 +3,11 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ImgBbService } from '../../services/propertyServices/imgBB/img-bb-service';
 import { finalize } from 'rxjs';
 import { FormPostProperty } from '../../components/forms/form-post-property/form-post-property';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet, RouterLinkWithHref } from '@angular/router';
 
 @Component({
   selector: 'app-admin',
-  imports: [ReactiveFormsModule, RouterOutlet],
+  imports: [ReactiveFormsModule, RouterOutlet, RouterLinkWithHref],
   templateUrl: './admin.html',
   styleUrl: './admin.css'
 })

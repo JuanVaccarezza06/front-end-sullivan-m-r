@@ -58,9 +58,8 @@
                 <!-- ACA ESTA EL ZONE -->
                 <!-- From the father we say to zone form: 
                 Still looking this variable, when it change, will be my signal -->
-                <app-form-zone [group]="form" 
-                [startSignal]="startSignal"
-                (finishEvent)="onOneChildFinished()"></app-form-zone>
+                <app-form-zone [group]="form" [startSignal]="startSignal"
+                    (finishEvent)="onOneChildFinished()"></app-form-zone>
 
                 <!-- ACA ESTA EL ADDRESS -->
                 <app-form-address [group]="form"></app-form-address>
@@ -103,14 +102,18 @@
         <section id="components-container">
 
             <!-- CARACTERISTICAS (Amenity Component) -->
-            <app-input-amenities id="component-input-amenities" [group]="form"
-                [startSignal]="startSignal"
-                (finishEvent)="onOneChildFinished()"></app-input-amenities>
+            <app-input-amenities id="component-input-amenities" 
+            [group]="form" 
+            [startSignal]="startSignal"
+            [isUpdate]="isUpdate" 
+            (finishEvent)="onOneChildFinished()"></app-input-amenities>
 
             <!-- IMÁGENES (Images Component) -->
-            <app-input-images id="component-input-images" [group]="form"
-                [startSignal]="startSignal"
-                (finishEvent)="onOneChildFinished()"></app-input-images>
+            <app-input-images id="component-input-images" 
+            [group]="form" 
+            [startSignal]="startSignal"
+            [isUpdate]="isUpdate" 
+            (finishEvent)="onOneChildFinished()"></app-input-images>
 
         </section>
 

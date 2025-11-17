@@ -71,4 +71,20 @@ export class PropertyService {
 
   }
 
+    put(property: PropertyPost) {
+
+    const token = localStorage.getItem(this.TOKEN_KEY)
+    if (!token) return
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+
+    const url = `${this.API_URL}/update`;
+
+    return this.http.put(url, property, { headers: headers });
+ 
+  }
+
 }

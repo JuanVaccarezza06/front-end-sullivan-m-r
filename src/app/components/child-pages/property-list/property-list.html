@@ -1,0 +1,109 @@
+<div class="body">
+
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+        <!-- Content -->
+        <div class="content">
+            <div class="content-header">
+                <div>
+                    <h1 class="content-title">Gestión de Propiedades</h1>
+                    <p class="content-subtitle">Administra todas las propiedades del catálogo</p>
+                </div>
+                <button class="btn-add">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Añadir Propiedad
+                </button>
+            </div>
+
+            <div class="filters">
+                <div class="filter-input">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <input type="text" placeholder="Buscar por título o ubicación...">
+                </div>
+                <div class="filter-select">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                    </svg>
+                    Todos los tipos
+                </div>
+                <div class="filter-select">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                    </svg>
+                    Todos los estados
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>PROPIEDAD</th>
+                            <th>TIPO</th>
+                            <th>PRECIO</th>
+                            <th>UBICACIÓN</th>
+                            <th>CARACTERÍSTICAS</th>
+                            <th>ESTADO</th>
+                            <th>ACCIONES</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @for (item of properties; track $index) {
+
+                        <tr>
+                            <td>
+                                <div class="property-cell">
+                                    <img [src]="item.mainImage"
+                                        alt="Mansión" class="property-img">
+                                    <div class="property-info">
+                                        <div class="property-title">{{item.title}}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="badge badge-venta">{{item.propertyTypeDTO.typeName}}</span></td>
+                            <td class="price">{{item.price}}</td>
+                            <td class="location">{{item.zoneDTO.zoneName}}, {{item.zoneDTO.cityDTO.cityName}}</td>
+                            <td class="characteristics">{{item.bedrooms}} hab • {{item.bathrooms}} baños • {{item.totalArea}}m²</td>
+                            <td><span class="badge badge-disponible">{{item.operationTypeDTO.operationName}}</span></td>
+                            <td>
+                                <div class="actions">
+                                    <button class="icon-btn icon-view">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                    </button>
+                                    <button class="icon-btn icon-edit" (click)="goToEdit(item)">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                    </button>
+                                    <button class="icon-btn icon-delete">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

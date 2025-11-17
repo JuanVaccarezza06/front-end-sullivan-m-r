@@ -43,8 +43,6 @@ export class AuthService {
 
   // 5. Método para LEER el token (tu lógica de roles)
   hasRoleAdmin(): boolean {
-    let cont = 0
-    console.log(cont+=1)
     const token = this.getToken(); // Usa el método de este servicio
     if (!token) return false;
     try {

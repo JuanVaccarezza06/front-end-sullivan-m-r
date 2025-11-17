@@ -27,6 +27,7 @@ export class ImgBbService {
     // We add the camps: 'name', 'value', 'filename'
     formData.append('image', file, file.name);
 
+
     // 4. La URL de la API se construye aquí
     const apiUrl = `https://api.imgbb.com/1/upload?key=${this.API_KEY}`;
 

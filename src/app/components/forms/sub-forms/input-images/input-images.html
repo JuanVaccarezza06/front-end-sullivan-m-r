@@ -28,14 +28,14 @@
         </div>
 
         <div class="images-grid">
-            @for (image of imagePreviews; track image.file.name) {
+            @for (image of imagePreviews; track image.file?.name) {
             <div class="image-card">
-                <img [src]="image.previewUrl" [alt]="image.file.name" class="preview-image">
+                <img [src]="image.previewUrl" [alt]="image.file?.name" class="preview-image">
                 <div class="image-overlay">
                     <button class="remove-btn" (click)="removeImage($index)" type="button" title="Eliminar">×</button>
                 </div>
                 <div class="image-info">
-                    <span class="image-name">{{ image.file.name }}</span>
+                    <span class="image-name">{{ image.file?.name }}</span>
                 </div>
             </div>
             }

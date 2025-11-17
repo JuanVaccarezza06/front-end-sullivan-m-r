@@ -1,4 +1,5 @@
 export default interface ImagePreview {
-    file: File;
+    name: string
+    file: File | undefined;
     previewUrl: string;
 }
