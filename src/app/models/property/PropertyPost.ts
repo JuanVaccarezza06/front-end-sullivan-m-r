@@ -8,6 +8,7 @@ import PropertyType from "./types/PropertyType"
 
 export default interface PropertyPost {
 
+    id : number | null
     title: string
     description: string
     price: number

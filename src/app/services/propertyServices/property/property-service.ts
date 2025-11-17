@@ -71,7 +71,9 @@ export class PropertyService {
 
   }
 
-    put(property: PropertyPost) {
+  put(property: PropertyPost) {
+
+    console.log(property)
 
     const token = localStorage.getItem(this.TOKEN_KEY)
     if (!token) return
@@ -81,10 +83,10 @@ export class PropertyService {
       'Authorization': `Bearer ${token}`
     });
 
-    const url = `${this.API_URL}/update`;
+    const url = `${this.API_URL}/update?id=`;
 
-    return this.http.put(url, property, { headers: headers });
- 
+    return this.http.put(`${url}${property.id}`, property, { headers: headers });
+
   }
 
 }

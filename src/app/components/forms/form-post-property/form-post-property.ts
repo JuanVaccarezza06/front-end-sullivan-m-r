@@ -166,6 +166,7 @@ export class FormPostProperty implements OnInit {
     let finalImages = this.form.get('images')?.value as Image[]
 
     let result = {
+      id : this.isUpdate ? this.propertyUpdate.id : null,
       title: this.form.get('title')?.value,
       description: this.form.get('description')?.value,
       price: this.form.get('price')?.value,
@@ -248,6 +249,7 @@ export class FormPostProperty implements OnInit {
   patchValues() {
 
     let result = {
+      id: this.propertyUpdate.id,
       title: this.propertyUpdate.title,
       description: this.propertyUpdate.description,
       price: this.propertyUpdate.price,

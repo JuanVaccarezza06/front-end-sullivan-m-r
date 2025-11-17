@@ -46,6 +46,8 @@ export class Properties implements OnInit {
 
     this.imageNotFound = this.imgService.getNotFound() // Load the not found image
 
+    console.log(this.properties[0].id)
+
   }
 
   loadFilterProperties(propertiesArray: Property[]) {
