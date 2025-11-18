@@ -58,7 +58,10 @@ export class PropertyService {
   post(property: PropertyPost) {
 
     const token = localStorage.getItem(this.TOKEN_KEY)
-    if (!token) return
+    if (!token){
+      console.error("Token no existente")
+      return
+    } 
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -71,12 +74,11 @@ export class PropertyService {
 
   }
 
-  put(property: PropertyPost) {
-
-    console.log(property)
+  put(property: PropertyPost) :Observable<PropertyPost>{
 
     const token = localStorage.getItem(this.TOKEN_KEY)
-    if (!token) return
+    if (!token)throw new Error("Token no existente")
+    
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -85,8 +87,27 @@ export class PropertyService {
 
     const url = `${this.API_URL}/update?id=`;
 
-    return this.http.put(`${url}${property.id}`, property, { headers: headers });
+    return this.http.put<PropertyPost>(`${url}${property.id}`, property, { headers: headers });
 
   }
 
+  delete(property: Property)  {
+
+    const token = localStorage.getItem(this.TOKEN_KEY)
+    if (!token) throw new Error("No existe un token")
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+
+    if (property) {
+      return this.http.delete(`${this.API_URL}/delete/${property.id}`, { headers: headers });
+    } else {
+      alert("Property nula. Delete fallido.")
+      throw new Error("Property NULL")
+    }
+    
+
+  }
 }

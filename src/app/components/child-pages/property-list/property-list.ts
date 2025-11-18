@@ -4,6 +4,7 @@ import Property from '../../../models/property/Property';
 import { isNgTemplate } from '@angular/compiler';
 import { ImgBbService } from '../../../services/propertyServices/imgBB/img-bb-service';
 import { Router, RouterLink } from "@angular/router";
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-property-list',
@@ -60,5 +61,38 @@ export class PropertyList implements OnInit {
     });
   }
 
+  goToDetail(propertyToSee: Property) {
 
+    return this.router.navigate(['property-detail'], {
+      state: { propertyData: propertyToSee }
+    });
+  }
+
+  goToDelete(propertyToSee: Property) {
+    const confirmation = confirm('¿Estás seguro de que quieres eliminar este elemento?');
+
+    if (confirmation) {
+      this.propertyService.delete(propertyToSee).subscribe({
+        next: (data) => {
+          console.log(data)
+          this.loadProperties();
+        },
+        error: (e) => console.log(e)
+      })
+    } else alert("Safaste")
+  }
+
+  goToPost() {
+    return this.router.navigate(['admin/form-post'])
+  }
+
+  changePage(signal: boolean) {
+    if (signal && this.pageSelected < this.lastPage) {
+      this.pageSelected++
+      this.loadProperties()
+    } else if (!signal && this.pageSelected > 0) {
+      this.pageSelected--
+      this.loadProperties()
+    }
+  }
 }

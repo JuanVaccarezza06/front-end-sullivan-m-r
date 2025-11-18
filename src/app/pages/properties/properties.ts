@@ -46,8 +46,6 @@ export class Properties implements OnInit {
 
     this.imageNotFound = this.imgService.getNotFound() // Load the not found image
 
-    console.log(this.properties[0].id)
-
   }
 
   loadFilterProperties(propertiesArray: Property[]) {
@@ -67,11 +65,11 @@ export class Properties implements OnInit {
     }
   }
 
-  loadProperties(mensaje : string) {
+  loadProperties(mensaje: string) {
     console.log(mensaje)
     this.propertyService.getAll(this.pageSelected).subscribe({
       next: (data) => {
-        this.lastPage = data.totalPages-1
+        this.lastPage = data.totalPages - 1
         this.pageSelected = data.number
         this.properties = data.content
         this.numberOfPropertiesLoadInArray = this.properties.length
@@ -105,7 +103,12 @@ export class Properties implements OnInit {
       this.pageSelected--
       this.loadProperties('Carge las propiedades desde el next page')
     }
+  }
 
+  goToDetail(propertyToSee: Property) {
+    return this.router.navigate(['property-detail'], {
+      state: { propertyData: propertyToSee }
+    });
   }
 }
 

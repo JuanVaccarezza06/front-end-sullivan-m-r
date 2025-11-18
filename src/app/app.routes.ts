@@ -10,6 +10,7 @@ import { Admin } from './pages/admin/admin';
 import { adminGuardGuard } from './guards/adminGuards/admin-guard-guard';
 import { FormPostProperty } from './components/forms/form-post-property/form-post-property';
 import { PropertyList } from './components/child-pages/property-list/property-list';
+import { PropertyDetail } from './pages/property-detail/property-detail';
 
 export const routes: Routes = [
 
@@ -35,11 +36,21 @@ export const routes: Routes = [
                 component: FormPostProperty // <-- (Ver nota abajo)
             },
             {
-                path: 'list', // Esto machea la ruta '/admin' exacta
+                path: 'property-list', // Esto machea la ruta '/admin' exacta
+                component: PropertyList // <-- (Ver nota abajo)
+            },
+            {
+                path: 'user-detail', // Esto machea la ruta '/admin' exacta
+                component: PropertyList // <-- (Ver nota abajo)
+            },
+            {
+                path: 'user-update', // Esto machea la ruta '/admin' exacta
                 component: PropertyList // <-- (Ver nota abajo)
             }
         ]
-    }
+    },
+    { path: 'property-detail', component: PropertyDetail }
+
 
 
 ];
