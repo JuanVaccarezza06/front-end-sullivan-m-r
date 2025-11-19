@@ -1,0 +1,46 @@
+<main class="login-wrap">
+    <form class="login-card" [formGroup]="formulario" (submit)="onSumbit()">
+
+        <h2>Actualizar user</h2>
+
+        <fieldset>
+            <label for="firstName">Ingrese su nombre</label>
+            <input id="firstName" type="text" placeholder="Carlos" formControlName="firstName">
+            @if (formulario.get('firstName')?.hasError('required') && formulario.get('firstName')?.touched )  { <p class="p-error">Este campo es obligatorio</p> }
+            @else if (formulario.get('firstName')?.hasError('minlength') && formulario.get('firstName')?.touched )  { <p class="p-error">Este campo tiene un minimo de 3 caracteres</p> }
+            @else if (formulario.get('firstName')?.hasError('maxlength') && formulario.get('firstName')?.touched )  { <p class="p-error">Este campo tiene un maximo de 20 caracteres</p> }
+        </fieldset>
+
+
+        <fieldset>
+            <label for="surname">Ingrese su apellido</label>
+            <input id="surname" type="text" placeholder="Saul" formControlName="surname">
+            @if (formulario.get('surname')?.hasError('required') && formulario.get('surname')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
+            @else if (formulario.get('surname')?.hasError('minlength') && formulario.get('surname')?.touched ) { <p class="p-error">Este campo tiene un minimo de 3 caracteres</p> }
+            @else if (formulario.get('surname')?.hasError('maxlength') && formulario.get('surname')?.touched ) { <p class="p-error">Este campo tiene un maximo de 20 caracteres</p> }
+        </fieldset>
+
+        <fieldset>
+            <label for="email">Ingrese su email</label>
+            <input id="email" type="email" placeholder="example@email.com" formControlName="email">
+            @if (formulario.get('email')?.hasError('required') && formulario.get('email')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
+            @else if (formulario.get('email')?.hasError('email') && formulario.get('email')?.touched ) { <p class="p-error">Debe ingresar un email de contacto</p> }
+            @else if (formulario.get('email')?.hasError('maxlength') && formulario.get('email')?.touched ) { <p class="p-error">Este campo debe tener un minimo de 6 caracteres</p> }
+            @else if (formulario.get('email')?.hasError('minlength') && formulario.get('email')?.touched ) { <p class="p-error">Este campo debe tener un maximo de 254 caracteres</p> }
+        </fieldset>
+
+
+        <fieldset class="phone-group">
+            <label>Teléfono</label>
+            <input id="numberPhone" type="text" placeholder="+54 (223) 154-123321" formControlName="numberPhone">
+        </fieldset>
+        @if (formulario.get('numberPhone')?.hasError('required') && formulario.get('numberPhone')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
+        @else if (formulario.get('numberPhone')?.hasError('pattern') && formulario.get('numberPhone')?.touched ) { <p class="p-error">El telefono solo puede tener numeros, espacios y el signo '+'</p> }
+        @else if (formulario.get('numberPhone')?.hasError('minlength') && formulario.get('numberPhone')?.touched ) { <p class="p-error"> El telefono debe tener al menos 10 caracteres</p> }
+        @else if (formulario.get('numberPhone')?.hasError('maxlength') && formulario.get('numberPhone')?.touched ) { <p class="p-error"> El telefono debe tener como maximo 20 caracteres</p> }
+
+        <button type="submit" [disabled]="this.formulario.invalid"> Actualizar </button>
+        @if (formulario.invalid) { <p class="p-error">El formulario es inválido.</p> }
+
+    </form>
+</main>

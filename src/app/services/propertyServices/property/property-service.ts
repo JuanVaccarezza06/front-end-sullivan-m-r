@@ -50,8 +50,6 @@ export class PropertyService {
   }
 
   applyFilter(filter: PropertiesFilter) {
-    console.log("DEBAJO ESTA EL JSON QUE SE ENVIA")
-    console.log(filter)
     return this.http.post<Property[]>(`${this.API_URL}/filter`, filter);
   }
 

@@ -1,0 +1,109 @@
+.nav-container {
+    width: 280px;
+    min-height: 100%;
+    background: #fafafa;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    /* Opcional: Para que no quede pegado al borde si lo pones en un layout */
+}
+
+nav { padding: 1rem; }
+
+.nav-item { margin-bottom: 0.25rem; }
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.875rem 1rem;
+    text-decoration: none;
+    color: #4b5563;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    width: 100%;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.nav-link:hover { background: #f9fafb; }
+
+/* Esta clase 'active' ahora la pone Angular automáticamente */
+.nav-link.active {
+    background: #d1fae5;
+    color: #047857;
+}
+
+.nav-link-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.nav-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+    transition: color 0.2s ease;
+}
+
+.nav-link:hover .nav-icon { color: #6b7280; }
+.nav-link.active .nav-icon { color: #059669; }
+
+.nav-chevron {
+    color: #9ca3af;
+    font-size: 0.875rem;
+    transition: transform 0.3s ease;
+}
+
+/* Angular activará esto con [class.expanded] */
+.nav-chevron.expanded { transform: rotate(90deg); }
+
+.submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    margin-left: 1rem;
+    margin-top: 0.25rem;
+}
+
+/* Angular activará esto con [class.expanded] */
+.submenu.expanded { max-height: 300px; }
+
+.submenu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 1rem;
+    text-decoration: none;
+    color: #6b7280;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+}
+
+.submenu-item:hover {
+    background: #f9fafb;
+    color: #111827;
+}
+
+/* Estilo extra para cuando un subitem está activo */
+.submenu-item.active {
+    color: #047857;
+    font-weight: 600;
+    background: #f0fdf4;
+}
+
+.submenu-icon {
+    width: 16px; height: 16px;
+    display: flex; align-items: center; justify-content: center;
+    color: #9ca3af;
+}
+
+.submenu-spacer { width: 16px; }

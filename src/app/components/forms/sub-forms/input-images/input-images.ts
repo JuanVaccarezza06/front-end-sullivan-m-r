@@ -43,7 +43,6 @@ export class InputImages implements OnChanges, OnInit {
 
   ngOnInit(): void {
     if (this.isUpdate) this.patchValues()
-    console.log(this.imagePreviews)
   }
 
   // --- Functions that will be execute when a file enter into the sistem! ---

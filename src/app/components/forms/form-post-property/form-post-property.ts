@@ -63,8 +63,7 @@ export class FormPostProperty implements OnInit {
     const state = this.router.lastSuccessfulNavigation?.extras?.state as { info?: Property };
     let property = state?.info || undefined;
 
-    if (!property) console.log("La property llegada por el router es null")   
-    else {
+    if (property){
       this.propertyUpdate = property
       this.isUpdate = true
       this.patchValues()
@@ -205,9 +204,7 @@ export class FormPostProperty implements OnInit {
     }
 
     if (this.isUpdate) this.service.put(result)?.subscribe({
-      next: (data) => {console.log(data)
-        console.log("Salio todo bine")
-      }
+      next: (data) => {}
       ,
       error: (e) => console.log(e)
     })

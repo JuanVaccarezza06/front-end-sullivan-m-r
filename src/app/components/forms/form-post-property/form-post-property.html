@@ -2,7 +2,7 @@
 <div class="form-container">
     <div class="form-header">
         <div class="form-title">
-            <h1>Añadir Nueva Propiedad</h1>
+            <h1>{{!isUpdate ? 'Añadir Nueva Propiedad' : 'Actualizar una propiedad'}}</h1>
             <p class="form-subtitle">Complete los detalles de la nueva propiedad</p>
         </div>
         <button class="cancel-btn">✕ Cancelar</button>
@@ -102,18 +102,12 @@
         <section id="components-container">
 
             <!-- CARACTERISTICAS (Amenity Component) -->
-            <app-input-amenities id="component-input-amenities" 
-            [group]="form" 
-            [startSignal]="startSignal"
-            [isUpdate]="isUpdate" 
-            (finishEvent)="onOneChildFinished()"></app-input-amenities>
+            <app-input-amenities id="component-input-amenities" [group]="form" [startSignal]="startSignal"
+                [isUpdate]="isUpdate" (finishEvent)="onOneChildFinished()"></app-input-amenities>
 
             <!-- IMÁGENES (Images Component) -->
-            <app-input-images id="component-input-images" 
-            [group]="form" 
-            [startSignal]="startSignal"
-            [isUpdate]="isUpdate" 
-            (finishEvent)="onOneChildFinished()"></app-input-images>
+            <app-input-images id="component-input-images" [group]="form" [startSignal]="startSignal"
+                [isUpdate]="isUpdate" (finishEvent)="onOneChildFinished()"></app-input-images>
 
         </section>
 

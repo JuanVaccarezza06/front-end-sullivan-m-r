@@ -1,16 +1,20 @@
 import { Routes } from '@angular/router';
 import { Home } from './pages/home/home';
-import { Properties } from './pages/properties/properties';
+import { Properties } from './pages/propertiesPages/properties/properties';
 import { Contact } from './pages/contact/contact';
-import { AboutUs } from './pages/about-us/about-us';
-import { Services } from './pages/services/services';
-import { LogIn } from './pages/log-in/log-in';
-import { Register } from './pages/register/register';
-import { Admin } from './pages/admin/admin';
+import { AboutUs } from './pages/viewPages/about-us/about-us';
+import { Services } from './pages/viewPages/services/services';
+import { Admin } from './pages/admistration/admin/admin';
 import { adminGuardGuard } from './guards/adminGuards/admin-guard-guard';
 import { FormPostProperty } from './components/forms/form-post-property/form-post-property';
-import { PropertyList } from './components/child-pages/property-list/property-list';
-import { PropertyDetail } from './pages/property-detail/property-detail';
+import { PropertyList } from './pages/propertiesPages/property-list/property-list';
+import { PropertyDetail } from './pages/propertiesPages/property-detail/property-detail';
+import { UserInfo } from './pages/usersPages/user-info/user-info';
+import { LogIn } from './pages/authPages/log-in/log-in';
+import { Register } from './pages/authPages/register/register';
+import { UserUpdate } from './pages/usersPages/user-update/user-update';
+import { Dashboard } from './pages/admistration/dashboard/dashboard';
+import { Consults } from './pages/admistration/consults/consults';
 
 export const routes: Routes = [
 
@@ -24,28 +28,49 @@ export const routes: Routes = [
     {
         path: 'admin',
         component: Admin, // Este es tu componente "layout" con el sidebar
-        canActivate: [adminGuardGuard], // El guard protege al padre y a todos sus hijos
+        canActivate: [adminGuardGuard],
         children: [
             {
-                path: 'form-post', // Esto machea la ruta '/admin' exacta
-                component: FormPostProperty // <-- (Ver nota abajo)
+                path: '',
+                canActivate: [adminGuardGuard],
+                component: FormPostProperty
+            },
+            {
+                path: 'form-post',
+                canActivate: [adminGuardGuard],
+                component: FormPostProperty
             },
 
             {
-                path: 'form-update', // Esto machea la ruta '/admin' exacta
-                component: FormPostProperty // <-- (Ver nota abajo)
+                path: 'form-update',
+                canActivate: [adminGuardGuard],
+                component: FormPostProperty
             },
             {
-                path: 'property-list', // Esto machea la ruta '/admin' exacta
-                component: PropertyList // <-- (Ver nota abajo)
+                path: 'property-list',
+                canActivate: [adminGuardGuard],
+                component: PropertyList
             },
             {
-                path: 'user-detail', // Esto machea la ruta '/admin' exacta
-                component: PropertyList // <-- (Ver nota abajo)
+                path: 'user-info',
+                canActivate: [adminGuardGuard],
+                component: UserInfo
             },
             {
-                path: 'user-update', // Esto machea la ruta '/admin' exacta
-                component: PropertyList // <-- (Ver nota abajo)
+                path: 'user-update',
+                canActivate: [adminGuardGuard],
+                component: UserUpdate
+            },
+            {
+                path: 'dashboard',
+                canActivate: [adminGuardGuard],
+                component: Dashboard
+            }
+            ,
+            {
+                path: 'consults',
+                canActivate: [adminGuardGuard],
+                component: Consults
             }
         ]
     },
