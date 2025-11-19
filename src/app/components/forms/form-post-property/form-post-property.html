@@ -5,8 +5,7 @@
             <h1>{{!isUpdate ? 'Añadir Nueva Propiedad' : 'Actualizar una propiedad'}}</h1>
             <p class="form-subtitle">Complete los detalles de la nueva propiedad</p>
         </div>
-        <button class="cancel-btn">✕ Cancelar</button>
-        <button class="cancel-btn" (click)="cargarForm()">✕ Cargar form</button>
+        <button class="cancel-btn" >✕ Cancelar</button>
     </div>
 
     <form id="propertyForm" [formGroup]="form" (submit)="startProcess()">

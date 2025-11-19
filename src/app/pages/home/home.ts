@@ -65,4 +65,10 @@ export class Home implements OnInit {
     else if (!p.imageDTOList.find(img => img.name.includes("Portada"))) p.mainImage = p.imageDTOList[0].url // If the image array don't has any image with 'portada' name, load any image
     else p.mainImage = p.imageDTOList.find(img => img.name.includes("Portada"))?.url // If the image array has the 'portada' image, it returs
   }
+
+  goToDetail(propertyToSee: Property) {
+    return this.router.navigate(['property-detail'], {
+      state: { propertyData: propertyToSee }
+    });
+  }
 }

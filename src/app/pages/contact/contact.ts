@@ -19,7 +19,6 @@ export class Contact {
 
   constructor(
     private fb: FormBuilder,
-    private router: Router,
     private contactService: ContactService
   ) { }
 
@@ -28,12 +27,12 @@ export class Contact {
     //this.motives = this.contactService.getMotives()
 
     this.formulario = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(40)]],
-      email: ['', [Validators.required, Validators.email]],
+      name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100), Validators.pattern(/^\S+\s+\S+.*$/)]],
+      email: ['', [Validators.required, Validators.email, Validators.maxLength(200)]],
       numberPhone: ['', [Validators.required, Validators.pattern(/^\+?[0-9\s\-]+$/), Validators.maxLength(20), Validators.minLength(3)]],
       description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
       motive: ['', [Validators.required]],
-      state: ['PENDIENTE']
+      state: ['PENDIENTE', [Validators.required]]
     });
 
   }
@@ -52,7 +51,7 @@ export class Contact {
     this.generalInquiry = {
       date: formattedDate, // o new Date()
       description: this.formulario.value.description,
-      state: this.formulario.value.state,
+      stateDTO: this.formulario.value.state,
       userDTO: {
         firstName: name, // suponiendo que "name" es el nombre del usuario
         surname: surname, // completar si tenés el campo
@@ -64,7 +63,9 @@ export class Contact {
       }
     };
 
-    this.contactService.post(this.generalInquiry as GeneralInquiry).subscribe({
+    console.log(this.generalInquiry)
+
+    this.contactService.post(this.generalInquiry).subscribe({
       next: (data) => console.log(data),
       error: (e) => console.log(e)
     })

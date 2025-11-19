@@ -14,7 +14,8 @@
             </fieldset>
             @if (formulario.get('name')?.hasError('required') && formulario.get('name')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
             @else if (formulario.get('name')?.hasError('minlength') && formulario.get('name')?.touched ) { <p class="p-error">El nombre debe tener al menos 3 caracteres</p> }
-            @else if (formulario.get('name')?.hasError('maxlength') && formulario.get('name')?.touched ) { <p class="p-error">El nombre debe tener un maximo de 40 caracteres</p> }
+            @else if (formulario.get('name')?.hasError('maxlength') && formulario.get('name')?.touched ) { <p class="p-error">El nombre debe tener un maximo de 100 caracteres</p> }
+            @else if (formulario.get('name')?.hasError('pattern') && formulario.get('name')?.touched ) { <p class="p-error">Ingrese su nombre y apellido</p> }
             
             <fieldset class="form-group">
                 <label>Email</label>
@@ -22,6 +23,7 @@
             </fieldset>
             @if (formulario.get('email')?.hasError('required') && formulario.get('email')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
             @else if (formulario.get('email')?.hasError('email') && formulario.get('email')?.touched ) { <p class="p-error">Debe ingresar un email de contacto</p> }
+            @else if (formulario.get('email')?.hasError('maxlength') && formulario.get('email')?.touched ) { <p class="p-error"> El email debe tener como maximo 200 caracteres</p> }
 
             <fieldset class="form-group">
                 <label>Teléfono</label>
@@ -29,8 +31,8 @@
             </fieldset>
                 @if (formulario.get('numberPhone')?.hasError('required') && formulario.get('numberPhone')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
                 @else if (formulario.get('numberPhone')?.hasError('pattern') && formulario.get('numberPhone')?.touched ) { <p class="p-error">El telefono solo puede tener numeros, espacios y el signo '+'</p> }
-                @else if (formulario.get('numberPhone')?.hasError('maxlength') && formulario.get('numberPhone')?.touched ) { <p class="p-error"> El telefono debe tener al menos 10 caracteres</p> }
-                @else if (formulario.get('numberPhone')?.hasError('minlength') && formulario.get('numberPhone')?.touched ) { <p class="p-error"> El telefono debe tener como maximo 20 caracteres</p> }
+                @else if (formulario.get('numberPhone')?.hasError('minlength') && formulario.get('numberPhone')?.touched ) { <p class="p-error"> El telefono debe tener al menos 10 caracteres</p> }
+                @else if (formulario.get('numberPhone')?.hasError('maxlength') && formulario.get('numberPhone')?.touched ) { <p class="p-error"> El telefono debe tener como maximo 20 caracteres</p> }
             
             <fieldset class="form-group">
                 <label>Motivo</label>

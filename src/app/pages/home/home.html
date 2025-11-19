@@ -31,7 +31,7 @@
     <div class="properties-grid">
 
       @for (p of propertiesfeature; track p.id) {
-      <div class="card">
+      <div class="card" (click)="goToDetail(p)">
         <div class="image">
           <img class="property-img" src="{{p.mainImage}}" alt="property">
           <span class="badge">{{p.operationTypeDTO.operationName}}</span>

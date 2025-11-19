@@ -27,13 +27,13 @@ export class LogIn {
     this.formulario = this.fb.group({
       username: ['', [
         Validators.minLength(6),
-        Validators.maxLength(20),
+        Validators.maxLength(30),
         Validators.required
       ]
       ],
       password: ['', [
-        Validators.minLength(6),
-        Validators.maxLength(20),
+        Validators.minLength(8),
+        Validators.maxLength(30),
         Validators.required,
         Validators.pattern(/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=<>?{}[\]~]).+$/),
       ]

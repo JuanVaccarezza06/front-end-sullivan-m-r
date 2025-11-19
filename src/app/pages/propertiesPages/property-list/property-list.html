@@ -71,7 +71,7 @@
 
                         @for (item of properties; track $index) {
 
-                        <tr>
+                        <tr (click)="goToDetail(item)">
                             <td>
                                 <div class="property-cell">
                                     <img [src]="item.mainImage" alt="Mansión" class="property-img">
@@ -81,7 +81,7 @@
                                 </div>
                             </td>
                             <td><span class="badge badge-venta">{{item.propertyTypeDTO.typeName}}</span></td>
-                            <td class="price">{{item.price}}</td>
+                            <td class="price">${{item.price}}</td>
                             <td class="location">{{item.zoneDTO.zoneName}}, {{item.zoneDTO.cityDTO.cityName}}</td>
                             <td class="characteristics">{{item.bedrooms}} hab • {{item.bathrooms}} baños •
                                 {{item.totalArea}}m²</td>

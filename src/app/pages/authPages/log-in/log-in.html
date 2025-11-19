@@ -12,7 +12,7 @@
             @else if (formulario.get('username')?.hasError('minlength') && formulario.get('username')?.touched ) { <p
                 class="p-error">El username debe tener al menos 6 caracteres</p> }
             @else if (formulario.get('username')?.hasError('maxlength') && formulario.get('username')?.touched ) { <p
-                class="p-error">El username debe tener un maximo de 20 caracteres</p> }
+                class="p-error">El username debe tener un maximo de 30 caracteres</p> }
             @else if (formulario.get('username')?.valid) { <p class="p-sucess">Username valido</p> }
         </fieldset>
 
@@ -24,7 +24,7 @@
             @else if ( this.formulario.get('password')?.hasError('minlength') && formulario.get('password')?.touched ) {
             <p class="p-error">La contraseña debe tener al menos 8 caracteres</p> }
             @else if ( this.formulario.get('password')?.hasError('maxlength') && formulario.get('password')?.touched ) {
-            <p class="p-error">La contraseña debe un maximo de 20 caracteres</p> }
+            <p class="p-error">La contraseña debe un maximo de 30 caracteres</p> }
             @else if ( this.formulario.get('password')?.hasError('pattern') && formulario.get('password')?.touched ) {
             <p class="p-error">La contraseña debe tener al menos: 1 mayuscula, 1 numero, 1 caracter especial</p> }
             @else if ( this.formulario.get('password')?.valid) { <p class="p-sucess">Contraseña válida</p> }

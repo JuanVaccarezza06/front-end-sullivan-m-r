@@ -27,12 +27,12 @@ export class Register {
 
     this.formulario = this.fb.group({
 
-      username: ['', [Validators.minLength(6), Validators.maxLength(20), Validators.required]],
-      password: ['', [Validators.minLength(6), Validators.maxLength(20), Validators.required,
+      username: ['', [Validators.minLength(6), Validators.maxLength(30), Validators.required]],
+      password: ['', [Validators.minLength(8), Validators.maxLength(30), Validators.required,
       Validators.pattern(/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=<>?{}[\]~]).+$/),
       ]],
-      firstName: ['', [Validators.required, Validators.maxLength(20), Validators.minLength(3)]],
-      surname: ['', [Validators.required, Validators.maxLength(20), Validators.minLength(3)]],
+      firstName: ['', [Validators.required, Validators.maxLength(100), Validators.minLength(3)]],
+      surname: ['', [Validators.required, Validators.maxLength(100), Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email, Validators.maxLength(254), Validators.minLength(6)]],
       numberPhone: ['', [Validators.required, Validators.pattern(/^\+?[0-9\s\-]+$/), Validators.maxLength(20), Validators.minLength(3)]]
     })
@@ -55,7 +55,6 @@ export class Register {
             state: { message: 'Usuario registrado correctamente.' }
           });
         }
-
       },
       error: (e) => console.log(e)
     })

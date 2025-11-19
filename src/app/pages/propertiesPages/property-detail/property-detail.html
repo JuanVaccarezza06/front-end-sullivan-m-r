@@ -22,7 +22,7 @@
 
                 <div class="stats">
                     <div class="stat-box">
-                        <div class="stat-label">Superficie</div>
+                        <div class="stat-label">Superficie construida</div>
                         <div class="stat-value">{{propertySelected.areaStructure}}m²</div>
                     </div>
                     <div class="stat-box">
@@ -58,7 +58,7 @@
                         <span class="detail-value">{{propertySelected.propertyTypeDTO.typeName}}</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Superficie parcela:</span>
+                        <span class="detail-label">Superficie total:</span>
                         <span class="detail-value">{{propertySelected.totalArea}}m²</span>
                     </div>
                     <div class="detail-row">
@@ -80,36 +80,50 @@
                     <div class="contact-item">✉️ patrick@inmobiliariasullivan.com</div>
                 </div>
 
-                <form>
+                <form [formGroup]="form" (submit)="onSumbit()"  >
                     <h3 class="form-title">¿Te interesa esta propiedad?</h3>
 
                     <div class="form-group">
                         <label class="form-label">Nombre</label>
-                        <input type="text" class="form-input" placeholder="">
+                        <input type="text" class="form-input" placeholder="" formControlName="fullName">
                     </div>
+                    @if (form.get('fullName')?.hasError('required') && form.get('fullName')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
+                    @else if (form.get('fullName')?.hasError('minlength') && form.get('fullName')?.touched ) { <p class="p-error">El nombre debe tener al menos 3 caracteres</p> }
+                    @else if (form.get('fullName')?.hasError('maxlength') && form.get('fullName')?.touched ) { <p class="p-error">El nombre debe tener un maximo de 100 caracteres</p> }
+                    @else if (form.get('fullName')?.hasError('pattern') && form.get('fullName')?.touched ) { <p class="p-error">Ingrese su nombre y apellido</p> }
 
+                    
                     <div class="form-group">
                         <label class="form-label">Email</label>
-                        <input type="email" class="form-input" placeholder="">
+                        <input type="email" class="form-input" placeholder="" formControlName="email">
                     </div>
+                    @if (form.get('email')?.hasError('required') && form.get('email')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
+                    @else if (form.get('email')?.hasError('email') && form.get('email')?.touched ) { <p class="p-error">Debe ingresar un email de contacto</p> }
+                    @else if (form.get('email')?.hasError('maxlength') && form.get('email')?.touched ) { <p class="p-error"> El email debe tener como maximo 200 caracteres</p> }
 
                     <div class="form-group">
                         <label class="form-label">Teléfono</label>
-                        <input type="tel" class="form-input" placeholder="">
+                        <input type="tel" class="form-input" placeholder="" formControlName="numberPhone">
                     </div>
-
+                    @if (form.get('numberPhone')?.hasError('required') && form.get('numberPhone')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
+                    @else if (form.get('numberPhone')?.hasError('pattern') && form.get('numberPhone')?.touched ) { <p class="p-error">El telefono solo puede tener numeros, espacios y el signo '+'</p> }
+                    @else if (form.get('numberPhone')?.hasError('maxlength') && form.get('numberPhone')?.touched ) { <p class="p-error"> El telefono debe tener al menos 10 caracteres</p> }
+                    @else if (form.get('numberPhone')?.hasError('minlength') && form.get('numberPhone')?.touched ) { <p class="p-error"> El telefono debe tener como maximo 500 caracteres</p> }
+            
                     <div class="form-group">
                         <label class="form-label">Mensaje</label>
-                        <textarea class="form-textarea"
-                            placeholder="Me interesa esta propiedad y quisiera recibir más información."></textarea>
+                        <textarea class="form-textarea" placeholder="Me interesa esta propiedad y quisiera recibir más información." formControlName="description"></textarea>
                     </div>
+                    @if (form.get('description')?.hasError('required') && form.get('description')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
+                    @else if (form.get('description')?.hasError('minlength') && form.get('description')?.touched ) { <p class="p-error">La descripcion debe tener al menos 10 caracteres</p> }
+                    @else if (form.get('description')?.hasError('maxlength') && form.get('description')?.touched ) { <p class="p-error">La descripcion debe tener un maximo de 2000 caracteres</p> }
 
                     <div class="checkbox-group">
-                        <input type="checkbox" id="privacy">
+                        <input type="checkbox" id="privacy" formControlName="conditions">
                         <label for="privacy">He leído y acepto la <a href="#">política de privacidad</a></label>
                     </div>
-
-                    <button type="submit" class="submit-btn">Enviar consulta</button>
+                    
+                    <button type="submit" class="submit-btn" [disabled]="form.invalid" >Enviar consulta</button>
                 </form>
             </div>
         </div>

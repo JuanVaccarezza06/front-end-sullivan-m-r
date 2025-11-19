@@ -1,109 +1,127 @@
 /* Form */
-    .filter-form {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
+.filter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-    fieldset {
-      border: none;
-      padding: 0;
-    }
+fieldset {
+  border: none;
+  padding: 0;
+}
 
-    legend {
-      font-size: 0.875rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 0.75rem;
-      color: var(--text);
-    }
+legend {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.75rem;
+  color: var(--text);
+}
 
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
 
-    label {
-      font-size: 0.875rem;
-      color: var(--text-light);
-      font-weight: 500;
-    }
+label {
+  font-size: 0.875rem;
+  color: var(--text-light);
+  font-weight: 500;
+}
 
-    select {
-      width: 100%;
-      padding: 0.625rem;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      font-size: 0.875rem;
-      background: var(--white);
-      cursor: pointer;
-      color: var(--text);
-    }
+select {
+  width: 100%;
+  padding: 0.625rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.875rem;
+  background: var(--white);
+  cursor: pointer;
+  color: var(--text);
+}
 
-    select:hover,
-    select:focus {
-      border-color: var(--primary);
-      outline: none;
-    }
+select:hover,
+select:focus {
+  border-color: var(--primary);
+  outline: none;
+}
 
-    /* Precio Grid */
-    .price-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
-    }
+/* Precio Grid */
+.price-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
 
-    /* Habitaciones */
-    .rooms {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 0.5rem;
-    }
+/* Habitaciones */
+.rooms {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+}
 
-    .rooms button {
-      padding: 0.625rem;
-      border: 1px solid var(--border);
-      background: var(--white);
-      border-radius: 6px;
-      font-size: 0.875rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-      color: var(--text);
-    }
+.rooms button {
+  padding: 0.625rem;
+  border: 1px solid var(--border);
+  background: var(--white);
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text);
+}
 
-    .rooms button:hover,
-    .rooms button.active {
-      background: var(--primary);
-      border-color: var(--primary);
-      color: var(--white);
-    }
+.rooms button:hover,
+.rooms button.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--white);
+}
 
-    /* Características */
-    .amenities {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
+/* Características */
+.amenities {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
 
-    .checkbox-label {
-      display: flex;
-      align-items: center;
-      gap: 0.625rem;
-      padding: 0.5rem 0;
-      cursor: pointer;
-      color: var(--text);
-    }
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.5rem 0;
+  cursor: pointer;
+  color: var(--text);
+}
 
-    .checkbox-label:hover {
-      color: var(--primary);
-    }
+.checkbox-label:hover {
+  color: var(--primary);
+}
 
-    input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      cursor: pointer;
-      accent-color: var(--primary);
-    }
+input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--primary);
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  background: #059669;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary:hover {
+  background: #047857;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+}
