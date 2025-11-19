@@ -1,21 +1,33 @@
 <div class="form-grid" [formGroup]="group">
-    <div class="form-group">
+    
+  <div class="form-group">
         <label>Nombre del proprietario <span class="required">*</span></label>
         <input type="text" formControlName="firstName">
+        @if (group.get('firstName')?.hasError('required') && group.get('firstName')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
+        @else if (group.get('firstName')?.hasError('minlength') && group.get('firstName')?.touched ) { <p class="p-error">Este campo tiene un minimo de 3 caracteres</p> }
+        @else if (group.get('firstName')?.hasError('maxlength') && group.get('firstName')?.touched ) { <p class="p-error">Este campo tiene un maximo de 100 caracteres</p> }
     </div>
 
     <div class="form-group">
         <label>Apellido del proprietario <span class="required">*</span></label>
         <input type="text" formControlName="surname">
+        @if (group.get('surname')?.hasError('required') && group.get('surname')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
+        @else if (group.get('surname')?.hasError('minlength') && group.get('surname')?.touched ) { <p class="p-error">Este campo tiene un minimo de 3 caracteres</p> }
+        @else if (group.get('surname')?.hasError('maxlength') && group.get('surname')?.touched ) { <p class="p-error">Este campo tiene un maximo de 100 caracteres</p> }
     </div>
 
     <div class="form-group">
         <label>Email <span class="required">*</span></label>
         <input type="text" formControlName="email">
+        @if (group.get('email')?.hasError('required') && group.get('email')?.touched )  { <p class="p-error">Este campo es obligatorio</p> }
+        @else if (group.get('email')?.hasError('email') && group.get('email')?.touched ){ <p class="p-error">Debe ingresar un email de contacto</p> }
+        @else if (group.get('email')?.hasError('minlength') && group.get('email')?.touched ){ <p class="p-error">Este campo debe tener un minimo de 6 caracteres</p> }
+        @else if (group.get('email')?.hasError('maxlength') && group.get('email')?.touched ) { <p class="p-error">Este campo debe tener un maximo de 254 caracteres</p> }
     </div>
 
     <div class="form-group">
         <label>Numero de telefono <span class="required">*</span></label>
         <input type="number" formControlName="numberPhone">
+        @if (group.get('numberPhone')?.hasError('required') && group.get('numberPhone')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
     </div>
 </div>
