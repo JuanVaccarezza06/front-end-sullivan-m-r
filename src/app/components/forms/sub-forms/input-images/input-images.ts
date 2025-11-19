@@ -97,7 +97,17 @@ export class InputImages implements OnChanges, OnInit {
         file: file, // El objeto File (para subirlo después)
         previewUrl: previewUrl // La URL temporal (para mostrarla ahora)
       });
+      this.syncWithParent()
+
     }
+  }
+
+  private syncWithParent() {
+    // // Si hay elementos, mandamos el array. Si está vacío, mandamos null.
+    // const valueToUpdate = this.imagePreviews.length > 0 ? this.imagePreviews : null;
+    // console.log(this.imagePreviews.length)
+    // this.group.get('images')?.setValue(valueToUpdate);
+    // this.group.get('images')?.updateValueAndValidity();
   }
 
   // --- 4. Funciones para eliminar imágenes ---
@@ -107,6 +117,7 @@ export class InputImages implements OnChanges, OnInit {
 
     // Quitamos del arreglo
     this.imagePreviews.splice(index, 1);
+    this.syncWithParent()
   }
 
   clearAllImages(): void {
@@ -115,6 +126,7 @@ export class InputImages implements OnChanges, OnInit {
 
     // Vaciamos el arreglo
     this.imagePreviews = [];
+    this.syncWithParent()
   }
 
   setImages() {

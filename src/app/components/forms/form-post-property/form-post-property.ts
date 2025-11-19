@@ -63,7 +63,7 @@ export class FormPostProperty implements OnInit {
     const state = this.router.lastSuccessfulNavigation?.extras?.state as { info?: Property };
     let property = state?.info || undefined;
 
-    if (property){
+    if (property) {
       this.propertyUpdate = property
       this.isUpdate = true
       this.patchValues()
@@ -75,36 +75,122 @@ export class FormPostProperty implements OnInit {
 
     this.form = this.fb.group({
       id: [null],
-      title: ['', Validators.required],
-      description: ['', Validators.required],
-      price: [0.00, [Validators.required]],
-      publicationDate: ['', Validators.required], // Usar un Date picker o formato string
-      yearConstruction: [2000, [Validators.required]],
-      areaStructure: [0.0, [Validators.required]],
-      totalArea: [0.0, [Validators.required]],
-      rooms: [0, [Validators.required]],
-      bathrooms: [0, [Validators.required]],
-      bedrooms: [0, [Validators.required]],
+      title: ['', [
+        Validators.required,
+        Validators.minLength(10),
+        Validators.maxLength(50),
+        Validators.pattern(/^\S+\s+\S+\s+\S+.*$/)]
+      ],
+      description: ['', [
+        Validators.required,
+        Validators.minLength(30),
+        Validators.maxLength(300),]
+      ],
+      price: ['', [
+        Validators.required,
+        Validators.min(1),
+        Validators.max(1000000000)]
+      ],
+      publicationDate: ['', [
+        Validators.required,
+        Validators.min(1),
+        Validators.max(3000)]
+      ], // Usar un Date picker o formato string
+      yearConstruction: ['', [
+        Validators.required,
+        Validators.min(1),
+        Validators.max(1000000000)]
+      ],
+      areaStructure: ['', [
+        Validators.required,
+        Validators.min(1),
+        Validators.max(1000000000)]
+      ],
+      totalArea: ['', [
+        Validators.required,
+        Validators.min(1),
+        Validators.max(1000000000)]
+      ],
+      rooms: ['', [
+        Validators.required,
+        Validators.min(1),
+        Validators.max(1000000000)]
+      ],
+      bathrooms: ['', [
+        Validators.required,
+        Validators.min(1),
+        Validators.max(1000000000)]
+      ],
+      bedrooms: ['', [
+        Validators.required,
+        Validators.min(1),
+        Validators.max(1000000000)]
+      ],
 
-      propertyTypes: ['', Validators.required],
-      operationTypes: ['', Validators.required],
+      propertyTypes: ['', [Validators.required,]],
+      operationTypes: ['', [Validators.required]],
 
-      zone: ['', Validators.required],
-      city: ['', Validators.required],
-      province: ['', Validators.required],
-      country: ['', Validators.required],
+      zone: ['', [
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(50)]
+      ],
+      city: ['', [
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(50)]
+      ],
+      province: ['', [
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(50)]
+      ],
+      country: ['', [
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(50)]
+      ],
 
-      mainStreet: ['', Validators.required],
-      secondaryStreet: ['', Validators.required],
-      numbering: ['', [Validators.required]],
+      mainStreet: ['', [
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(50)]
+      ],
+      secondaryStreet: ['', [
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(50)]
+      ],
+      numbering: ['', [
+        Validators.required,
+        Validators.min(1),
+        Validators.max(1000000000)]
+      ],
 
-      firstName: ['', Validators.required],
-      surname: ['', Validators.required],
-      email: ['', [Validators.required]],
-      numberPhone: ['', Validators.required],
-
-      amenities: ['', Validators.required],
-      images: ['', Validators.required],
+      firstName: ['', [
+        Validators.required,
+        Validators.maxLength(100),
+        Validators.minLength(3)]
+      ],
+      surname: ['', [
+        Validators.required,
+        Validators.maxLength(100),
+        Validators.minLength(3)]]
+      ,
+      email: ['', [
+        Validators.required,
+        Validators.email,
+        Validators.maxLength(254),
+        Validators.minLength(6)]
+      ],
+      numberPhone: ['', [
+        Validators.required,
+        Validators.pattern(/^\+?[0-9\s\-]+$/),
+        Validators.maxLength(20),
+        Validators.minLength(3)]
+      ],
+      amenities: ['', [Validators.required]],
+      images: ['', []],
     });
   }
 
@@ -115,6 +201,17 @@ export class FormPostProperty implements OnInit {
       },
       error: (e) => console.log(e)
     });
+  }
+
+  checkInvalidControls() {
+    const controls = this.form.controls;
+    for (const name in controls) {
+      if (controls[name].invalid) {
+        console.log(`❌ Campo Inválido: [${name}]`);
+        console.log('   Errores:', controls[name].errors);
+        console.log('   Valor actual:', controls[name].value);
+      }
+    }
   }
 
   loadPropertyTypes() {
@@ -165,7 +262,7 @@ export class FormPostProperty implements OnInit {
     let finalImages = this.form.get('images')?.value as Image[]
 
     let result = {
-      id : this.isUpdate ? this.propertyUpdate.id : null,
+      id: this.isUpdate ? this.propertyUpdate.id : null,
       title: this.form.get('title')?.value,
       description: this.form.get('description')?.value,
       price: this.form.get('price')?.value,
@@ -203,8 +300,10 @@ export class FormPostProperty implements OnInit {
       imageDTOList: finalImages
     }
 
+    console.log(result)
+
     if (this.isUpdate) this.service.put(result)?.subscribe({
-      next: (data) => {}
+      next: (data) => { }
       ,
       error: (e) => console.log(e)
     })
@@ -214,36 +313,6 @@ export class FormPostProperty implements OnInit {
     })
 
 
-  }
-
-  cargarForm() {
-    let result = {
-      title: "Titulo hermoso",
-      description: "Esta es la desc",
-      price: 230000,
-      publicationDate: "",
-      yearConstruction: 2002,
-      areaStructure: 250,
-      totalArea: 300,
-      rooms: 5,
-      bathrooms: 5,
-      bedrooms: 4,
-
-      propertyTypes: "Casa",
-
-      operationTypes: "Venta",
-
-      mainStreet: "Carasa",
-      secondaryStreet: "Aguado",
-      numbering: 6789,
-
-      firstName: "Santiago",
-      surname: "Vaccarezza",
-      email: "jprvs@gmail.com",
-      numberPhone: 12345678,
-    }
-
-    this.form.patchValue(result)
   }
 
   patchValues() {
@@ -285,5 +354,44 @@ export class FormPostProperty implements OnInit {
 
     this.form.patchValue(result)
   }
+
+  cargarValores() {
+
+    let result = {
+      title: 'Espectacular Casa en el Centro', // > 10 chars
+      description: 'Esta es una descripción de prueba lo suficientemente larga para superar la validación de 30 caracteres obligatoria del sistema.', // > 30 chars
+      price: 250000,
+      publicationDate: '2025-11-19',
+      yearConstruction: 2020,
+      areaStructure: 150,
+      totalArea: 300,
+      rooms: 5,
+      bathrooms: 2,
+      bedrooms: 3,
+
+      // Asegúrate que estos valores existan en tus <select> o arrays cargados
+      propertyTypes: 'Casa',
+      operationTypes: 'Venta',
+
+      zone: 'Playa Grande',
+      city: 'Mar del Plata',
+      province: 'Buenos Aires',
+      country: 'Argentina',
+
+      mainStreet: 'Av. Colón',
+      secondaryStreet: 'Calle Güemes',
+      numbering: '1234',
+
+      firstName: 'Juan Pablo',
+      surname: 'Rodriguez',
+      email: 'juan.prueba@gmail.com',
+      numberPhone: '+54 9 223 5559999', // Cumple el pattern con + y espacios
+
+    }
+    // Aplicar al formulario
+    this.form.patchValue(result);
+  }
+
+
 
 }

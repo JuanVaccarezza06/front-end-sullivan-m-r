@@ -200,3 +200,10 @@
      min-width: 0;
      /* Importante para que el grid no se rompa */
  }
+ 
+ .p-error {
+  color: rgb(223, 121, 121);
+  font-size: 0.85rem;
+  margin: 0.3rem 0 0 0;
+    margin-bottom: 1rem;
+}

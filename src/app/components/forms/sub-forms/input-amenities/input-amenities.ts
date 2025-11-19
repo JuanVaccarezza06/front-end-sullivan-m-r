@@ -67,7 +67,10 @@ export class InputAmenities implements OnInit, OnChanges {
 
     if (amenity.amenityName == undefined || amenity.amenityName == "") return
 
-    if (!this.amenitiesLoad.find((value) => value.amenityName == amenity.amenityName)) this.amenitiesLoad.push(amenity)
+    if (!this.amenitiesLoad.find((value) => value.amenityName == amenity.amenityName)) {
+      this.amenitiesLoad.push(amenity)
+      this.syncWithParent()
+    }
 
   }
 
@@ -75,7 +78,11 @@ export class InputAmenities implements OnInit, OnChanges {
 
     let newAmenities = this.amenitiesLoad.filter((value) => value.amenityName != name)
 
-    if (newAmenities) this.amenitiesLoad = newAmenities
+    if (newAmenities) {
+      this.amenitiesLoad = newAmenities
+      this.syncWithParent()
+
+    }
     else console.log("No hay valor en el name llegado por parametro")
 
   }
@@ -94,11 +101,22 @@ export class InputAmenities implements OnInit, OnChanges {
       this.amenityService
         .post(amenity)
         .subscribe({
-          next: (data) => this.amenitiesLoad.push(data),
+          next: (data) => {
+            this.amenitiesLoad.push(data)
+            this.syncWithParent()
+          },
           error: (e) => console.log(e)
         })
     } else return
 
+  }
+
+  private syncWithParent() {
+    // Si hay elementos, mandamos el array. Si está vacío, mandamos null.
+    const valueToUpdate = this.amenitiesLoad.length > 0 ? this.amenitiesLoad : null;
+
+    this.group.get('amenities')?.setValue(valueToUpdate);
+    this.group.get('amenities')?.updateValueAndValidity();
   }
 
   setAmenitiesWithFrom() {

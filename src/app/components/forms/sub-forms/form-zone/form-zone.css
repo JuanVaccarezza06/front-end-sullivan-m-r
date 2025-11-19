@@ -1,3 +1,8 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+ 
  .form-grid {
      display: grid;
      grid-template-columns: 1fr 1fr;
@@ -7,7 +12,6 @@
  .form-group {
      display: flex;
      flex-direction: column;
-     gap: 0.5rem;
  }
 
  label {
@@ -19,6 +23,12 @@
  label .required {
      color: #ef4444;
  }
+
+  .p-error {
+  color: rgb(223, 121, 121);
+  font-size: 0.85rem;
+  margin: 0.3rem 0 0 0;
+}
 
  input[type="text"],
  input[type="number"],

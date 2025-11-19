@@ -5,7 +5,7 @@
             <h1>{{!isUpdate ? 'Añadir Nueva Propiedad' : 'Actualizar una propiedad'}}</h1>
             <p class="form-subtitle">Complete los detalles de la nueva propiedad</p>
         </div>
-        <button class="cancel-btn" >✕ Cancelar</button>
+        <button class="cancel-btn" (click)="form.reset()">✕ Cancelar</button>
     </div>
 
     <form id="propertyForm" [formGroup]="form" (submit)="startProcess()">
@@ -17,41 +17,66 @@
                 <div class="form-group">
                     <label>Título de la Propiedad <span class="required">*</span></label>
                     <input type="text" formControlName="title">
+                    @if (form.get('title')?.hasError('required') && form.get('title')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
+                    @else if (form.get('title')?.hasError('minlength') && form.get('title')?.touched ) { <p class="p-error">Este campo tiene un minimo de 10 caracteres</p> }
+                    @else if (form.get('title')?.hasError('maxlength') && form.get('title')?.touched ) { <p class="p-error">Este campo tiene un maximo de 50 caracteres</p> }
+                    @else if (form.get('title')?.hasError('pattern') && form.get('title')?.touched ) { <p class="p-error">El titulo debe tener por lo menos 3 palabras</p> }
                 </div>
 
                 <div class="form-group">
                     <label>Precio <span class="required">*</span></label>
                     <input type="text" formControlName="price" placeholder="€450,000 o €2,500/mes">
+                    @if (form.get('price')?.hasError('required') && form.get('price')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
+                    @else if (form.get('price')?.hasError('min') && form.get('price')?.touched ) { <p class="p-error">Este campo tiene un valor minimo de 1</p> }
+                    @else if (form.get('price')?.hasError('max') && form.get('price')?.touched ) { <p class="p-error">Este campo tiene un valor de 1000000000</p> }
                 </div>
 
                 <div class="form-group">
                     <label>Anio de construccion <span class="required">*</span></label>
                     <input type="number" formControlName="yearConstruction">
+                    @if (form.get('yearConstruction')?.hasError('required') && form.get('yearConstruction')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
+                    @else if (form.get('yearConstruction')?.hasError('min') && form.get('yearConstruction')?.touched ) { <p class="p-error">Este campo tiene un valor minimo de 1</p> }
+                    @else if (form.get('yearConstruction')?.hasError('max') && form.get('yearConstruction')?.touched ) { <p class="p-error">Este campo tiene un valor de 1000000000</p> }
                 </div>
 
                 <div class="form-group">
                     <label>Ambientes <span class="required">*</span></label>
                     <input type="number" formControlName="rooms">
+                    @if (form.get('rooms')?.hasError('required') && form.get('rooms')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
+                    @else if (form.get('rooms')?.hasError('min') && form.get('rooms')?.touched ) { <p class="p-error">Este campo tiene un valor minimo de 1</p> }
+                    @else if (form.get('rooms')?.hasError('max') && form.get('rooms')?.touched ) { <p class="p-error">Este campo tiene un valor de 1000000000</p> }
                 </div>
 
                 <div class="form-group">
                     <label>Habitaciones <span class="required">*</span></label>
                     <input type="number" formControlName="bedrooms">
+                    @if (form.get('bedrooms')?.hasError('required') && form.get('bedrooms')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
+                    @else if (form.get('bedrooms')?.hasError('min') && form.get('bedrooms')?.touched ) { <p class="p-error">Este campo tiene un valor minimo de 1</p> }
+                    @else if (form.get('bedrooms')?.hasError('max') && form.get('bedrooms')?.touched ) { <p class="p-error">Este campo tiene un valor de 1000000000</p> }
                 </div>
 
                 <div class="form-group">
                     <label>Baños <span class="required">*</span></label>
                     <input type="number" formControlName="bathrooms">
+                    @if (form.get('bathrooms')?.hasError('required') && form.get('bathrooms')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
+                    @else if (form.get('bathrooms')?.hasError('min') && form.get('bathrooms')?.touched ) { <p class="p-error">Este campo tiene un valor minimo de 1</p> }
+                    @else if (form.get('bathrooms')?.hasError('max') && form.get('bathrooms')?.touched ) { <p class="p-error">Este campo tiene un valor de 1000000000</p> }
                 </div>
 
                 <div class="form-group">
                     <label>Área total (m²) <span class="required">*</span></label>
                     <input type="number" formControlName="totalArea">
+                    @if (form.get('totalArea')?.hasError('required') && form.get('totalArea')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
+                    @else if (form.get('totalArea')?.hasError('min') && form.get('totalArea')?.touched ) { <p class="p-error">Este campo tiene un valor minimo de 1</p> }
+                    @else if (form.get('totalArea')?.hasError('max') && form.get('totalArea')?.touched ) { <p class="p-error">Este campo tiene un valor de 1000000000</p> }
                 </div>
 
                 <div class="form-group">
                     <label>Área de construccion (m²) <span class="required">*</span></label>
                     <input type="number" formControlName="areaStructure">
+                    @if (form.get('areaStructure')?.hasError('required') && form.get('areaStructure')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
+                    @else if (form.get('areaStructure')?.hasError('min') && form.get('areaStructure')?.touched ) { <p class="p-error">Este campo tiene un valor minimo de 1</p> }
+                    @else if (form.get('areaStructure')?.hasError('max') && form.get('areaStructure')?.touched ) { <p class="p-error">Este campo tiene un valor de 1000000000</p> }
                 </div>
 
                 <!-- ACA ESTA EL ZONE -->
@@ -74,6 +99,7 @@
                         <option value="{{i.operationName}}">{{i.operationName}}</option>
                         }
                     </select>
+                    @if (form.get('operationTypes')?.hasError('required') && form.get('operationTypes')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
                 </div>
 
 
@@ -85,11 +111,15 @@
                         <option value="{{i.typeName}}">{{i.typeName}}</option>
                         }
                     </select>
+                    @if (form.get('propertyTypes')?.hasError('required') && form.get('propertyTypes')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
                 </div>
 
                 <div class="form-group full-width">
                     <label>Descripción <span class="required">*</span></label>
                     <textarea formControlName="description" required></textarea>
+                    @if (form.get('description')?.hasError('required') && form.get('description')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
+                    @else if (form.get('description')?.hasError('minlength') && form.get('description')?.touched ) { <p class="p-error">Este campo tiene un minimo de 30 caracteres</p> }
+                    @else if (form.get('description')?.hasError('maxlength') && form.get('description')?.touched ) { <p class="p-error">Este campo tiene un maximo de 300 caracteres</p> }
                 </div>
 
             </div>
@@ -103,6 +133,7 @@
             <!-- CARACTERISTICAS (Amenity Component) -->
             <app-input-amenities id="component-input-amenities" [group]="form" [startSignal]="startSignal"
                 [isUpdate]="isUpdate" (finishEvent)="onOneChildFinished()"></app-input-amenities>
+                
 
             <!-- IMÁGENES (Images Component) -->
             <app-input-images id="component-input-images" [group]="form" [startSignal]="startSignal"
@@ -113,7 +144,8 @@
         <!-- FOOTER -->
         <div class="form-footer">
             <button type="button" class="btn btn-secondary">Cancelar</button>
-            <button type="submit" class="btn btn-primary" id="submitBtn">Guardar Propiedad</button>
+            <button type="button" class="btn btn-secondary" (click)="cargarValores()">Cargar valores</button>
+            <button type="submit" class="btn btn-primary" id="submitBtn" [disabled]="form.invalid" >Guardar Propiedad</button>
         </div>
     </form>
 </div>
