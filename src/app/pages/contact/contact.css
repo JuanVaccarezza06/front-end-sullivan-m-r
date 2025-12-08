@@ -107,11 +107,15 @@
     transition: all 0.2s;
 }
 
-.btn-submit:hover {
-    background: #047857;
-    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
-}
 
+ .btn-submit:hover:not(:disabled) {
+     background-color: #f5f5f5;
+ }
+
+ .btn-submit:disabled {
+     opacity: 0.5;
+     cursor: not-allowed;
+ }
 .contact-info {
     display: flex;
     flex-direction: column;

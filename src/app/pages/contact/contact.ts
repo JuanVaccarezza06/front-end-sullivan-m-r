@@ -63,8 +63,6 @@ export class Contact {
       }
     };
 
-    console.log(this.generalInquiry)
-
     this.contactService.post(this.generalInquiry).subscribe({
       next: (data) => console.log(data),
       error: (e) => console.log(e)

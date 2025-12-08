@@ -55,7 +55,7 @@
             @else if (formulario.get('description')?.hasError('minlength') && formulario.get('description')?.touched ) { <p class="p-error">La descripcion debe tener al menos 10 caracteres</p> }
             @else if (formulario.get('description')?.hasError('maxlength') && formulario.get('description')?.touched ) { <p class="p-error">La descripcion debe tener un maximo de 2000 caracteres</p> }
 
-            <button type="submit" class="btn-submit">Enviar Mensaje</button>
+            <button type="submit" class="btn-submit" [disabled]="formulario.invalid" >Enviar Mensaje</button>
         </form>
 
         <div class="right-column">

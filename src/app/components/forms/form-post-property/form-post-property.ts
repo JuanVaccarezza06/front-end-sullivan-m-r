@@ -91,11 +91,6 @@ export class FormPostProperty implements OnInit {
         Validators.min(0),
         Validators.max(1000000000)]
       ],
-      publicationDate: ['', [
-        Validators.required,
-        Validators.min(0),
-        Validators.max(3000)]
-      ], // Usar un Date picker o formato string
       yearConstruction: ['', [
         Validators.required,
         Validators.min(0),
@@ -132,23 +127,19 @@ export class FormPostProperty implements OnInit {
 
       zone: ['', [
         Validators.required,
-        Validators.minLength(2),
-        Validators.maxLength(50)]
+        Validators.minLength(2)]
       ],
       city: ['', [
         Validators.required,
-        Validators.minLength(2),
-        Validators.maxLength(50)]
+        Validators.minLength(2)]
       ],
       province: ['', [
         Validators.required,
-        Validators.minLength(2),
-        Validators.maxLength(50)]
+        Validators.minLength(2)]
       ],
       country: ['', [
         Validators.required,
-        Validators.minLength(2),
-        Validators.maxLength(50)]
+        Validators.minLength(2)]
       ],
 
       mainStreet: ['', [
@@ -298,8 +289,27 @@ export class FormPostProperty implements OnInit {
       next: (data) => console.log(data),
       error: (e) => console.log(e)
     })
+  }
 
 
+  private mostrarErroresFormulario(form: FormGroup): void {
+    Object.keys(form.controls).forEach(key => {
+      const control = form.get(key);
+
+      // 1. Si es un sub-grupo (FormGroup anidado), llamar recursivamente
+      if (control instanceof FormGroup) {
+        this.mostrarErroresFormulario(control);
+      }
+      // 2. Si es un control simple y es inválido
+      if (control?.invalid) {
+        console.log(`🔥 Campo inválido: [${key}]`);
+        console.log(`   Tipo de error:`, control.errors);
+
+        // 3. Forzar la validación visual en el HTML
+        control.markAsTouched();
+        control.markAsDirty();
+      }
+    });
   }
 
   cargarForm() {
@@ -403,8 +413,14 @@ export class FormPostProperty implements OnInit {
       surname: 'Rodriguez',
       email: 'juan.prueba@gmail.com',
       numberPhone: 5492235559999, // Cumple el pattern con + y espacios
-    
+
     }
     this.form.patchValue(result)
+    if (this.form.invalid) {
+      console.warn('⚠️ El formulario no es válido. Revisa la consola:');
+
+      // LLAMAS AL MÉTODO AQUÍ
+      this.mostrarErroresFormulario(this.form);
+    }
   }
 }
