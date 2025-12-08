@@ -1,9 +1,10 @@
 <main class="home">
 
+  <!-- message if it come from login/register -->
   <section class="hero">
-    @if (isLogged) {
+    @if (isFromLogin) {
     <div class="message-box">
-      <h1 class="message-log">{{mensajeExito}}</h1>
+      <h1 class="message-log">{{sucessMessage}}</h1>
     </div>
     }
 
@@ -20,7 +21,49 @@
 
   <section class="search-section">
     <h2>Encuentra tu propiedad ideal</h2>
-    <app-filter-home></app-filter-home>
+
+    <!-- Here starts the filter-->
+
+    <form class="search-form" [formGroup]="form" (submit)="makeFilter()">
+
+      <fieldset class="form-group">
+        <label for="operation">Tipo de Operación</label>
+        <select id="operation" formControlName="operationTypes">
+          <option value="" disabled selected>-- Selecciona un tipo --</option>
+          @for (ot of operationTypeArray; track $index ){
+          <option>{{ot.operationName}}</option>
+          }
+        </select>
+      </fieldset>
+
+      <fieldset class="form-group">
+        <label for="property-type">Tipo de Propiedad</label>
+        <select id="property-type" formControlName="propertyTypes">
+          <option value="" disabled selected>-- Selecciona un tipo --</option>
+          @for (pt of propertyTypesArray; track $index) {
+          <option>{{pt.typeName}}</option>
+          }
+        </select>
+      </fieldset>
+
+      <fieldset class="form-group">
+        <label for="location">Ubicación</label>
+        <select id="location" formControlName="zone">
+          <option value="" disabled selected>-- Selecciona un tipo --</option>
+          @for (z of zoneArray; track $index) {
+          <option [ngValue]="z">
+            {{z.zoneName}},
+            {{z.cityDTO.cityName}},
+            {{z.cityDTO.provinceDTO.provinceName}},
+            {{z.cityDTO.provinceDTO.countryDTO.countryName}}
+          </option>
+          }
+        </select>
+      </fieldset>
+
+      <button [disabled]="form.invalid" type="submit" class="btn-search">Buscar</button>
+    </form>
+
   </section>
 
   <section class="featured-section">
@@ -31,7 +74,7 @@
     <div class="properties-grid">
 
       @for (p of propertiesfeature; track p.id) {
-      <div class="card" (click)="goToDetail(p)">
+      <div class="card" (click)="viewDetail(p)">
         <div class="image">
           <img class="property-img" src="{{p.mainImage}}" alt="property">
           <span class="badge">{{p.operationTypeDTO.operationName}}</span>

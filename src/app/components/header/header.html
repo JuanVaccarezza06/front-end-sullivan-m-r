@@ -24,11 +24,11 @@
         @if(isAdmin()){
         <button type="button" class="cta" routerLink="admin/form-post">Administracion</button>
         }
-      <button type="button" class="cta" (click)="logOut()">Log out</button>
+      <button type="button" class="cta" (click)="logOut()">Cerrar sesion</button>
 
       }@else {
-      <button type="button" class="cta" routerLink="log-in">Log in</button>
-      <button type="button" class="cta" routerLink="register">Register</button>
+      <button type="button" class="cta" routerLink="log-in">Iniciar sesion</button>
+      <button type="button" class="cta" routerLink="register">Registrarse</button>
       }
 
 
