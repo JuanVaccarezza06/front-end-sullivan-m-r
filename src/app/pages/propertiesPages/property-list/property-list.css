@@ -87,7 +87,6 @@
            flex: 1;
            font-size: 14px;
        }
-
        .filter-input input::placeholder {
            color: #999;
        }
@@ -109,14 +108,11 @@
        .table-container {
            background-color: white;
            border-radius: 8px;
-           overflow-y: auto;
-           max-height:60%;
            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
        }
 
        table {
            width: 100%;
-           border-collapse: collapse;
        }
 
        thead {
@@ -258,7 +254,6 @@
            width: 18px;
            height: 18px;
        }
-
        /* Navegación de páginas */
        .pagination {
            display: flex;

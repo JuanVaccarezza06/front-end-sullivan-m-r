@@ -10,7 +10,6 @@ html,
 body {
   width: 100%;
 }
-
 /* Main contenetor */
 .home {
   min-width: 100%;
@@ -217,7 +216,6 @@ fieldset {
   transform: none;
   box-shadow: none;
 }
-
 .btn-search:disabled:hover {
   background: #9ca3af;
   transform: none;

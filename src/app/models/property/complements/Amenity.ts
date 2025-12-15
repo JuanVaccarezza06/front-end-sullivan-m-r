@@ -1,3 +1,4 @@
 export default interface Amenity{   
-      amenityName: string;
+      amenityName: string
+      isFeatured: boolean
 }

@@ -98,7 +98,6 @@ export class InputAmenities implements OnInit, OnChanges {
           error: (e) => console.log(e)
         })
     } else return
-
   }
 
   setAmenitiesWithFrom() {
@@ -113,7 +112,8 @@ export class InputAmenities implements OnInit, OnChanges {
       const amenities = this.group.get('amenities')?.value as Amenity[]
       amenities.forEach(value => {
         this.amenitiesLoad.push({
-          amenityName: value.amenityName
+          amenityName: value.amenityName,
+          isFeatured: value.isFeatured
         })
       })
 

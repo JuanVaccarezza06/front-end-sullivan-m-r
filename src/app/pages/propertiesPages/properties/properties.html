@@ -1,102 +1,319 @@
-<section class="hero">
-  <div class="hero-content">
-    <h1>Nuestras Propiedades</h1>
-    <p>Descubre nuestra selección de propiedades con auténtico carácter irlandés. Cada hogar ha sido cuidadosamente
-      seleccionado para ofrecerte lo mejor en confort, diseño y ubicación.</p>
-  </div>
-</section>
-
 <!-- Main Content -->
 <div class="container">
-  <!-- Propiedades -->
+
+  <!-- This if checks if the page is in edit/config mode -->
+
+  @if (!isConfig) {
+
   <main class="content">
+
+    <!-- Header from properties -->
     <div class="content-header">
       <div class="filter-info">
         @if (isFilter) {
         <div class="header-properties">
           <p>Propiedades que cumplen con el filtro aplicado recientemente</p>
-          <button (click)="onResetClick()" class="btn-link" style="display:none;">Limpiar filtro</button>
+          <button class="btn-link" (click)="clearFilter()">Limpiar filtro</button>
         </div>
         }
         @else { <p>Mostrando {{numberOfPropertiesLoadInArray}} propiedades</p> }
       </div>
 
+      <!-- Pagination section into header properties-->
       <div class="pagination pagination--minimal">
         <button class="pagination__button" id="prevBtn2" (click)="changePage(false)">
           ‹
         </button>
         <span class="pagination__info">
-          Página <span>{{pageSelected}}</span> de <span >{{lastPage}}</span>
+          Página <span>{{pageSelected}}</span> de <span>{{lastPage}}</span>
         </span>
         <button class="pagination__button" id="nextBtn2" (click)="changePage(true)">
           ›
         </button>
       </div>
+
     </div>
 
+    <!-- Properties section -->
     <div class="grid">
+      @if (!isFilterFailed) {
+
 
       @for (p of properties; track p.id) {
-      <!-- Card 1 -->
+      <!-- Cards -->
       <article class="card" (click)="goToDetail(p)">
-        <div class="card-image">
+
+        <div class="card-image"> <!-- Image box -->
           <img [src]="p.mainImage" alt="Propiedad en venta">
           <span class="badge">{{p.operationTypeDTO.operationName}}</span>
         </div>
-        <div class="card-body">
-          <h2>{{p.title}}</h2>
-          <div class="location">
+
+        <div class="card-body"> <!-- Body card -->
+          <h2>{{p.title}}</h2> <!-- Title -->
+          <div class="location"> <!-- Zone box -->
             <svg width="16" height="16" fill="#0d9e6d" viewBox="0 0 20 20">
               <path fill-rule="evenodd"
                 d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" />
             </svg>
             <span>{{p.zoneDTO.zoneName}}</span>
           </div>
-          <p>{{p.description}}</p>
-          <div class="card-footer">
-            <div class="price">${{p.price}}</div>
-            <div class="features">
-              <div class="feature">
+
+          <p>{{p.description}}</p> <!-- Description -->
+
+          <div class="card-footer"> <!-- Footer card -->
+
+            <div class="price">${{p.price}}</div> <!-- Price -->
+
+            <div class="features"> <!-- Feature box -->
+              <div class="feature"> <!-- Rooms box -->
                 <svg width="20" height="20" fill="#0d9e6d" viewBox="0 0 20 20">
                   <path
                     d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
                 </svg>
                 <span>{{p.rooms}}</span>
               </div>
-              <div class="feature">
+
+              <div class="feature"> <!-- Bathroom box -->
                 <svg width="20" height="20" fill="#0d9e6d" viewBox="0 0 20 20">
                   <path
                     d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
                 </svg>
                 <span>{{p.bathrooms}}</span>
               </div>
+
             </div>
           </div>
         </div>
       </article>
       }
+      }@else { <p>No existen coincidencias con ese filtro!</p> }
+
     </div>
+
   </main>
+  }@else {
+  <!-- ======== HERE STARTS THE AMENITY CONFIG HTML ======== -->
 
-  <!-- Filtros Sidebar -->
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <h2>Filtros</h2>
-      <button type="button" class="btn-link" (click)="onResetClick()">Limpiar filtros</button>
+  <div class="admin-panel"> <!-- Contenetor box -->
+
+    <div class="admin-header"> <!-- Header box -->
+
+      <div class="header-text">
+        <h2>{{isZoneConfig ? 'Configuración de Zonas' : 'Configuración de Amenities'}}</h2>
+        <p>{{isZoneConfig ? 'Gestiona qué zonas aparecen destacadas en el los filtros.' : 'Gestiona qué características
+          aparecen destacadas en el los filtros.'}}</p>
+      </div>
+
+      <div class="header-stats">
+        @if (isZoneConfig) { <button class="btn-edit" (click)="isZoneConfig=false">Configurar Amenities</button> }
+        @if (!isZoneConfig) { <button class="btn-edit" (click)="isZoneConfig=true">Configurar Zonas</button> }
+        <div class="stat-item"> <!-- Featured box -->
+          <span class="stat-label">Destacadas</span>
+          <span class="stat-value highlight">
+            {{featuredCount()}}
+          </span>
+        </div>
+        <div class="stat-divider"></div> <!-- Divider box -->
+
+        <div class="stat-item"> <!-- Total box -->
+          <span class="stat-label">Total</span>
+          <span class="stat-value">{{amenitiesArray.length}}</span>
+        </div>
+      </div>
+
     </div>
 
-    <app-filter-properties-page 
-    class="filter-form" 
-    [resetTrigger]="resetFilters"
-    (thereIsFilter)="loadFilterProperties($event)" 
-    (filterClean)="loadProperties()">
-    </app-filter-properties-page>
+    <div class="admin-toolbar"> <!-- Search amenity box -->
+      <div class="search-wrapper" [formGroup]="form">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" placeholder="Buscar amenity..." class="search-input"
+          formControlName="controlToSearchAmenity">
+        <button type="submit" class="btn-search" (click)="findAmenityByName()"
+          [disabled]="form.get('controlToSearchAmenity')?.invalid">Buscar</button>
+        <button type="submit" class="btn-search" (click)="clearSearch()"
+          [disabled]="form.get('controlToSearchAmenity')?.invalid && form.get('controlToSearchAmenity')?.touched">Limpiar</button>
+      </div>
+    </div>
+    <div class="table-container">
+      <table class="amenities-table"> <!-- Table body -->
+        <thead> <!-- Header from table -->
+          <tr>
+            <th>Nombre</th> <!-- Header table items -->
+            <th>Eliminar</th>
+            <th>Destacado</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @if (isAmenitySearch && !isAmenityNotCoincidence) {
+          <tr>
+            <td class="col-name">{{amenityFound.amenityName}}</td>
+            <td class="col-name">
+              <button (click)="deleteAmenity(amenityFound)" class="icon-btn icon-delete">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </td>
+            <td class="text-center">
+              <div class="toggle-switch">
+                <input type="checkbox" id="toggle1" checked>
+                <label for="toggle1"></label>
+              </div>
+            </td>
+          </tr>
+          }
+          @else if(isAmenitySearch && isAmenityNotCoincidence) {
+          <p>No hay coincidencias</p>
+          }
+
+          @if(!amenitiesArray || amenitiesArray.length === 0){
+          <p>No hay amenities disponibles</p>
+          }@else if(!isAmenitySearch) {
+          @for (item of amenitiesArray; track $index) {
+          <tr>
+            <td class="col-name">{{item.amenityName}}</td>
+            <td class="col-name">
+              <button (click)="deleteAmenity(item)" class="icon-btn icon-delete">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </td>
+            <td class="text-center">
+              <div class="toggle-switch">
+                <input type="checkbox" [id]="'toggle-' + $index" [checked]="item.isFeatured"
+                  (change)="addIntoFeaturedArray(item, $event)">
+
+                <label [for]="'toggle-' + $index"></label>
+              </div>
+            </td>
+          </tr>
+          }
+          }
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+  }
+
+  <aside class="sidebar"> <!-- Aside conteiner -->
+    <div class="sidebar-header"> <!-- Aside header -->
+      <h2>Filtros</h2>
+      <div>
+        <button type="button" class="btn-link" (click)="clearFilter()">Limpiar filtros</button>
+        <!-- Clean filter button -->
+        @if (!isConfig) { <!-- Button edit page (into if) -->
+        <button type="button" class="btn-edit" (click)="isConfig=true">Editar</button>
+        }@else { <button type="button" class="btn-edit" (click)="updateAmenities()">Guardar</button> }
+      </div>
+    </div>
+
+    <form class="filter-form" [formGroup]="form">
+
+      <fieldset> <!-- Type operation fieldset -->
+        <legend>Tipo de operación</legend>
+        <div class="form-group">
+          <select id="operation-type" formControlName="operationTypes">
+            <option value="" disabled selected>Seleccionar operación</option>
+            @for (operation of operationTypesArray; track $index) {
+            <option [ngValue]="operation.operationName">{{operation.operationName}}</option>
+            }
+          </select>
+        </div>
+      </fieldset>
+
+      <fieldset> <!-- Type property fieldset -->
+        <legend>Tipo de Propiedad</legend>
+        <div class="form-group">
+          <select id="property-type" formControlName="propertyTypes">
+            <option value="" disabled selected>Seleccionar tipo</option>
+            @for (type of propertyTypesArray; track $index) {
+            <option>{{type.typeName}}</option>
+            }
+          </select>
+        </div>
+      </fieldset>
+
+      <fieldset> <!-- Zone fieldset -->
+        <legend>Zona</legend>
+        <div class="form-group">
+          <select id="zone" formControlName="zone">
+            <option value="" disabled selected>Seleccionar zona</option>
+            @for (z of zoneArray; track $index) {
+            <option [ngValue]="z">
+              {{z.zoneName}}, {{z.cityDTO.cityName}},
+              {{z.cityDTO.provinceDTO.provinceName}},
+              {{z.cityDTO.provinceDTO.countryDTO.countryName}}
+            </option>
+            }
+          </select>
+        </div>
+      </fieldset>
+
+      <fieldset> <!-- Price range fieldset -->
+        <legend>Rango de precio</legend>
+        <div class="price-grid">
+          <div class="form-group">
+            <label for="minPrice">Mínimo</label>
+            <select id="minPrice" formControlName="minPrice">
+              <option value="0">€0</option>
+              <option value="50000">€50,000</option>
+              <option value="100000">€100,000</option>
+              <option value="200000">€200,000</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="maxPrice">Máximo</label>
+            <select id="maxPrice" formControlName="maxPrice">
+              <option value="0">Sin límite</option>
+              <option value="200000">€200,000</option>
+              <option value="500000">€500,000</option>
+              <option value="1000000">€1,000,000</option>
+            </select>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset> <!-- Room fieldset -->
+        <legend>Ambientes</legend>
+        <div class="rooms">
+          @for (num of numberRooms; track $index) {
+          <button type="button" [class.seleccionado]="num === numberRoomsSelect"
+            (click)="setRoomsValuee(num)">{{num}}+</button>
+          }
+        </div>
+      </fieldset>
+
+      <fieldset formArrayName="amenities"> <!-- Amenities fieldset -->
+        <legend>Características</legend>
+        <div class="amenities">
+          @for (am of amenitiesArrayFeatured; track $index) {
+          <label class="checkbox-label">
+            <input type="checkbox" [formControlName]="$index">
+            <span>{{ am.amenityName }}</span>
+          </label>
+          }
+        </div>
+      </fieldset>
+
+      <button type="submit" class="btn-primary" (click)="onSumbit()">Aplicar filtros</button>
+    </form>
   </aside>
+
 </div>
 
 <!-- CTA -->
-<section class="cta">
+<section class="cta"> <!-- Second footer fieldset -->
   <h2>¿No encuentras lo que buscas?</h2>
   <p>Contacta con nuestro equipo de expertos y te ayudaremos a encontrar la propiedad perfecta para ti.</p>
   <button class="btn-cta" routerLink="/contact">Contactar ahora</button>
 </section>
+

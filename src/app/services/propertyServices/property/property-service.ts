@@ -20,13 +20,15 @@ export class PropertyService {
 
   readonly TOKEN_KEY = "token"
 
+  readonly size = 8
+
   constructor(
     private http: HttpClient,
     private authService: AuthService
   ) { }
 
   getAll(page: number): Observable<PageResponse<Property>> {
-    return this.http.get<PageResponse<Property>>(`${this.API_URL}/find-all?page=${page}&size=8`);
+    return this.http.get<PageResponse<Property>>(`${this.API_URL}/find-all?page=${page}&size=${this.size}`);
   }
 
   getFeaturedProperties() {
@@ -49,17 +51,17 @@ export class PropertyService {
     return this.http.get<Amenity[]>(`${this.API_URL}/available-amenities`);
   }
 
-  applyFilter(filter: PropertiesFilter) {
-    return this.http.post<Property[]>(`${this.API_URL}/filter`, filter);
+  applyFilter(filter: PropertiesFilter, page: number) {
+    return this.http.post<PageResponse<Property>>(`${this.API_URL}/filter?page=${page}&size=${this.size}`, filter);
   }
 
   post(property: PropertyPost) {
 
     const token = localStorage.getItem(this.TOKEN_KEY)
-    if (!token){
+    if (!token) {
       console.error("Token no existente")
       return
-    } 
+    }
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -72,11 +74,11 @@ export class PropertyService {
 
   }
 
-  put(property: PropertyPost) :Observable<PropertyPost>{
+  put(property: PropertyPost): Observable<PropertyPost> {
 
     const token = localStorage.getItem(this.TOKEN_KEY)
-    if (!token)throw new Error("Token no existente")
-    
+    if (!token) throw new Error("Token no existente")
+
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -89,7 +91,7 @@ export class PropertyService {
 
   }
 
-  delete(property: Property)  {
+  delete(property: Property) {
 
     const token = localStorage.getItem(this.TOKEN_KEY)
     if (!token) throw new Error("No existe un token")
@@ -105,7 +107,7 @@ export class PropertyService {
       alert("Property nula. Delete fallido.")
       throw new Error("Property NULL")
     }
-    
+
 
   }
 }

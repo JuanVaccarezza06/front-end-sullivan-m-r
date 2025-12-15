@@ -148,12 +148,23 @@ export class Home implements OnInit {
       amenityDTOList: []
     } as PropertiesFilter
 
-
-    this.service.applyFilter(filterResult).subscribe({
+    this.service.applyFilter(filterResult, 0).subscribe({
       next: (data) => {
-        this.router.navigate(['properties'], {
-          state: { filterHomeArray: data }
-        })
+        if (data.content?.length > 0 && data.first) {
+          console.log(data)
+          this.router
+          .navigate
+          (
+            ['properties'], 
+            { state: { homeResponse: data }}
+          )
+        } else {
+          this.router
+          .navigate(
+            ['properties'], 
+            { state: { homeResponse: false }}
+        )
+        }
       },
       error: (e) => console.log(e)
     })
