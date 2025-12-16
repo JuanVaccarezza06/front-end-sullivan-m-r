@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, NgZone, OnInit } from '@angular/core';
 import Property from '../../../models/property/Property';
 import { PropertyService } from '../../../services/propertyServices/property/property-service';
 import { ImgBbService } from '../../../services/propertyServices/imgBB/img-bb-service';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import Amenity from '../../../models/property/complements/Amenity';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import ZoneDTO from '../../../models/property/geography/Zone';
@@ -14,7 +14,7 @@ import { AmenityService } from '../../../services/propertyServices/amenity/ameni
 
 @Component({
   selector: 'app-properties',
-  imports: [RouterLink, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './properties.html',
   styleUrl: './properties.css'
 })
@@ -33,7 +33,7 @@ export class Properties implements OnInit {
   amenityFound!: Amenity
 
   // With those variables i can take control about the number rooms!
-  numberRooms: number[] = [1, 2, 3, 4]
+  numberRooms: number[] = [1, 2, 3, 4, 5]
   numberRoomsSelect!: number
 
   // Variables for check if it is an edit page and if it is a filter
@@ -86,11 +86,6 @@ export class Properties implements OnInit {
     else if (homeResponseIntoConst === false) {
       this.isFilterFailed = true;
       this.isFilter = true;
-
-      // setTimeout(() => {
-      //   this.isFilterFailed = false;
-      //   this.loadProperties();
-      // }, 3000);
     }
     else {
       const response = homeResponseIntoConst as PageResponse<Property>
@@ -159,13 +154,11 @@ export class Properties implements OnInit {
       next: (data) => {
         this.amenitiesArray = data;
 
-        // It is a control form array, by every amenitie, will create an control in false.
-        // The result is an form control with false, once false by amenitie.
-        const amenityControls = this.amenitiesArray.map(() => this.fb.control(false));
-
-        // The form array is setting into de form array from form group.
-        this.form.setControl('amenities', this.fb.array(amenityControls));
         this.amenitiesArrayFeatured = this.amenitiesArray.filter(value => value.isFeatured)
+
+        const amenityControls = this.amenitiesArrayFeatured.map(() => this.fb.control(false));
+
+        this.form.setControl('amenities', this.fb.array(amenityControls));
       },
       error: (e) => console.log(e)
     });
@@ -200,7 +193,7 @@ export class Properties implements OnInit {
       minPrice: 0,
       maxPrice: 0,
       rooms: 0,
-      amenities: this.amenitiesArray.map(() => false)
+      amenities: this.amenitiesArrayFeatured.map(() => false)
     });
     this.resetPageInfo()
 
@@ -259,11 +252,7 @@ export class Properties implements OnInit {
     });
   }
 
-  featuredCount(): number {
-    return this.amenitiesArray?.filter(a => a.isFeatured).length || 0;
-  }
-
-  setRoomsValuee(value: number) {
+  setRoomsValue(value: number) {
     this.form.get('rooms')?.setValue(value);
     this.numberRoomsSelect = value
   }
@@ -356,13 +345,22 @@ export class Properties implements OnInit {
 
   onSumbit() {
 
+    console.log("Inputs (checkboxes)")
+    console.log(this.form.get('amenities')?.value)
+
+    console.log("Amenities array featured")
+    console.log(this.amenitiesArrayFeatured)
+
     // It get a boolean array, order by the original values from the amenitiesArray
     const selectedBooleans: boolean[] = this.form.get('amenities')?.value;
     // It transform or parse the booleans to amenity real info. So easy but complex
-    let selectedAmenitiesDTO: Amenity[] = this.amenitiesArray
+    let selectedAmenitiesDTO: Amenity[] = this.amenitiesArrayFeatured
       .filter((amenity, index) => selectedBooleans[index]);
 
     selectedAmenitiesDTO ??= [];
+
+    console.log("Selected amenities")
+    console.log(selectedAmenitiesDTO)
 
     let zoneValue = this.form.get('zone')?.value as ZoneDTO;
 
@@ -410,15 +408,23 @@ export class Properties implements OnInit {
     this.resetPageInfo()
     this.isFilter = true;
 
+    console.log(this.filterResult)
+
     this.propertyService.applyFilter(this.filterResult, this.pageSelected).subscribe({
       next: (data) => {
-        this.lastPage = data.totalPages - 1
-        this.pageSelected = data.number
-        this.properties = data.content
-        this.numberOfPropertiesLoadInArray = this.properties.length
-        this.properties.forEach((value) => this.choiceMainImage(value))
-        console.log("Properties load from onSumbit")
-        console.log(data)
+
+        if (data.content?.length > 0 && data.first) {
+          this.lastPage = data.totalPages - 1
+          this.pageSelected = data.number
+          this.properties = data.content
+          this.numberOfPropertiesLoadInArray = this.properties.length
+          this.properties.forEach((value) => this.choiceMainImage(value))
+          console.log("Properties load from onSumbit")
+          console.log(data)
+        } else {
+          this.isFilterFailed = true;
+          this.isFilter = true;
+        }
       },
       error: (e) => console.log(e)
     });
@@ -448,8 +454,8 @@ export class Properties implements OnInit {
       if (this.featured[index].isFeatured !== isChecked) {
         this.featured[index] = item;
       }
-    }else this.featured.push(item);
-    
+    } else this.featured.push(item);
+
   }
 
   updateAmenities(): void {
@@ -457,6 +463,8 @@ export class Properties implements OnInit {
       next: (data) => {
         console.log("Salio todo bien")
         console.log(data)
+        this.isConfig = false
+        this.loadAmenities()
       },
       error: (e) => {
         console.log(e)

@@ -29,6 +29,7 @@ export class PropertyDetail implements OnInit {
 
   ngOnInit(): void {
 
+
     this.formInitializer()
 
     const state = this.router.lastSuccessfulNavigation?.extras?.state as { propertyData: Property };
@@ -39,6 +40,7 @@ export class PropertyDetail implements OnInit {
       this.propertySelected = state.propertyData;
       this.choiceMainImage(this.propertySelected)
     }
+    console.log(this.propertySelected)
 
   }
 
@@ -71,7 +73,7 @@ export class PropertyDetail implements OnInit {
       surname: surname, // completar si tenés el campo
       email: this.form.value.email,
       numberPhone: this.form.value.numberPhone.trim()
-      
+
     };
 
     console.log(result)

@@ -1,13 +1,25 @@
+<!-- Header property generic -->
+
+@if (!isConfig) {
+<section class="propiedades-header">
+  <div class="propiedades-content">
+    <h1 class="propiedades-titulo">Nuestras Propiedades</h1>
+    <p class="propiedades-descripcion">Descubre nuestra selección de propiedades con auténtico carácter irlandés. Cada
+      hogar ha sido cuidadosamente seleccionado para ofrecerte lo mejor en confort, diseño y ubicación.</p>
+  </div>
+</section>
+}
+
 <!-- Main Content -->
+
 <div class="container">
-
-  <!-- This if checks if the page is in edit/config mode -->
-
-  @if (!isConfig) {
+  
+  @if (!isConfig) { <!-- This if checks if the page is in edit/config mode -->
 
   <main class="content">
 
-    <!-- Header from properties -->
+    @if (!isFilterFailed) {
+    <!-- Header from properties section -->
     <div class="content-header">
       <div class="filter-info">
         @if (isFilter) {
@@ -16,7 +28,7 @@
           <button class="btn-link" (click)="clearFilter()">Limpiar filtro</button>
         </div>
         }
-        @else { <p>Mostrando {{numberOfPropertiesLoadInArray}} propiedades</p> }
+        @else { <p>Se estan mostrando {{numberOfPropertiesLoadInArray}} propiedades</p> }
       </div>
 
       <!-- Pagination section into header properties-->
@@ -33,11 +45,10 @@
       </div>
 
     </div>
-
+    }
     <!-- Properties section -->
     <div class="grid">
       @if (!isFilterFailed) {
-
 
       @for (p of properties; track p.id) {
       <!-- Cards -->
@@ -86,7 +97,31 @@
         </div>
       </article>
       }
-      }@else { <p>No existen coincidencias con ese filtro!</p> }
+      }@else { <!-- If the filter is empty, will show this -->
+      <div class="empty-state"> <!-- Empty box container -->
+        <div class="empty-icon-container">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" 
+            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+            class="search-icon-anim">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg> <!-- This if checks if the page is in edit/config mode -->
+        </div>
+
+        <h3>No encontramos propiedades</h3>
+        <p>Intenta ajustar los filtros o reinicia la búsqueda para ver más opciones.</p>
+
+        <button class="btn-reload" (click)="clearFilter()">  <!-- Button for come back to properties -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 4v6h-6"></path>
+            <path d="M1 20v-6h6"></path>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+          Ver todas las propiedades
+        </button>
+      </div>
+      }
 
     </div>
 
@@ -100,17 +135,19 @@
 
       <div class="header-text">
         <h2>{{isZoneConfig ? 'Configuración de Zonas' : 'Configuración de Amenities'}}</h2>
-        <p>{{isZoneConfig ? 'Gestiona qué zonas aparecen destacadas en el los filtros.' : 'Gestiona qué características
+        <p>{{isZoneConfig ? 'Gestiona qué zonas aparecen destacadas en los filtros.' : 'Gestiona qué características
           aparecen destacadas en el los filtros.'}}</p>
       </div>
 
-      <div class="header-stats">
-        @if (isZoneConfig) { <button class="btn-edit" (click)="isZoneConfig=false">Configurar Amenities</button> }
-        @if (!isZoneConfig) { <button class="btn-edit" (click)="isZoneConfig=true">Configurar Zonas</button> }
+      <div class="header-stats"> <!-- Buttons to change between zone and amenitie config -->
+        @if (isZoneConfig) { <button class="btn-edit btn-change-config" (click)="isZoneConfig=false">Configurar
+          Amenities</button> }
+        @if (!isZoneConfig) { <button class="btn-edit  btn-change-config" (click)="isZoneConfig=true">Configurar
+          Zonas</button> }
         <div class="stat-item"> <!-- Featured box -->
           <span class="stat-label">Destacadas</span>
           <span class="stat-value highlight">
-            {{featuredCount()}}
+            {{amenitiesArrayFeatured.length}}
           </span>
         </div>
         <div class="stat-divider"></div> <!-- Divider box -->
@@ -122,6 +159,8 @@
       </div>
 
     </div>
+
+    @if (!isZoneConfig) {
 
     <div class="admin-toolbar"> <!-- Search amenity box -->
       <div class="search-wrapper" [formGroup]="form">
@@ -136,6 +175,9 @@
           [disabled]="form.get('controlToSearchAmenity')?.invalid">Buscar</button>
         <button type="submit" class="btn-search" (click)="clearSearch()"
           [disabled]="form.get('controlToSearchAmenity')?.invalid && form.get('controlToSearchAmenity')?.touched">Limpiar</button>
+      
+        <h3 class="error-message">Hubo un error</h3>
+
       </div>
     </div>
     <div class="table-container">
@@ -200,9 +242,11 @@
         </tbody>
       </table>
     </div>
+    }
 
   </div>
   }
+
 
   <aside class="sidebar"> <!-- Aside conteiner -->
     <div class="sidebar-header"> <!-- Aside header -->
@@ -286,8 +330,9 @@
         <legend>Ambientes</legend>
         <div class="rooms">
           @for (num of numberRooms; track $index) {
-          <button type="button" [class.seleccionado]="num === numberRoomsSelect"
-            (click)="setRoomsValuee(num)">{{num}}+</button>
+          <button type="button" [class.active]="numberRoomsSelect === num" (click)="setRoomsValue(num)">
+            {{num}}+
+          </button>
           }
         </div>
       </fieldset>
@@ -304,16 +349,19 @@
         </div>
       </fieldset>
 
-      <button type="submit" class="btn-primary" (click)="onSumbit()">Aplicar filtros</button>
+      <button type="submit" class="btn-submit" (click)="onSumbit()">Aplicar filtros</button>
     </form>
   </aside>
 
 </div>
 
-<!-- CTA -->
-<section class="cta"> <!-- Second footer fieldset -->
-  <h2>¿No encuentras lo que buscas?</h2>
-  <p>Contacta con nuestro equipo de expertos y te ayudaremos a encontrar la propiedad perfecta para ti.</p>
-  <button class="btn-cta" routerLink="/contact">Contactar ahora</button>
-</section>
 
+<section class="cta-contacto-section"> <!-- Footer from page -->
+  <svg class="star-icon" width="64" heigth="64" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path fill="white" d="M12 2 Q 15 9 22 12 Q 15 15 12 22 Q 9 15 2 12 Q 9 9 12 2 z" />
+  </svg>
+  <h2 class="cta-titulo">¿No encuentras lo que buscas?</h2>
+  <p class="cta-descripcion">Contacta con nuestro equipo de expertos y te ayudaremos a encontrar la propiedad perfecta
+    para ti.</p>
+  <a href="contact" class="cta-boton">Contactar ahora</a>
+</section>
