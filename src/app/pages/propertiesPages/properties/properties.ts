@@ -60,6 +60,8 @@ export class Properties implements OnInit {
 
   featured: Amenity[] = []
 
+  errorMessage: string = ''
+  errorSignal: boolean = false
 
   constructor(
     private propertyService: PropertyService,
@@ -259,79 +261,20 @@ export class Properties implements OnInit {
 
   findAmenityByName() {
 
-    this.isAmenitySearch = true
-
-    console.log("Principio del find by...")
-    console.log("1ero es 'isSearch' y el 2do es 'isAmenityNotCoincidence'")
-    console.log(this.isAmenitySearch)
-    console.log(this.isAmenityNotCoincidence)
-
-    console.log("Este es isConfig")
-    console.log(this.isConfig)
-
-    console.log("1ero es 'isFilter' y el 2do es 'isFilterFailed'")
-    console.log(this.isFilter)
-    console.log(this.isFilterFailed)
-
-    console.log("Valor de controlToSearchAmenity")
-    console.log(this.form.get('controlToSearchAmenity')?.value)
     const amenityName = this.form.get('controlToSearchAmenity')?.value
     this.amenityService.getAmenityByName(amenityName).subscribe({
       next: (data) => {
         this.amenityFound = data
         this.isAmenitySearch = true
-
-        console.log("\n\nEstamos en el next.")
-        console.log("1ero es 'isSearch' y el 2do es 'isAmenityNotCoincidence'")
-        console.log(this.isAmenitySearch)
-        console.log(this.isAmenityNotCoincidence)
-
-        console.log("Este es isConfig")
-        console.log(this.isConfig)
-
-        console.log("1ero es 'isFilter' y el 2do es 'isFilterFailed'")
-        console.log(this.isFilter)
-        console.log(this.isFilterFailed)
-
-        console.log("Valor del data!!!")
-        console.log(data)
       },
       error: (e) => {
         this.isAmenityNotCoincidence = true;
-
-        console.log("\n\nEstamos en el error (antes del clear search!.")
-        console.log("1ero es 'isSearch' y el 2do es 'isAmenityNotCoincidence'")
-        console.log(this.isAmenitySearch)
-        console.log(this.isAmenityNotCoincidence)
-
-        console.log("Este es isConfig")
-        console.log(this.isConfig)
-
-        console.log("1ero es 'isFilter' y el 2do es 'isFilterFailed'")
-        console.log(this.isFilter)
-        console.log(this.isFilterFailed)
-
-        console.log("Valor del error!!!")
-        console.log(e)
+        this.errorMessage = 'No existen coincidencias'
+        this.errorSignal = true
         setTimeout(() => {
           this.clearSearch()
+          this.errorSignal = false
         }, 3000);
-
-        console.log("\n\nEstamos en el error (despues del clear search!.")
-        console.log("Principio del find by...")
-        console.log("1ero es 'isSearch' y el 2do es 'isAmenityNotCoincidence'")
-        console.log(this.isAmenitySearch)
-        console.log(this.isAmenityNotCoincidence)
-
-        console.log("Este es isConfig")
-        console.log(this.isConfig)
-
-        console.log("1ero es 'isFilter' y el 2do es 'isFilterFailed'")
-        console.log(this.isFilter)
-        console.log(this.isFilterFailed)
-
-        console.log("Valor del error!!!")
-        console.log(e)
       }
     })
   }
@@ -437,8 +380,13 @@ export class Properties implements OnInit {
         console.log("Se elimino correctamente.")
       }, error: (e) => {
         if (e.error == "DataIntegrityViolationException (SQL Exception): The record is associated with other record or the PK is duplicated") console.log(e.error)
+        this.errorMessage = 'No se puede eliminar una amenity que esta utilizando una propiedad'
+        this.errorSignal = true
       }
     })
+    setTimeout(() => {
+      this.errorSignal = false;
+    }, 5000);
   }
 
   addIntoFeaturedArray(item: Amenity, event: Event): void {

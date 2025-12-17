@@ -13,7 +13,7 @@
 <!-- Main Content -->
 
 <div class="container">
-  
+
   @if (!isConfig) { <!-- This if checks if the page is in edit/config mode -->
 
   <main class="content">
@@ -100,7 +100,7 @@
       }@else { <!-- If the filter is empty, will show this -->
       <div class="empty-state"> <!-- Empty box container -->
         <div class="empty-icon-container">
-          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" 
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
             class="search-icon-anim">
             <circle cx="11" cy="11" r="8"></circle>
@@ -111,7 +111,7 @@
         <h3>No encontramos propiedades</h3>
         <p>Intenta ajustar los filtros o reinicia la búsqueda para ver más opciones.</p>
 
-        <button class="btn-reload" (click)="clearFilter()">  <!-- Button for come back to properties -->
+        <button class="btn-reload" (click)="clearFilter()"> <!-- Button for come back to properties -->
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M23 4v6h-6"></path>
@@ -160,7 +160,12 @@
 
     </div>
 
-    @if (!isZoneConfig) {
+    @if (isZoneConfig) {
+
+    
+
+    }@else {
+
 
     <div class="admin-toolbar"> <!-- Search amenity box -->
       <div class="search-wrapper" [formGroup]="form">
@@ -175,11 +180,16 @@
           [disabled]="form.get('controlToSearchAmenity')?.invalid">Buscar</button>
         <button type="submit" class="btn-search" (click)="clearSearch()"
           [disabled]="form.get('controlToSearchAmenity')?.invalid && form.get('controlToSearchAmenity')?.touched">Limpiar</button>
-      
-        <h3 class="error-message">Hubo un error</h3>
+        @if (errorSignal) {
+        <div class="error-card">
+          <span class="error-icono">⚠</span>
+          <p class="error-mensaje">{{errorMessage}}</p>
+        </div>
+        }
 
       </div>
     </div>
+
     <div class="table-container">
       <table class="amenities-table"> <!-- Table body -->
         <thead> <!-- Header from table -->
@@ -191,28 +201,6 @@
         </thead>
 
         <tbody>
-          @if (isAmenitySearch && !isAmenityNotCoincidence) {
-          <tr>
-            <td class="col-name">{{amenityFound.amenityName}}</td>
-            <td class="col-name">
-              <button (click)="deleteAmenity(amenityFound)" class="icon-btn icon-delete">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-              </button>
-            </td>
-            <td class="text-center">
-              <div class="toggle-switch">
-                <input type="checkbox" id="toggle1" checked>
-                <label for="toggle1"></label>
-              </div>
-            </td>
-          </tr>
-          }
-          @else if(isAmenitySearch && isAmenityNotCoincidence) {
-          <p>No hay coincidencias</p>
-          }
 
           @if(!amenitiesArray || amenitiesArray.length === 0){
           <p>No hay amenities disponibles</p>
@@ -239,9 +227,31 @@
           </tr>
           }
           }
+
+          @if (isAmenitySearch && !isAmenityNotCoincidence) {
+          <tr>
+            <td class="col-name">{{amenityFound.amenityName}}</td>
+            <td class="col-name">
+              <button (click)="deleteAmenity(amenityFound)" class="icon-btn icon-delete">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </td>
+            <td class="text-center">
+              <div class="toggle-switch">
+                <input type="checkbox" id="toggle1" checked>
+                <label for="toggle1"></label>
+              </div>
+            </td>
+          </tr>
+          }
+
         </tbody>
       </table>
     </div>
+
     }
 
   </div>
