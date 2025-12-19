@@ -1,0 +1,96 @@
+<div class="admin-toolbar"> <!-- Search amenity box -->
+    <div class="search-wrapper" [formGroup]="form">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" placeholder="Buscar amenity..." class="search-input"
+            formControlName="controlToSearchAmenity">
+        <button type="submit" class="btn-search" (click)="findAmenityByName()"
+            [disabled]="form.get('controlToSearchAmenity')?.invalid">Buscar</button>
+        <button type="submit" class="btn-search" (click)="clearSearch()"
+            [disabled]="form.get('controlToSearchAmenity')?.invalid && form.get('controlToSearchAmenity')?.touched">Limpiar</button>
+        @if (errorSignal) {
+        <div class="error-card">
+            <span class="error-icono">⚠</span>
+            <p class="error-mensaje">{{errorMessage}}</p>
+        </div>
+        }
+
+    </div>
+</div>
+
+<div class="table-container">
+    <table class="amenities-table"> <!-- Table body -->
+        <thead> <!-- Header from table -->
+            <tr>
+                <th>Nombre</th> <!-- Header table items -->
+                <th>Eliminar</th>
+                <th>Destacado</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            @if (isAmenitySearch) {
+
+            @if (!isAmenityNotCoincidence) {
+            <tr>
+                <td class="col-name">{{amenityFound.amenityName}}</td>
+
+                <td class="col-name">
+                    <button (click)="deleteAmenity(amenityFound)" class="icon-btn icon-delete">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                    </button>
+                </td>
+
+                <td class="text-center">
+                    <div class="toggle-switch">
+                        <input type="checkbox" [id]="'toggle-search'" [checked]="amenityFound.isFeatured"
+                            (change)="addIntoFeaturedArray(amenityFound, $event)">
+                        <label for="toggle-search"></label>
+                    </div>
+                </td>
+            </tr>
+            }
+            }
+            @else {
+
+            @if(!amenitiesArray || amenitiesArray.length === 0){
+            <tr>
+                <td colspan="3">
+                    <p>No hay amenities disponibles</p>
+                </td>
+            </tr>
+            }
+            @else {
+            @for (item of amenitiesArray; track $index) {
+            <tr>
+                <td class="col-name">{{item.amenityName}}</td>
+                <td class="col-name">
+                    <button (click)="deleteAmenity(item)" class="icon-btn icon-delete">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                    </button>
+                </td>
+                <td class="text-center">
+                    <div class="toggle-switch">
+                        <input type="checkbox" [id]="'toggle-' + $index" [checked]="item.isFeatured"
+                            (change)="addIntoFeaturedArray(item, $event)">
+                        <label [for]="'toggle-' + $index"></label>
+                    </div>
+                </td>
+            </tr>
+            }
+            }
+            }
+
+        </tbody>
+    </table>
+</div>

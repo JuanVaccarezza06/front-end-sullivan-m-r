@@ -1,6 +1,6 @@
 <!-- Header property generic -->
 
-@if (!isConfig) {
+@if (!adminMode) {
 <section class="propiedades-header">
   <div class="propiedades-content">
     <h1 class="propiedades-titulo">Nuestras Propiedades</h1>
@@ -14,11 +14,11 @@
 
 <div class="container">
 
-  @if (!isConfig) { <!-- This if checks if the page is in edit/config mode -->
+  @if (!adminMode) {
 
-  <main class="content">
+  <main class="content"> <!-- This if checks if the page is in edit/config mode -->
 
-    @if (!isFilterFailed) {
+    @if (!filterFailed) {
     <!-- Header from properties section -->
     <div class="content-header">
       <div class="filter-info">
@@ -48,11 +48,11 @@
     }
     <!-- Properties section -->
     <div class="grid">
-      @if (!isFilterFailed) {
+      @if (!filterFailed) {
 
       @for (p of properties; track p.id) {
       <!-- Cards -->
-      <article class="card" (click)="goToDetail(p)">
+      <article class="card" (click)="detail(p)">
 
         <div class="card-image"> <!-- Image box -->
           <img [src]="p.mainImage" alt="Propiedad en venta">
@@ -127,22 +127,26 @@
 
   </main>
   }@else {
-  <!-- ======== HERE STARTS THE AMENITY CONFIG HTML ======== -->
 
+
+  <!-- ======== HERE STARTS THE AMENITY CONFIG HTML ======== -->
   <div class="admin-panel"> <!-- Contenetor box -->
 
     <div class="admin-header"> <!-- Header box -->
 
       <div class="header-text">
-        <h2>{{isZoneConfig ? 'Configuración de Zonas' : 'Configuración de Amenities'}}</h2>
-        <p>{{isZoneConfig ? 'Gestiona qué zonas aparecen destacadas en los filtros.' : 'Gestiona qué características
+        <h2>{{zoneConfiguration ? 'Configuración de Zonas' : 'Configuración de Amenities'}}</h2>
+        <p>{{zoneConfiguration ? 'Gestiona qué zonas aparecen destacadas en los filtros.' : 'Gestiona qué
+          características
           aparecen destacadas en el los filtros.'}}</p>
       </div>
 
       <div class="header-stats"> <!-- Buttons to change between zone and amenitie config -->
-        @if (isZoneConfig) { <button class="btn-edit btn-change-config" (click)="isZoneConfig=false">Configurar
+        @if (zoneConfiguration) { <button class="btn-edit btn-change-config"
+          (click)="zoneConfiguration=false">Configurar
           Amenities</button> }
-        @if (!isZoneConfig) { <button class="btn-edit  btn-change-config" (click)="isZoneConfig=true">Configurar
+        @if (!zoneConfiguration) { <button class="btn-edit  btn-change-config"
+          (click)="zoneConfiguration=true">Configurar
           Zonas</button> }
         <div class="stat-item"> <!-- Featured box -->
           <span class="stat-label">Destacadas</span>
@@ -160,112 +164,26 @@
 
     </div>
 
-    @if (isZoneConfig) {
-
-    
-
-    }@else {
-
-
-    <div class="admin-toolbar"> <!-- Search amenity box -->
-      <div class="search-wrapper" [formGroup]="form">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon">
-          <circle cx="11" cy="11" r="8"></circle>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-        </svg>
-        <input type="text" placeholder="Buscar amenity..." class="search-input"
-          formControlName="controlToSearchAmenity">
-        <button type="submit" class="btn-search" (click)="findAmenityByName()"
-          [disabled]="form.get('controlToSearchAmenity')?.invalid">Buscar</button>
-        <button type="submit" class="btn-search" (click)="clearSearch()"
-          [disabled]="form.get('controlToSearchAmenity')?.invalid && form.get('controlToSearchAmenity')?.touched">Limpiar</button>
-        @if (errorSignal) {
-        <div class="error-card">
-          <span class="error-icono">⚠</span>
-          <p class="error-mensaje">{{errorMessage}}</p>
-        </div>
-        }
-
-      </div>
-    </div>
-
-    <div class="table-container">
-      <table class="amenities-table"> <!-- Table body -->
-        <thead> <!-- Header from table -->
-          <tr>
-            <th>Nombre</th> <!-- Header table items -->
-            <th>Eliminar</th>
-            <th>Destacado</th>
-          </tr>
-        </thead>
-
-        <tbody>
-
-          @if(!amenitiesArray || amenitiesArray.length === 0){
-          <p>No hay amenities disponibles</p>
-          }@else if(!isAmenitySearch) {
-          @for (item of amenitiesArray; track $index) {
-          <tr>
-            <td class="col-name">{{item.amenityName}}</td>
-            <td class="col-name">
-              <button (click)="deleteAmenity(item)" class="icon-btn icon-delete">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-              </button>
-            </td>
-            <td class="text-center">
-              <div class="toggle-switch">
-                <input type="checkbox" [id]="'toggle-' + $index" [checked]="item.isFeatured"
-                  (change)="addIntoFeaturedArray(item, $event)">
-
-                <label [for]="'toggle-' + $index"></label>
-              </div>
-            </td>
-          </tr>
-          }
-          }
-
-          @if (isAmenitySearch && !isAmenityNotCoincidence) {
-          <tr>
-            <td class="col-name">{{amenityFound.amenityName}}</td>
-            <td class="col-name">
-              <button (click)="deleteAmenity(amenityFound)" class="icon-btn icon-delete">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-              </button>
-            </td>
-            <td class="text-center">
-              <div class="toggle-switch">
-                <input type="checkbox" id="toggle1" checked>
-                <label for="toggle1"></label>
-              </div>
-            </td>
-          </tr>
-          }
-
-        </tbody>
-      </table>
-    </div>
-
-    }
+    <app-configuration-filter [amenitiesArray]="amenitiesArray" [amenitiesArrayFeatured]="amenitiesArrayFeatured">
+    </app-configuration-filter>
 
   </div>
+
   }
 
+
+  <!-- ======== SIDEBAR ======== -->
 
   <aside class="sidebar"> <!-- Aside conteiner -->
     <div class="sidebar-header"> <!-- Aside header -->
       <h2>Filtros</h2>
       <div>
-        <button type="button" class="btn-link" (click)="clearFilter()">Limpiar filtros</button>
+        <button class="btn-link" [disabled]="adminMode" [disabled]="!isFilter" (click)="clearFilter()">
+          Limpiar filtro
+        </button>
         <!-- Clean filter button -->
-        @if (!isConfig) { <!-- Button edit page (into if) -->
-        <button type="button" class="btn-edit" (click)="isConfig=true">Editar</button>
+        @if (!adminMode) { <!-- Button edit page (into if) -->
+        <button type="button" class="btn-edit" (click)="adminMode=true">Editar</button>
         }@else { <button type="button" class="btn-edit" (click)="updateAmenities()">Guardar</button> }
       </div>
     </div>
@@ -318,19 +236,18 @@
           <div class="form-group">
             <label for="minPrice">Mínimo</label>
             <select id="minPrice" formControlName="minPrice">
-              <option value="0">€0</option>
-              <option value="50000">€50,000</option>
-              <option value="100000">€100,000</option>
-              <option value="200000">€200,000</option>
+              @for (item of minPrices; track $index) {
+              <option value="{{item}}">{{item}} $</option>
+              }
             </select>
           </div>
           <div class="form-group">
             <label for="maxPrice">Máximo</label>
             <select id="maxPrice" formControlName="maxPrice">
               <option value="0">Sin límite</option>
-              <option value="200000">€200,000</option>
-              <option value="500000">€500,000</option>
-              <option value="1000000">€1,000,000</option>
+              @for (item of maxPrices; track $index) {
+              <option value="{{item}}">{{item}} $</option>
+              }
             </select>
           </div>
         </div>
@@ -359,7 +276,7 @@
         </div>
       </fieldset>
 
-      <button type="submit" class="btn-submit" (click)="onSumbit()">Aplicar filtros</button>
+      <button type="submit" class="btn-submit" (click)="onSubmit()" [disabled]="adminMode">Aplicar filtros</button>
     </form>
   </aside>
 

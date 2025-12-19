@@ -1,67 +1,68 @@
-import { Component, EventEmitter, Input, NgZone, OnInit } from '@angular/core';
-import Property from '../../../models/property/Property';
-import { PropertyService } from '../../../services/propertyServices/property/property-service';
-import { ImgBbService } from '../../../services/propertyServices/imgBB/img-bb-service';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+
+// Models
+import Property from '../../../models/property/Property';
 import Amenity from '../../../models/property/complements/Amenity';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import ZoneDTO from '../../../models/property/geography/Zone';
 import PropertyType from '../../../models/property/types/PropertyType';
 import OperationType from '../../../models/property/types/OperationType';
 import PropertiesFilter from '../../../models/property/request-response/PropertiesFilter';
 import { PageResponse } from '../../../models/pagable/PageResponse';
+
+// Services
+import { PropertyService } from '../../../services/propertyServices/property/property-service';
+import { ImgBbService } from '../../../services/propertyServices/imgBB/img-bb-service';
 import { AmenityService } from '../../../services/propertyServices/amenity/amenity-service';
+
+// Components
+import { ConfigurationFilter } from '../../../components/configuration-filter/configuration-filter';
 
 @Component({
   selector: 'app-properties',
-  imports: [ReactiveFormsModule],
+  standalone: true,
+  imports: [ReactiveFormsModule, ConfigurationFilter],
   templateUrl: './properties.html',
   styleUrl: './properties.css'
 })
 export class Properties implements OnInit {
 
-  form!: FormGroup
+  form!: FormGroup;
 
-  // Objects that I need to show
-  operationTypesArray!: OperationType[]
-  propertyTypesArray: PropertyType[] = []
-  zoneArray: ZoneDTO[] = []
-  amenitiesArray!: Amenity[];
-  amenitiesArrayFeatured!: Amenity[];
-  properties!: Property[]
-  filterResult!: PropertiesFilter
-  amenityFound!: Amenity
+  // Reference to the child. Note: When using @if in HTML, this may be undefined at the beginning.
+  @ViewChild(ConfigurationFilter) childComponent!: ConfigurationFilter;
 
-  // With those variables i can take control about the number rooms!
-  numberRooms: number[] = [1, 2, 3, 4, 5]
-  numberRoomsSelect!: number
+  // Data Objects
+  properties: Property[] = [];
+  amenitiesArray: Amenity[] = [];
+  amenitiesArrayFeatured: Amenity[] = []; // This will be automatically passed to the child via HTML.
 
-  // Variables for check if it is an edit page and if it is a filter
-  isConfig: boolean = false
-  isFilter: boolean = false
+  operationTypesArray: OperationType[] = [];
+  propertyTypesArray: PropertyType[] = [];
+  zoneArray: ZoneDTO[] = [];
 
-  // This variable helps me to take control if the filter was empty
-  isFilterFailed: boolean = false
+  filterResult!: PropertiesFilter;
 
-  // This variable helps me to take control if the user did a amenity search and if it failed
-  isAmenitySearch: boolean = false
-  isAmenityNotCoincidence: boolean = false
+  // Control variables
+  numberRooms: number[] = [1, 2, 3, 4, 5];
+  numberRoomsSelect!: number;
 
-  isZoneConfig: boolean = false
+  minPrices: number[] = [0, 50000, 100000, 200000, 300000, 400000, 500000]
+  maxPrices: number[] = [600000, 700000, 800000, 900000, 10000000]
 
-  // Image not found for the properties main images not found
-  imageNotFound!: string
+  adminMode: boolean = false;
+  isFilter: boolean = false;
+  filterFailed: boolean = false;
+  zoneConfiguration: boolean = false;
 
-  // All those variables are take control about the pages
-  numberPagesInDatabase: number = 0
-  numberOfPropertiesLoadInArray: number = 0
-  pageSelected: number = 0
-  lastPage: number = 0
+  imageNotFound!: string;
 
-  featured: Amenity[] = []
-
-  errorMessage: string = ''
-  errorSignal: boolean = false
+  // Pagination
+  numberPagesInDatabase: number = 0;
+  numberOfPropertiesLoadInArray: number = 0;
+  pageSelected: number = 0;
+  lastPage: number = 0;
 
   constructor(
     private propertyService: PropertyService,
@@ -71,7 +72,6 @@ export class Properties implements OnInit {
     private fb: FormBuilder
   ) { }
 
-
   ngOnInit(): void {
     this.formInitializer();
 
@@ -79,18 +79,20 @@ export class Properties implements OnInit {
     this.loadAvailablesOperationTypes();
     this.loadPropertyTypes();
     this.loadZones();
+
     this.imageNotFound = this.imgService.getNotFound();
 
+    // Check routing state from Home
     const state = this.router.lastSuccessfulNavigation?.extras?.state as { homeResponse?: PageResponse<Property> | boolean };
     const homeResponseIntoConst = state?.homeResponse;
 
-    if (homeResponseIntoConst === undefined) this.loadProperties();
-    else if (homeResponseIntoConst === false) {
-      this.isFilterFailed = true;
+    if (homeResponseIntoConst === undefined) {
+      this.loadProperties();
+    } else if (homeResponseIntoConst === false) {
+      this.filterFailed = true;
       this.isFilter = true;
-    }
-    else {
-      const response = homeResponseIntoConst as PageResponse<Property>
+    } else {
+      const response = homeResponseIntoConst as PageResponse<Property>;
       this.loadPropertiesFromHome(response.content);
     }
   }
@@ -104,102 +106,118 @@ export class Properties implements OnInit {
       rooms: [0, [Validators.required]],
       amenities: this.fb.array([]),
       zone: ['', [Validators.required]],
-      controlToSearchAmenity: ['', [Validators.required]]
+    });
+  }
+
+  // ==========================================
+  // LOADING DATA METHODS
+  // ==========================================
+
+  loadProperties() {
+    this.propertyService.getAll(this.pageSelected).subscribe({
+      next: (data) => {
+        this.isFilter = false;
+        this.updatePageInfo(data.totalPages - 1, data.number, data.content);
+        this.properties.forEach((value) => this.choiceMainImage(value));
+        console.log("Properties load from database.");
+      },
+      error: (e) => console.log(e)
     });
   }
 
   loadPropertiesFromHome(propertiesArray: Property[]) {
-    this.properties = propertiesArray;
-    this.properties.forEach((value) => this.choiceMainImage(value))
-
-    this.isFilter = true
-
-    this.numberOfPropertiesLoadInArray = this.properties.length
-
-    console.log("Properties load from filter.");
+    if (propertiesArray && propertiesArray.length > 0) {
+      this.isFilter = true;
+      this.properties = propertiesArray;
+      this.properties.forEach((value) => this.choiceMainImage(value));
+      this.numberOfPropertiesLoadInArray = this.properties.length;
+      console.log("Properties load from filter.");
+    } else {
+      console.log("The properties that came from home are undefined (array null)");
+    }
   }
 
-  loadProperties() {
-
-    console.log("Properties load from database.");
-    this.isFilter = false;
-
-    this.propertyService.getAll(this.pageSelected).subscribe({
+  loadAmenities() {
+    console.log("Estoy en load amenities");
+    this.propertyService.getAvailableAmenities().subscribe({
       next: (data) => {
-        this.lastPage = data.totalPages - 1
-        this.pageSelected = data.number
-        this.properties = data.content
-        this.numberOfPropertiesLoadInArray = this.properties.length
-        this.properties.forEach((value) => this.choiceMainImage(value))
-      },
-      error: (e) => console.log(e)
-    })
-  }
+        this.amenitiesArray = data;
 
-  choiceMainImage(p: Property) {
-    if (!p.imageDTOList || p.imageDTOList.length == 0) p.mainImage = this.imageNotFound; // If the image array is null or empty, we load the not found image in the cards
-    else if (!p.imageDTOList.find(img => img.name.includes("Portada"))) p.mainImage = p.imageDTOList[0].url // If the image array don't has any image with 'portada' name, load any image
-    else p.mainImage = p.imageDTOList.find(img => img.name.includes("Portada"))?.url // If the image array has the 'portada' image, it returs
-  }
+        // I filter the featured items
+        const featuredTemp = this.amenitiesArray.filter(value => value.isFeatured);
 
-  loadAvailablesOperationTypes() {
-    this.propertyService.getAvailablesOperationTypes().subscribe({
-      next: (data) => {
-        this.operationTypesArray = data;
+        // I updated the filter form (left).
+        this.updateAmenitiesForm(featuredTemp);
+
+        // I update the variable.
+        // ALERT: Angular will detect this change and automatically pass it to the child via [amenitiesArrayFeatured] in the HTML.
+        this.amenitiesArrayFeatured = featuredTemp;
+
       },
       error: (e) => console.log(e)
     });
   }
 
-  loadAmenities() {
-    this.propertyService.getAvailableAmenities().subscribe({
-      next: (data) => {
-        this.amenitiesArray = data;
-
-        this.amenitiesArrayFeatured = this.amenitiesArray.filter(value => value.isFeatured)
-
-        const amenityControls = this.amenitiesArrayFeatured.map(() => this.fb.control(false));
-
-        this.form.setControl('amenities', this.fb.array(amenityControls));
-      },
+  loadAvailablesOperationTypes() {
+    this.propertyService.getAvailablesOperationTypes().subscribe({
+      next: (data) => this.operationTypesArray = data,
       error: (e) => console.log(e)
     });
   }
 
   loadZones() {
     this.propertyService.getAvailableZones().subscribe({
-      next: (data) => {
-        this.zoneArray = data;
-      },
+      next: (data) => this.zoneArray = data,
       error: (e) => console.log(e)
     });
   }
 
   loadPropertyTypes() {
     this.propertyService.getAvailablePropertyTypes().subscribe({
-      next: (data) => {
-        this.propertyTypesArray = data;
-      },
+      next: (data) => this.propertyTypesArray = data,
       error: (e) => console.log(e)
     });
   }
 
-  clearFilter() {
-    this.isFilter = false
-    this.isFilterFailed = false
+  // ==========================================
+  // UTILS & PAGINATION
+  // ==========================================
 
-    this.form.reset({
-      operationTypes: '',
-      propertyTypes: '',
-      zone: '',
-      minPrice: 0,
-      maxPrice: 0,
-      rooms: 0,
-      amenities: this.amenitiesArrayFeatured.map(() => false)
-    });
-    this.resetPageInfo()
+  choiceMainImage(p: Property) {
+    if (!p.imageDTOList || p.imageDTOList.length == 0) {
+      p.mainImage = this.imageNotFound;
+    } else {
+      const portada = p.imageDTOList.find(img => img.name.includes("Portada"));
+      p.mainImage = portada ? portada.url : p.imageDTOList[0].url;
+    }
+  }
 
-    this.loadProperties()
+  changePage(signal: boolean) {
+    const action = signal ? 1 : -1;
+    const newPage = this.pageSelected + action;
+
+    // Validate limits
+    if (newPage < 0 || newPage > this.lastPage) return;
+
+    this.pageSelected = newPage;
+
+    if (this.isFilter) {
+      this.propertyService.applyFilter(this.filterResult, this.pageSelected).subscribe({
+        next: (data) => {
+          this.updatePageInfo(data.totalPages - 1, data.number, data.content);
+          this.properties.forEach((value) => this.choiceMainImage(value));
+        }
+      });
+    } else {
+      this.loadProperties();
+    }
+  }
+
+  updatePageInfo(totalPageToUpdate: number, numberPageToUpdate: number, contentToUpdate: Property[]) {
+    this.lastPage = totalPageToUpdate;
+    this.pageSelected = numberPageToUpdate;
+    this.properties = contentToUpdate;
+    this.numberOfPropertiesLoadInArray = this.properties.length;
   }
 
   resetPageInfo() {
@@ -209,224 +227,174 @@ export class Properties implements OnInit {
     this.lastPage = 0;
   }
 
-  changePage(signal: boolean) {
-    if (this.isFilter) {
-      if (signal && this.pageSelected < this.lastPage) {
-        this.pageSelected++
-        this.propertyService.applyFilter(this.filterResult, this.pageSelected).subscribe({
-          next: (data) => {
-            this.lastPage = data.totalPages - 1
-            this.pageSelected = data.number
-            this.properties = data.content
-            this.numberOfPropertiesLoadInArray = this.properties.length
-            this.properties.forEach((value) => this.choiceMainImage(value))
-            console.log("Properties load from chagePage")
-          },
-        })
-      } else if (!signal && this.pageSelected > 0) {
-        this.pageSelected--
-        this.propertyService.applyFilter(this.filterResult, this.pageSelected).subscribe({
-          next: (data) => {
-            this.lastPage = data.totalPages - 1
-            this.pageSelected = data.number
-            this.properties = data.content
-            this.numberOfPropertiesLoadInArray = this.properties.length
-            this.properties.forEach((value) => this.choiceMainImage(value))
-            console.log("Properties load from chagePage")
-          },
-        })
-      }
-    } else {
-      if (signal && this.pageSelected < this.lastPage) {
-        this.pageSelected++
-        this.loadProperties()
-      } else if (!signal && this.pageSelected > 0) {
-        this.pageSelected--
-        this.loadProperties()
-      }
-    }
-
-  }
-
-  goToDetail(propertyToSee: Property) {
+  detail(propertyToSee: Property) {
     return this.router.navigate(['property-detail'], {
       state: { propertyData: propertyToSee }
     });
   }
 
+  // ==========================================
+  // FORM & FILTER LOGIC
+  // ==========================================
+
   setRoomsValue(value: number) {
     this.form.get('rooms')?.setValue(value);
-    this.numberRoomsSelect = value
+    this.numberRoomsSelect = value;
   }
 
-  findAmenityByName() {
-
-    const amenityName = this.form.get('controlToSearchAmenity')?.value
-    this.amenityService.getAmenityByName(amenityName).subscribe({
-      next: (data) => {
-        this.amenityFound = data
-        this.isAmenitySearch = true
-      },
-      error: (e) => {
-        this.isAmenityNotCoincidence = true;
-        this.errorMessage = 'No existen coincidencias'
-        this.errorSignal = true
-        setTimeout(() => {
-          this.clearSearch()
-          this.errorSignal = false
-        }, 3000);
-      }
-    })
+  getAmenitiesFormArray() {
+    return this.form.get('amenities') as FormArray;
   }
 
-  clearSearch() {
-    this.form.setControl('controlToSearchAmenity', new FormControl('', Validators.required));
-    this.isAmenityNotCoincidence = false;
-    this.isAmenitySearch = false
-    this.router.navigate(["properties"])
+  updateAmenitiesForm(amenitiesList: Amenity[] | null = null) {
+    const amenitiesControl = this.getAmenitiesFormArray();
+    if (amenitiesControl) {
+      amenitiesControl.clear();
+      const listToUse = amenitiesList || this.amenitiesArrayFeatured;
+      listToUse.forEach(() => {
+        amenitiesControl.push(this.fb.control(false));
+      });
+    }
   }
 
-  onSumbit() {
+  onSubmit() {
+    console.log("Starting onSubmit...");
 
-    console.log("Inputs (checkboxes)")
-    console.log(this.form.get('amenities')?.value)
+    // 1. Safe extraction of amenities
+    // Ensure we default to an empty array if the form control is null
+    const selectedBooleans: boolean[] = this.form.get('amenities')?.value ?? [];
 
-    console.log("Amenities array featured")
-    console.log(this.amenitiesArrayFeatured)
+    // Map the true/false values to the actual Amenity objects
+    // IMPORTANT: This assumes the index of the form array matches 'amenitiesArrayFeatured'
+    const selectedAmenitiesDTO: Amenity[] = this.amenitiesArrayFeatured
+      .filter((_, index) => selectedBooleans[index] === true);
 
-    // It get a boolean array, order by the original values from the amenitiesArray
-    const selectedBooleans: boolean[] = this.form.get('amenities')?.value;
-    // It transform or parse the booleans to amenity real info. So easy but complex
-    let selectedAmenitiesDTO: Amenity[] = this.amenitiesArrayFeatured
-      .filter((amenity, index) => selectedBooleans[index]);
+    // 2. Safe extraction of Zone
+    const rawZone = this.form.get('zone')?.value;
 
-    selectedAmenitiesDTO ??= [];
-
-    console.log("Selected amenities")
-    console.log(selectedAmenitiesDTO)
-
-    let zoneValue = this.form.get('zone')?.value as ZoneDTO;
-
-    if (!zoneValue) {
-      zoneValue = {
-        "zoneName": "",
-        "cityDTO": {
-          "cityName": "",
-          "provinceDTO": {
-            "provinceName": "",
-            "countryDTO": {
-              "countryName": ""
-            }
+    // Define a completely empty structure to avoid sending nulls deeply nested
+    const defaultZone: ZoneDTO = {
+      zoneName: '',
+      cityDTO: {
+        cityName: '',
+        provinceDTO: {
+          provinceName: '',
+          countryDTO: {
+            countryName: ''
           }
         }
-      } as ZoneDTO;
-    } else {
+      }
+    };
 
-      zoneValue.zoneName = zoneValue.zoneName ?? '';
+    // If rawZone exists, map it; otherwise, use the default structure with empty strings
+    const safeZoneDTO: ZoneDTO = rawZone ? {
+      zoneName: rawZone.zoneName ?? '',
+      cityDTO: {
+        cityName: rawZone.cityDTO?.cityName ?? '',
+        provinceDTO: {
+          provinceName: rawZone.cityDTO?.provinceDTO?.provinceName ?? '',
+          countryDTO: {
+            countryName: rawZone.cityDTO?.provinceDTO?.countryDTO?.countryName ?? ''
+          }
+        }
+      }
+    } : defaultZone;
 
-      zoneValue.cityDTO = zoneValue.cityDTO ?? { cityName: '', provinceDTO: {} };
-      zoneValue.cityDTO.cityName = zoneValue.cityDTO.cityName ?? '';
-
-      zoneValue.cityDTO.provinceDTO = zoneValue.cityDTO.provinceDTO ?? { provinceName: '', countryDTO: {} };
-      zoneValue.cityDTO.provinceDTO.provinceName = zoneValue.cityDTO.provinceDTO.provinceName ?? '';
-
-      zoneValue.cityDTO.provinceDTO.countryDTO = zoneValue.cityDTO.provinceDTO.countryDTO ?? { countryName: '' };
-      zoneValue.cityDTO.provinceDTO.countryDTO.countryName = zoneValue.cityDTO.provinceDTO.countryDTO.countryName ?? '';
-    }
-
-    zoneValue.cityDTO.cityName ||= '';
-    zoneValue.cityDTO.provinceDTO.provinceName ||= '';
-    zoneValue.cityDTO.provinceDTO.countryDTO.countryName ||= '';
-
+    // 3. Construct the Filter Object
+    // We strictly use '??' to ensure NO nulls are sent, only '' or 0.
     this.filterResult = {
-      operationTypeDTO: { "operationName": this.form.get('operationTypes')?.value },
-      propertyTypeDTO: { "typeName": this.form.get('propertyTypes')?.value },
-      zoneDTO: zoneValue,
-      minPrice: this.form.get('minPrice')?.value,
-      maxPrice: this.form.get('maxPrice')?.value,
-      rooms: this.form.get('rooms')?.value,
+      operationTypeDTO: {
+        operationName: this.form.get('operationTypes')?.value ?? ''
+      },
+      propertyTypeDTO: {
+        typeName: this.form.get('propertyTypes')?.value ?? ''
+      },
+      zoneDTO: safeZoneDTO,
+      minPrice: this.form.get('minPrice')?.value ?? 0,
+      maxPrice: this.form.get('maxPrice')?.value ?? 0,
+      rooms: this.form.get('rooms')?.value ?? 0,
       amenityDTOList: selectedAmenitiesDTO
     } as PropertiesFilter;
 
-    this.resetPageInfo()
+    // 4. UI State Updates
+    this.resetPageInfo();
     this.isFilter = true;
 
-    console.log(this.filterResult)
+    console.log("Filter payload to send:", this.filterResult);
 
+    // 5. API Call
     this.propertyService.applyFilter(this.filterResult, this.pageSelected).subscribe({
       next: (data) => {
+        // CASE: Results found
+        if (data.content && data.content.length > 0) {
+          this.updatePageInfo(data.totalPages - 1, data.number, data.content);
+          this.properties.forEach((value) => this.choiceMainImage(value));
 
-        if (data.content?.length > 0 && data.first) {
-          this.lastPage = data.totalPages - 1
-          this.pageSelected = data.number
-          this.properties = data.content
-          this.numberOfPropertiesLoadInArray = this.properties.length
-          this.properties.forEach((value) => this.choiceMainImage(value))
-          console.log("Properties load from onSumbit")
-          console.log(data)
-        } else {
-          this.isFilterFailed = true;
-          this.isFilter = true;
+          this.filterFailed = false; // Important: Ensure error state is cleared
+          console.log("Properties loaded successfully from filter");
         }
+        // CASE: No results found (FIX ADDED HERE)
+        else {
+          console.log("Filter returned no results.");
+          this.properties = []; // Clear the list
+          this.filterFailed = true; // Trigger the "No properties found" UI
+          this.numberOfPropertiesLoadInArray = 0;
+        }
+      },
+      error: (e) => {
+        console.error("Error applying filter:", e);
+        // Optional: Handle visual error feedback here
+        this.filterFailed = true;
+      }
+    });
+  }
+
+  clearFilter() {
+    this.isFilter = false;
+    this.filterFailed = false;
+
+    this.form.patchValue({
+      operationTypes: '',
+      propertyTypes: '',
+      zone: '',
+      minPrice: 0,
+      maxPrice: 0,
+      rooms: 0
+    });
+
+    this.numberRoomsSelect = 0; // Reset visual selection
+
+    const amenitiesControl = this.getAmenitiesFormArray();
+    if (amenitiesControl) {
+      amenitiesControl.controls.forEach(control => control.setValue(false));
+    }
+
+    this.resetPageInfo();
+    this.loadProperties();
+  }
+
+  // ==========================================
+  // CHILD COMPONENT INTERACTION (ADMIN)
+  // ==========================================
+
+  updateAmenities(): void {
+    console.log("Guardando configuración de amenities...");
+
+    // Security check: if the child is not rendered (adminMode=false), we do nothing
+    if (!this.childComponent) {
+      console.error("El componente de configuración no está activo.");
+      return;
+    }
+
+    const featuredToUpdate = this.childComponent.featured;
+
+    this.amenityService.updateFeatures(featuredToUpdate).subscribe({
+      next: (data) => {
+        console.log("Update exitoso", data);
+        this.adminMode = false; // We close the admin mode
+        this.loadAmenities(); // Refresh to see the changes
       },
       error: (e) => console.log(e)
     });
   }
-
-  deleteAmenity(amenity: Amenity) {
-    if (!amenity) return
-    this.amenityService.delete(amenity.amenityName).subscribe({
-      next: (data) => {
-        console.log("Se elimino correctamente.")
-      }, error: (e) => {
-        if (e.error == "DataIntegrityViolationException (SQL Exception): The record is associated with other record or the PK is duplicated") console.log(e.error)
-        this.errorMessage = 'No se puede eliminar una amenity que esta utilizando una propiedad'
-        this.errorSignal = true
-      }
-    })
-    setTimeout(() => {
-      this.errorSignal = false;
-    }, 5000);
-  }
-
-  addIntoFeaturedArray(item: Amenity, event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const isChecked = input.checked;
-    item.isFeatured = isChecked;
-
-    const index = this.featured.findIndex(
-      (existingItem) => existingItem.amenityName === item.amenityName
-    );
-
-    if (index !== -1) {
-      if (this.featured[index].isFeatured !== isChecked) {
-        this.featured[index] = item;
-      }
-    } else this.featured.push(item);
-
-  }
-
-  updateAmenities(): void {
-    this.amenityService.updateFeatures(this.featured).subscribe({
-      next: (data) => {
-        console.log("Salio todo bien")
-        console.log(data)
-        this.isConfig = false
-        this.loadAmenities()
-      },
-      error: (e) => {
-        console.log(e)
-      }
-    })
-  }
-
-
-
 }
-
-
-
-
-
-
-
