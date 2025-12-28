@@ -52,7 +52,7 @@ export class InputAmenities implements OnInit, OnChanges {
   }
 
   loadAmenities() {
-    this.service.getAvailableAmenities().subscribe({
+    this.amenityService.getAll().subscribe({
       next: (data) => {
         this.amenitiesArray = data;
       },

@@ -17,8 +17,12 @@ export class AmenityService {
     return this.http.post<Amenity>(`${this.API_URL}/post`, amenity);
   }
 
-  getAmenityByName(amenityName: string) {
-    return this.http.get<Amenity>(`${this.API_URL}/get/${amenityName}`);
+  getAll() {
+    return this.http.get<Amenity[]>(`${this.API_URL}/all`);
+  }
+
+  getAmenityByName(name: string) {
+    return this.http.get<Amenity>(`${this.API_URL}/get/find-by-name/${name}`);
   }
 
   delete(amenityName: string) {
@@ -26,7 +30,7 @@ export class AmenityService {
   }
 
   updateFeatures(amenities: Amenity[]) {
-    return this.http.put<Amenity[]>(`${this.API_URL}/update/features`,amenities);
+    return this.http.put<Amenity[]>(`${this.API_URL}/update/features`, amenities);
   }
 
 }

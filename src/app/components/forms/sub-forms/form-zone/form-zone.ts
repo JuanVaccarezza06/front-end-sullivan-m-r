@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
 import ZoneDTO from '../../../../models/property/geography/Zone';
 import { PropertyService } from '../../../../services/propertyServices/property/property-service';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ZoneService } from '../../../../services/propertyServices/zone/zone-service';
 
 @Component({
   selector: 'app-form-zone',
@@ -22,7 +23,8 @@ export class FormZone implements OnInit, OnChanges {
   @Output() finishEvent = new EventEmitter<boolean>();
 
   constructor(
-    private service: PropertyService
+    private service: PropertyService,
+    private zoneService: ZoneService,
   ) { }
 
   ngOnInit(): void {
@@ -30,7 +32,7 @@ export class FormZone implements OnInit, OnChanges {
   }
 
   loadZones() {
-    this.service.getAvailableZones().subscribe({
+    this.zoneService.getAll().subscribe({
       next: (data) => {
         this.zoneArray = data;
       },

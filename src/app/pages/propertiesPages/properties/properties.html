@@ -131,46 +131,12 @@
 
   <!-- ======== HERE STARTS THE AMENITY CONFIG HTML ======== -->
   <div class="admin-panel"> <!-- Contenetor box -->
-
-    <div class="admin-header"> <!-- Header box -->
-
-      <div class="header-text">
-        <h2>{{zoneConfiguration ? 'Configuración de Zonas' : 'Configuración de Amenities'}}</h2>
-        <p>{{zoneConfiguration ? 'Gestiona qué zonas aparecen destacadas en los filtros.' : 'Gestiona qué
-          características
-          aparecen destacadas en el los filtros.'}}</p>
-      </div>
-
-      <div class="header-stats"> <!-- Buttons to change between zone and amenitie config -->
-        @if (zoneConfiguration) { <button class="btn-edit btn-change-config"
-          (click)="zoneConfiguration=false">Configurar
-          Amenities</button> }
-        @if (!zoneConfiguration) { <button class="btn-edit  btn-change-config"
-          (click)="zoneConfiguration=true">Configurar
-          Zonas</button> }
-        <div class="stat-item"> <!-- Featured box -->
-          <span class="stat-label">Destacadas</span>
-          <span class="stat-value highlight">
-            {{amenitiesArrayFeatured.length}}
-          </span>
-        </div>
-        <div class="stat-divider"></div> <!-- Divider box -->
-
-        <div class="stat-item"> <!-- Total box -->
-          <span class="stat-label">Total</span>
-          <span class="stat-value">{{amenitiesArray.length}}</span>
-        </div>
-      </div>
-
-    </div>
-
-    <app-configuration-filter [amenitiesArray]="amenitiesArray" [amenitiesArrayFeatured]="amenitiesArrayFeatured">
-    </app-configuration-filter>
-
+    <app-adapter-item (itemsUpdated)="updateDone($event)" (itHadNotChanges)="turnOffAdminMode()"
+      (filterRequested)="filterFromOnSeeItem($event)">
+    </app-adapter-item>
   </div>
 
   }
-
 
   <!-- ======== SIDEBAR ======== -->
 
@@ -178,13 +144,10 @@
     <div class="sidebar-header"> <!-- Aside header -->
       <h2>Filtros</h2>
       <div>
+        <!-- Clean filter button -->
         <button class="btn-link" [disabled]="adminMode" [disabled]="!isFilter" (click)="clearFilter()">
           Limpiar filtro
         </button>
-        <!-- Clean filter button -->
-        @if (!adminMode) { <!-- Button edit page (into if) -->
-        <button type="button" class="btn-edit" (click)="adminMode=true">Editar</button>
-        }@else { <button type="button" class="btn-edit" (click)="updateAmenities()">Guardar</button> }
       </div>
     </div>
 
@@ -219,7 +182,7 @@
         <div class="form-group">
           <select id="zone" formControlName="zone">
             <option value="" disabled selected>Seleccionar zona</option>
-            @for (z of zoneArray; track $index) {
+            @for (z of zoneArrayFeatured; track $index) {
             <option [ngValue]="z">
               {{z.zoneName}}, {{z.cityDTO.cityName}},
               {{z.cityDTO.provinceDTO.provinceName}},
@@ -230,27 +193,28 @@
         </div>
       </fieldset>
 
-      <fieldset> <!-- Price range fieldset -->
+      <fieldset>
         <legend>Rango de precio</legend>
+
         <div class="price-grid">
           <div class="form-group">
             <label for="minPrice">Mínimo</label>
-            <select id="minPrice" formControlName="minPrice">
-              @for (item of minPrices; track $index) {
-              <option value="{{item}}">{{item}} $</option>
-              }
-            </select>
+            <input type="number" id="minPrice" formControlName="minPrice" placeholder="Desde" min="0"
+              class="form-control">
           </div>
+
           <div class="form-group">
             <label for="maxPrice">Máximo</label>
-            <select id="maxPrice" formControlName="maxPrice">
-              <option value="0">Sin límite</option>
-              @for (item of maxPrices; track $index) {
-              <option value="{{item}}">{{item}} $</option>
-              }
-            </select>
+            <input type="number" id="maxPrice" formControlName="maxPrice" placeholder="Hasta" min="0"
+              class="form-control">
           </div>
         </div>
+
+        @if (form.errors?.['rangeError'] && (form.get('minPrice')?.touched || form.get('maxPrice')?.touched)) {
+        <div class="error-message" style="color: red; font-size: 0.8rem; margin-top: 5px;">
+          El precio mínimo no puede ser mayor al máximo.
+        </div>
+        }
       </fieldset>
 
       <fieldset> <!-- Room fieldset -->
@@ -270,13 +234,19 @@
           @for (am of amenitiesArrayFeatured; track $index) {
           <label class="checkbox-label">
             <input type="checkbox" [formControlName]="$index">
-            <span>{{ am.amenityName }}</span>
+            <span class="span-name">{{ am.amenityName }}</span>
           </label>
           }
         </div>
       </fieldset>
 
-      <button type="submit" class="btn-submit" (click)="onSubmit()" [disabled]="adminMode">Aplicar filtros</button>
+      <div class="button-group">
+        @if(auth.isLoggedIn() && auth.hasRoleAdmin()){
+        @if (!adminMode) { <button type="button" class="btn-submit btn-edit" (click)="adminMode=true">Editar</button>
+        <!-- Button edit page (into if) -->}
+        @else { <button type="button" class="btn-submit btn-edit" (click)="startSave()">Guardar</button> }}
+        <button type="submit" class="btn-submit" (click)="onSubmit()" [disabled]="adminMode"> Aplicar filtros</button>
+      </div>
     </form>
   </aside>
 

@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 
 // Models
 import Property from '../../../models/property/Property';
@@ -18,20 +18,40 @@ import { AmenityService } from '../../../services/propertyServices/amenity/ameni
 
 // Components
 import { ConfigurationFilter } from '../../../components/configuration-filter/configuration-filter';
+import { AdapterItem } from "../../../components/adapter-item/adapter-item";
+import { ZoneService } from '../../../services/propertyServices/zone/zone-service';
+import { ConfigurationType } from '../../../models/property/complements/ConfigurationType';
+import { setThrowInvalidWriteToSignalError } from '@angular/core/primitives/signals';
+import { AuthService } from '../../../services/authService/auth-service';
 
 @Component({
   selector: 'app-properties',
-  standalone: true,
-  imports: [ReactiveFormsModule, ConfigurationFilter],
+  imports: [ReactiveFormsModule, AdapterItem],
   templateUrl: './properties.html',
   styleUrl: './properties.css'
 })
 export class Properties implements OnInit {
 
   form!: FormGroup;
+  // Definimos la función del validador fuera o dentro de la clase
+  priceRangeValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+    const min = control.get('minPrice')?.value;
+    const max = control.get('maxPrice')?.value;
+
+    // Lógica de validación:
+    // 1. Si ambos tienen valor
+    // 2. Y el maximo no es 0 (asumiendo que 0 o null es "sin límite")
+    // 3. Y el mínimo es mayor que el máximo...
+    // ENTOCES: Hay error.
+    if (min !== null && max !== null && max > 0 && min > max) {
+      return { rangeError: true }; // Retornamos el objeto de error
+    }
+
+    return null; // Todo OK
+  };
 
   // Reference to the child. Note: When using @if in HTML, this may be undefined at the beginning.
-  @ViewChild(ConfigurationFilter) childComponent!: ConfigurationFilter;
+  @ViewChild(AdapterItem) childComponent!: AdapterItem;
 
   // Data Objects
   properties: Property[] = [];
@@ -41,6 +61,7 @@ export class Properties implements OnInit {
   operationTypesArray: OperationType[] = [];
   propertyTypesArray: PropertyType[] = [];
   zoneArray: ZoneDTO[] = [];
+  zoneArrayFeatured: ZoneDTO[] = [];
 
   filterResult!: PropertiesFilter;
 
@@ -67,9 +88,11 @@ export class Properties implements OnInit {
   constructor(
     private propertyService: PropertyService,
     private amenityService: AmenityService,
+    private zoneService: ZoneService,
     private imgService: ImgBbService,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    public auth: AuthService
   ) { }
 
   ngOnInit(): void {
@@ -101,12 +124,16 @@ export class Properties implements OnInit {
     this.form = this.fb.group({
       operationTypes: ['', [Validators.required]],
       propertyTypes: ['', [Validators.required]],
-      minPrice: [0, [Validators.required]],
-      maxPrice: [0, [Validators.required]],
+
+      // Cambiamos a null o '' inicial para que el input salga vacío y limpio
+      // Agregamos Validators.min(0) para que no pongan números negativos
+      minPrice: [null, [Validators.min(0)]],
+      maxPrice: [null, [Validators.min(0)]],
+
       rooms: [0, [Validators.required]],
       amenities: this.fb.array([]),
       zone: ['', [Validators.required]],
-    });
+    }, { validators: this.priceRangeValidator }); // <--- AQUÍ SE APLICA LA VALIDACIÓN CRUZADA
   }
 
   // ==========================================
@@ -138,8 +165,7 @@ export class Properties implements OnInit {
   }
 
   loadAmenities() {
-    console.log("Estoy en load amenities");
-    this.propertyService.getAvailableAmenities().subscribe({
+    this.amenityService.getAll().subscribe({
       next: (data) => {
         this.amenitiesArray = data;
 
@@ -166,8 +192,11 @@ export class Properties implements OnInit {
   }
 
   loadZones() {
-    this.propertyService.getAvailableZones().subscribe({
-      next: (data) => this.zoneArray = data,
+    this.zoneService.getAll().subscribe({
+      next: (data) => {
+        this.zoneArray = data
+        this.zoneArrayFeatured = this.zoneArray.filter(value => value.isFeatured)
+      },
       error: (e) => console.log(e)
     });
   }
@@ -283,7 +312,8 @@ export class Properties implements OnInit {
             countryName: ''
           }
         }
-      }
+      },
+      isFeatured: false
     };
 
     // If rawZone exists, map it; otherwise, use the default structure with empty strings
@@ -297,7 +327,8 @@ export class Properties implements OnInit {
             countryName: rawZone.cityDTO?.provinceDTO?.countryDTO?.countryName ?? ''
           }
         }
-      }
+      },
+      isFeatured: rawZone.isFeatured ?? false
     } : defaultZone;
 
     // 3. Construct the Filter Object
@@ -316,9 +347,16 @@ export class Properties implements OnInit {
       amenityDTOList: selectedAmenitiesDTO
     } as PropertiesFilter;
 
+    this.executeFilterCall(this.filterResult)
+
+
+  }
+
+  executeFilterCall(filterResult: PropertiesFilter) {
     // 4. UI State Updates
     this.resetPageInfo();
     this.isFilter = true;
+    this.filterResult = filterResult;
 
     console.log("Filter payload to send:", this.filterResult);
 
@@ -339,6 +377,7 @@ export class Properties implements OnInit {
           this.properties = []; // Clear the list
           this.filterFailed = true; // Trigger the "No properties found" UI
           this.numberOfPropertiesLoadInArray = 0;
+          this.childComponent.showError("El item no tiene usos.")
         }
       },
       error: (e) => {
@@ -347,6 +386,11 @@ export class Properties implements OnInit {
         this.filterFailed = true;
       }
     });
+  }
+
+  filterFromOnSeeItem(filterResult: PropertiesFilter) {
+    this.executeFilterCall(filterResult)
+    this.adminMode = false
   }
 
   clearFilter() {
@@ -377,7 +421,7 @@ export class Properties implements OnInit {
   // CHILD COMPONENT INTERACTION (ADMIN)
   // ==========================================
 
-  updateAmenities(): void {
+  startSave(): void {
     console.log("Guardando configuración de amenities...");
 
     // Security check: if the child is not rendered (adminMode=false), we do nothing
@@ -386,15 +430,18 @@ export class Properties implements OnInit {
       return;
     }
 
-    const featuredToUpdate = this.childComponent.featured;
-
-    this.amenityService.updateFeatures(featuredToUpdate).subscribe({
-      next: (data) => {
-        console.log("Update exitoso", data);
-        this.adminMode = false; // We close the admin mode
-        this.loadAmenities(); // Refresh to see the changes
-      },
-      error: (e) => console.log(e)
-    });
+    this.childComponent.saveChanges()
   }
+
+  updateDone(config: ConfigurationType) {
+    if (config == ConfigurationType.AMENITY) this.loadAmenities()
+    if (config == ConfigurationType.ZONE) this.loadZones()
+    this.adminMode = false
+  }
+
+  turnOffAdminMode() {
+    this.adminMode = false
+  }
+
+
 }

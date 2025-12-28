@@ -50,7 +50,7 @@
         <label for="location">Ubicación</label>
         <select id="location" formControlName="zone">
           <option value="" disabled selected>-- Selecciona un tipo --</option>
-          @for (z of zoneArray; track $index) {
+          @for (z of zoneArrayFeatured; track $index) {
           <option [ngValue]="z">
             {{z.zoneName}},
             {{z.cityDTO.cityName}},

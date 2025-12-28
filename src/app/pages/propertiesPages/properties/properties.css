@@ -558,11 +558,80 @@ select:focus {
   color: var(--primary);
 }
 
+.span-name {
+  font-size: small;
+}
+
 input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
+  width: 14px;
+  height: 14px;
   cursor: pointer;
   accent-color: var(--primary);
+}
+
+/* Estilo base para todos los selects dentro de tus formularios */
+.filter-form select,
+.form-group select {
+  /* 1. ELIMINAR ESTILO NATIVO (CRÍTICO) */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  /* 2. DIMENSIONES Y TEXTO */
+  width: 100%;
+  padding: 0.75rem 1rem;
+  padding-right: 2.5rem;
+  /* Espacio extra a la derecha para que el texto no tape la flecha */
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: var(--text-dark, #1a1a1a);
+  background-color: var(--white, #fff);
+
+  /* 3. BORDES SUAVES */
+  border: 1px solid var(--border-color, #e5e5e5);
+  border-radius: var(--radius-md, 0.5rem);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  /* 4. LA FLECHA PERSONALIZADA (SVG ENCODED) */
+  /* Usamos un SVG de 'chevron-down' codificado para no depender de archivos externos */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23666666'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1.2em;
+}
+
+/* Estado HOVER (Al pasar el mouse) */
+.filter-form select:hover {
+  border-color: var(--primary-color, #0d9e6d);
+}
+
+/* Estado FOCUS (Al hacer clic/teclado) */
+.filter-form select:focus {
+  outline: none;
+  border-color: var(--primary-color, #0d9e6d);
+  box-shadow: 0 0 0 4px rgba(13, 158, 109, 0.1);
+  /* Anillo suave verde */
+}
+
+/* Opcional: Estilo para las opciones (Limitado por el navegador) */
+.filter-form select option {
+  color: #1a1a1a;
+  padding: 10px;
+}
+
+/* Opcional: Si está deshabilitado */
+.filter-form select:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  /* Aquí controlas EL ESPACIO SOLO ENTRE LOS BOTONES */
 }
 
 /* ========== BUTTON SECTION ========== */
@@ -616,43 +685,6 @@ input[type="checkbox"] {
   background-color: rgba(13, 158, 109, 0.1);
 }
 
-.btn-edit {
-  width: 4rem;
-
-  margin-left: 1rem;
-
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-
-  background: #059669;
-  color: white;
-  border: none;
-  border-radius: 0.5rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-
-  background: #047857;
-  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
-}
-
-.btn-edit:disabled {
-  background-color: var(--border-color);
-  color: var(--text-light);
-  cursor: not-allowed;
-  box-shadow: none;
-  transform: none;
-  border: 1px solid var(--border-color);
-}
-
-/* Evitar efectos hover */
-.btn-edit:disabled:hover {
-  background-color: var(--border-color);
-  transform: none;
-  box-shadow: none;
-}
-
 .btn-change-config {
   width: 9rem;
 
@@ -661,8 +693,8 @@ input[type="checkbox"] {
 }
 
 .btn-submit {
-  padding: 0.8rem 2rem;
-  background: #0d9e6d;
+  padding: 0.6rem 2rem;
+  background: var(--primary-dark);
   color: white;
   border: none;
   border-radius: 0.5rem;
@@ -671,21 +703,31 @@ input[type="checkbox"] {
   cursor: pointer;
   transition: all 0.3s ease;
   white-space: nowrap;
+
+  gap: 0;
+  margin: 0;
 }
 
 .btn-submit:disabled {
-  background: #9ca3af;   
-  color: #ffffff;        
-  cursor: not-allowed;   
-  box-shadow: none;      
-  transform: none;       
-  opacity: 0.7;          
+  background: #9ca3af;
+  color: #ffffff;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+  opacity: 0.7;
+
+
 }
 
 .btn-submit:disabled:hover {
   background: #9ca3af;
   transform: none;
   box-shadow: none;
+}
+
+.btn-edit {
+  width: 100%;
+  margin: 0;
 }
 
 .btn-reload {
@@ -710,6 +752,80 @@ input[type="checkbox"] {
 
 .btn-reload:hover svg {
   animation: spin 1s linear infinite;
+}
+
+/* ========== INPUTS (PRICE) ========== */
+
+/* Estilo base igual al del <select> para mantener consistencia */
+input[type="number"] {
+  width: 100%;
+  padding: 0.625rem;
+  /* 10px */
+  border: 1px solid var(--border-color);
+  /* Usamos tu variable definida en :host */
+  border-radius: 6px;
+  font-size: 0.875rem;
+  background: var(--white);
+  color: var(--text-dark);
+  transition: var(--transition);
+  /* Usamos tu transición suave */
+}
+
+/* Estado Focus: Igual que tus selects pero con un suave shadow */
+input[type="number"]:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  /* Un pequeño resplandor verde para mejorar la UX al escribir */
+  box-shadow: 0 0 0 3px rgba(13, 158, 109, 0.1);
+}
+
+/* Placeholder un poco más claro */
+input[type="number"]::placeholder {
+  color: var(--text-light);
+  opacity: 0.7;
+}
+
+/* ========== VALIDATION MESSAGES ========== */
+
+/* Estilo para el mensaje de error rojo */
+.error-message {
+  color: #dc2626;
+  /* Un rojo estándar de alerta */
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+
+  /* Pequeña animación para que no aparezca de golpe */
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========== UTILS: HIDE SPINNERS ========== */
+
+/* Esto es MUY importante en inputs de precio.
+   Elimina las flechitas (spinners) nativas del navegador que
+   suelen verse feas y ocupan espacio innecesario.
+*/
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 /* ========== EMPTY STATE ========== */
@@ -882,9 +998,8 @@ input[type="checkbox"] {
   .container {
     display: flex;
     flex-direction: column;
-    margin-left: 1rem;
-    margin-right: 1rem;
     gap: 2rem;
+
   }
 
   .sidebar {
@@ -897,4 +1012,30 @@ input[type="checkbox"] {
   .grid {
     grid-template-columns: 1fr;
   }
+
+  /* Forzamos al select a no salirse de la pantalla */
+  .filter-form select,
+  .form-group select {
+    max-width: 100%;
+    /* Obliga a que no sea más ancho que su padre */
+    width: 100%;
+    /* Ocupa todo el ancho disponible */
+    font-size: 16px !important;
+    /* Evita que el celular haga zoom automático */
+    text-overflow: ellipsis;
+    /* Pone "..." si el texto es muy largo */
+    white-space: nowrap;
+    /* Evita que el texto ocupe dos lineas rompiendo el input */
+    overflow: hidden;
+    /* Oculta lo que sobre */
+  }
+
+  /* Ajustamos las opciones internas */
+  option {
+    font-size: 14px;
+    max-width: 90vw;
+    /* Que la opción desplegada no supere el ancho de pantalla */
+  }
+
+
 }

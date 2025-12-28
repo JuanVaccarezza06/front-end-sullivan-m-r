@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import GeneralInquiry from '../../models/contact/GeneralInquiry';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ContactService } from '../../services/contactService/contact-service';
 
 @Component({
@@ -13,13 +13,15 @@ import { ContactService } from '../../services/contactService/contact-service';
 export class Contact {
 
   formulario!: FormGroup
-  generalInquiry!: GeneralInquiry
+
+  inquiryToSend!: GeneralInquiry
 
   motives!: string[]
 
   constructor(
     private fb: FormBuilder,
-    private contactService: ContactService
+    private contactService: ContactService,
+    private route: ActivatedRoute  // <--- Inyectar ActivatedRoute
   ) { }
 
   ngOnInit(): void {
@@ -35,7 +37,41 @@ export class Contact {
       state: ['PENDIENTE', [Validators.required]]
     });
 
+    this.loadMotives()
+
+    this.route.queryParams.subscribe(params => {
+      const serviceTitle = params['subject'];
+
+      if (serviceTitle) {
+        this.prefillForm(serviceTitle);
+      }
+    });
   }
+
+  loadMotives(){
+
+  }
+
+  private prefillForm(serviceTitle: string): void {
+    let motiveValue = 'OTRO'; // Valor por defecto para el select
+
+    // Mapeamos el Título del Servicio (del array) al Value del Select (del HTML)
+    // Ajusta estos strings según tus títulos exactos en services.service.ts
+    if (serviceTitle.includes('Venta')) motiveValue = 'VENTA';
+    else if (serviceTitle.includes('Alquiler')) motiveValue = 'ALQUILER';
+    else if (serviceTitle.includes('Tasación')) motiveValue = 'TASACION';
+    else if (serviceTitle.includes('Administración')) motiveValue = 'OTRO'; // O agrega una opción ADMIN en tu select
+
+    // Construimos el mensaje personalizado
+    const customMessage = `Hola, me interesa el servicio de "${serviceTitle}". Me gustaría recibir más información y agendar una llamada.`;
+
+    // Actualizamos el formulario (patchValue solo actualiza los campos que le pases)
+    this.formulario.patchValue({
+      motive: motiveValue,
+      description: customMessage
+    });
+  }
+
 
   onSubmit(): void {
 
@@ -48,7 +84,7 @@ export class Contact {
     const today = new Date();
     const formattedDate = today.toISOString().split('T')[0]; // "2025-10-27"
 
-    this.generalInquiry = {
+    this.inquiryToSend = {
       date: formattedDate, // o new Date()
       description: this.formulario.value.description,
       stateDTO: this.formulario.value.state,
@@ -63,7 +99,7 @@ export class Contact {
       }
     };
 
-    this.contactService.post(this.generalInquiry).subscribe({
+    this.contactService.post(this.inquiryToSend).subscribe({
       next: (data) => console.log(data),
       error: (e) => console.log(e)
     })

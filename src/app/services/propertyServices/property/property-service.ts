@@ -35,20 +35,12 @@ export class PropertyService {
     return this.http.get<Property[]>(`${this.API_URL}/featured-properties`);
   }
 
-  getAvailableZones() {
-    return this.http.get<ZoneDTO[]>(`${this.API_URL}/available-zones`);
-  }
-
   getAvailablesOperationTypes() {
     return this.http.get<OperationType[]>(`${this.API_URL}/available-operation-types`);
   }
 
   getAvailablePropertyTypes() {
     return this.http.get<PropertyType[]>(`${this.API_URL}/available-property-types`);
-  }
-
-  getAvailableAmenities() {
-    return this.http.get<Amenity[]>(`${this.API_URL}/available-amenities`);
   }
 
   applyFilter(filter: PropertiesFilter, page: number) {

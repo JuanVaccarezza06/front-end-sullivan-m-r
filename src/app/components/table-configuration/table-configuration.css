@@ -1,0 +1,173 @@
+:host {
+    --primary-color: #0d9e6d;
+    --primary-dark: #0a7d56;
+    --text-dark: #1a1a1a;
+    --text-gray: #666;
+    --text-light: #999;
+    --border-color: #e5e5e5;
+    --bg-light: #f9f9f9;
+    --white: #ffffff;
+    --shadow-sm: 0 0.0625rem 0.1875rem rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 0.625rem 1.5625rem rgba(0, 0, 0, 0.1);
+    --radius-sm: 0.25rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --transition: all 0.3s ease;
+}
+
+
+.table-container {
+    overflow-x: auto;
+
+    overflow-y: auto;
+    max-height: 40rem;
+
+    display: flex;
+    justify-content: space-around;
+}
+
+.amenities-table {
+    border-collapse: collapse;
+    min-width: 100%;
+}
+
+
+.amenities-table th {
+    text-align: left;
+    padding: 1rem 2rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--text-light);
+    background-color: var(--bg-light);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.amenities-table td {
+    padding: 1rem 2rem;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+    transition: var(--transition);
+}
+
+.amenities-table tr:hover td {
+    background-color: #fafafa;
+}
+
+.amenities-table tr:last-child td {
+    border-bottom: none;
+}
+
+.col-name {
+    font-weight: 500;
+    color: var(--text-light);
+
+}
+
+.icon-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.icon-btn:hover {
+    background-color: #f0f0f0;
+}
+
+.icon-delete {
+    color: #dc3545;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 3rem;
+    height: 1.5rem;
+}
+
+.toggle-switch label {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #e5e5e5;
+    transition: .4s;
+    border-radius: 2rem;
+}
+
+.toggle-switch label:before {
+    position: absolute;
+    content: "";
+    height: 1.1rem;
+    width: 1.1rem;
+    left: 0.2rem;
+    bottom: 0.2rem;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch input:checked+label {
+    background-color: var(--primary-color);
+}
+
+.toggle-switch input:checked+label:before {
+    transform: translateX(1.5rem);
+}
+
+.btn-search:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-search:disabled:hover {
+    background: #9ca3af;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-search {
+    padding: 0.8rem 2rem;
+    background: var(--primary-dark);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.btn-search:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(13, 158, 109, 0.3);
+}
+
+svg {
+    min-width: 18px;
+    min-height: 18px;
+    margin-left: 0.70rem;
+}
+
+.icon-view {
+    color: #666;
+}

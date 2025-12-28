@@ -1,0 +1,258 @@
+/* Variables locales o utilízalas desde tu archivo global de variables */
+:host {
+    --primary-color: #0d9e6d;
+    --primary-dark: #0a7d56;
+    --text-dark: #1a1a1a;
+    --text-gray: #666;
+    --text-light: #999;
+    --border-color: #e5e5e5;
+    --bg-light: #f9f9f9;
+    --white: #ffffff;
+    --shadow-sm: 0 0.0625rem 0.1875rem rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 0.625rem 1.5625rem rgba(0, 0, 0, 0.1);
+    --radius-sm: 0.25rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --transition: all 0.3s ease;
+    --border-color: ##ffffff;
+    /* Esto permite que todos los rems relativos a este componente se ajusten si cambias el font-size del host */
+    display: block;
+}
+
+/* HEADER SECTION */
+.propiedades-header {
+    background-color: #e8f0ed;
+    /* 60px -> 3.75rem | 40px -> 2.5rem */
+    padding: 3.75rem 2.5rem;
+    width: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    border-bottom: 1.5px solid var(--border-color);
+    /* Excepción mantenida */
+}
+
+.propiedades-content {
+    /* 900px -> 56.25rem */
+    max-width: 56.25rem;
+}
+
+.propiedades-titulo {
+    /* 42px -> 2.625rem */
+    font-size: 2.625rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    letter-spacing: -0.031rem;
+    /* 20px -> 1.25rem */
+    margin: 0 0 1.25rem 0;
+}
+
+.propiedades-descripcion {
+    /* 17px -> 1.0625rem */
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: #4a5568;
+    font-weight: 400;
+    margin: 0;
+}
+
+/* BODY CONTENT */
+.propiedades-body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #f8f9fa;
+    /* 40px -> 2.5rem | 20px -> 1.25rem */
+    padding: 2.5rem 1.25rem;
+}
+
+.container {
+    /* 1200px -> 75rem */
+    max-width: 95rem;
+    margin: 0 auto;
+}
+
+/* GRID SYSTEM */
+.services-grid {
+    display: grid;
+    /* 3 Columnas fijas, cada una ocupa 1 fracción del espacio */
+    grid-template-columns: repeat(3, 1fr);
+    /* 24px -> 1.5rem */
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* CARDS */
+.service-card {
+    background: white;
+    /* 12px -> 0.75rem */
+    border-radius: 0.75rem;
+    /* 32px -> 2rem */
+    padding: 2rem;
+    /* Sombras convertidas aprox de px a rem */
+    box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+
+    /* Estructura Flexible para altura uniforme */
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    /* Ocupa toda la altura de la fila del grid */
+    box-sizing: border-box;
+    /* Asegura que el padding no rompa el tamaño */
+}
+
+.service-card:hover {
+    transform: translateY(-0.125rem);
+    /* 2px -> 0.125rem */
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.12);
+}
+
+/* Contenedor interno para empujar el botón al final */
+.card-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ICON */
+/* ICON CONTAINER */
+.service-icon {
+    /* Dimensiones del contenedor (el cuadrado/círculo verde claro) */
+    /* 48px -> 3rem */
+    width: 2rem;
+    height: 2rem;
+
+
+    /* Apariencia */
+    /* 10px -> 0.625rem */
+    border-radius: 0.625rem;
+    color: #0d9e6d;
+    /* Color base para el stroke del SVG (currentColor) */
+
+    /* Alineación del ícono al centro */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* Separación con el título */
+    /* 20px -> 1.25rem */
+    margin-bottom: 1.25rem;
+
+    /* Transición suave para efectos si quisieras animar el fondo */
+    transition: background-color 0.3s ease;
+}
+
+/* SVG ICON (El dibujo dentro del contenedor) */
+.service-icon svg {
+    /* Estilos de línea */
+    stroke: currentColor;
+    /* Toma el color #0d9e6d del padre */
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+
+    /* Animación */
+    transition: transform 0.3s ease;
+
+}
+
+/* EFECTO HOVER */
+/* Cuando pasas el mouse por la CARTA completa, el ícono se mueve */
+.service-card:hover .service-icon svg {
+    transform: scale(1.1);
+    /* Crece un 10% */
+}
+
+
+/* TEXTOS */
+.service-title {
+    /* 20px -> 1.25rem */
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    /* 12px -> 0.75rem */
+    margin-bottom: 0.75rem;
+}
+
+.service-description {
+    /* 14px -> 0.875rem */
+    font-size: 0.875rem;
+    color: #666;
+    line-height: 1.6;
+    /* 20px -> 1.25rem */
+    margin-bottom: 1.25rem;
+}
+
+/* LISTA */
+.service-features {
+    list-style: none;
+    margin-bottom: 1.5rem;
+    padding: 0;
+}
+
+.service-features li {
+    /* 14px -> 0.875rem */
+    font-size: 0.875rem;
+    color: #444;
+    /* 8px -> 0.5rem */
+    padding: 0.5rem 0;
+    /* 24px -> 1.5rem */
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.service-features li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #2e7d32;
+    font-weight: bold;
+}
+
+/* BUTTON */
+.service-button {
+    display: block;
+    width: 100%;
+    /* 12px 24px -> 0.75rem 1.5rem */
+    padding: 0.75rem 1.5rem;
+    background-color: #d4edda;
+    color: #2e7d32;
+    text-align: center;
+    text-decoration: none;
+    /* 8px -> 0.5rem */
+    border-radius: 0.5rem;
+    /* 14px -> 0.875rem */
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    /* Margen superior automático en caso de que flex-grow falle por soporte */
+    margin-top: auto;
+}
+
+.service-button:hover {
+    background-color: #c3e6cb;
+}
+
+/* ========== RESPONSIVE ========== */
+
+/* LAPTOP: Hasta 1500px (93.75rem) */
+@media (max-width: 93.75rem) {
+    .services-grid {
+        /* 2 Columnas. Al haber 6 elementos, se crean 3 filas automáticamente */
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .service-card {
+        margin: 1rem;
+    }
+}
+
+/* MOVIL: Hasta 900px (56.25rem) */
+@media (max-width: 56.25rem) {
+    .services-grid {
+        /* 1 Columna. Al haber 6 elementos, se crean 6 filas automáticamente */
+        grid-template-columns: 1fr;
+    }
+}

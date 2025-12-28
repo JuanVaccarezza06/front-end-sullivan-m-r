@@ -8,6 +8,7 @@ import PropertiesFilter from '../../models/property/request-response/PropertiesF
 import ZoneDTO from '../../models/property/geography/Zone';
 import PropertyType from '../../models/property/types/PropertyType';
 import OperationType from '../../models/property/types/OperationType';
+import { ZoneService } from '../../services/propertyServices/zone/zone-service';
 
 @Component({
   selector: 'app-home',
@@ -29,11 +30,13 @@ export class Home implements OnInit {
   // Objects that I need to show
   propertiesfeature!: Property[]
   zoneArray!: ZoneDTO[]
+  zoneArrayFeatured!: ZoneDTO[]
   propertyTypesArray!: PropertyType[]
   operationTypeArray!: OperationType[]
 
   constructor(
     private service: PropertyService,
+    private zoneService: ZoneService,
     private imgService: ImgBbService,
     private router: Router,
     private fb: FormBuilder
@@ -117,9 +120,10 @@ export class Home implements OnInit {
   }
 
   loadAvailablesZones() {
-    this.service.getAvailableZones().subscribe({
+    this.zoneService.getAll().subscribe({
       next: (data) => {
         this.zoneArray = data;
+        this.zoneArrayFeatured = data.filter(value => value.isFeatured);
       },
       error: (e) => console.log(e)
     });
@@ -140,7 +144,8 @@ export class Home implements OnInit {
               "countryName": this.form.get('zone')?.value.cityDTO.provinceDTO.countryDTO.countryName
             }
           }
-        }
+        },
+        isFeatured: false
       },
       minPrice: 0,
       maxPrice: 0,
