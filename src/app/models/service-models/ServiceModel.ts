@@ -3,4 +3,5 @@ export interface ServiceModel {
   description: string;
   features: string[];
   icon: string; // Aquí guardaremos el string del SVG
+  messageDefault: string; 
 }

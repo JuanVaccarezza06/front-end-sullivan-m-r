@@ -22,7 +22,8 @@ export class Services {
         'Gestión de visitas y negociaciones',
         'Asesoramiento legal y fiscal'
       ],
-      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`
+      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`,
+      messageDefault: `Hola, estoy interesado en vender mi propiedad. Me gustaría recibir una valoración profesional y conocer su plan de marketing para la venta.`
     },
     {
       title: 'Alquiler',
@@ -34,7 +35,9 @@ export class Services {
         'Mantenimiento y resolución de incidencias',
         'Renovaciones y actualizaciones de renta'
       ],
-      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>`
+      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>`,
+      messageDefault: `Hola, tengo una propiedad disponible y me gustaría información sobre su servicio de gestión de alquileres y selección de inquilinos.`
+
     },
     {
       title: 'Administración de propiedades',
@@ -46,7 +49,9 @@ export class Services {
         'Control periódico del estado del inmueble',
         'Rendición de cuentas mensual detallada'
       ],
-      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect><path d="M9 14l2 2 4-4"></path></svg>`
+      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect><path d="M9 14l2 2 4-4"></path></svg>`,
+      messageDefault: `Hola, quisiera delegar la administración operativa de mi inmueble en ustedes. Me interesa conocer el alcance del servicio y los costos de gestión.`
+
     },
     {
       title: 'Tasación',
@@ -58,7 +63,8 @@ export class Services {
         'Certificado oficial de tasación',
         'Asesoramiento sobre mejoras'
       ],
-      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>`
+      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>`,
+      messageDefault: 'Hola, necesito realizar una tasación oficial de mi propiedad. Quisiera coordinar una visita para que evalúen el inmueble.'
     },
     {
       title: 'Asesoría legal',
@@ -70,7 +76,8 @@ export class Services {
         'Resolución de conflictos',
         'Trámites ante notarías y registros'
       ],
-      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>`
+      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>`,
+      messageDefault: 'Hola, requiero asesoramiento legal especializado en temas inmobiliarios. Me gustaría agendar una consulta con sus abogados.'
     },
     {
       title: 'Reformas y decoración',
@@ -82,7 +89,8 @@ export class Services {
         'Coordinación de gremios',
         'Supervisión de obras'
       ],
-      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>`
+      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>`,
+      messageDefault: 'Hola, estoy pensando en renovar mi propiedad. Me gustaría solicitar un presupuesto de reforma y ver sus propuestas de diseño.'
     }
   ];
 
@@ -98,9 +106,12 @@ export class Services {
 
   getList() { return this.services }
 
-  buildConsult(serviceTitle: string) {
+  buildConsult(service: ServiceModel) {
     this.router.navigate(['/contact'], {
-      queryParams: { subject: serviceTitle }
+      queryParams: {
+        subject: service.title,
+        msg: service.messageDefault // Enviamos el mensaje predeterminado
+      }
     });
   }
 

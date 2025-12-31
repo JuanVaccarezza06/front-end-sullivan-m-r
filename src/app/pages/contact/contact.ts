@@ -1,7 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { take } from 'rxjs/operators'; // <--- Senior Tip: Import this
+
+// Models & Services
 import GeneralInquiry from '../../models/contact/GeneralInquiry';
-import { ActivatedRoute, Router } from '@angular/router';
+import { MotiveService } from '../../services/propertyServices/motive/motive-service';
+import MotiveDTO from '../../models/contact/MotiveDTO';
+import { AuthService } from '../../services/authService/auth-service';
+import { UserService } from '../../services/userService/user-service';
 import { ContactService } from '../../services/contactService/contact-service';
 
 @Component({
@@ -10,98 +17,159 @@ import { ContactService } from '../../services/contactService/contact-service';
   templateUrl: './contact.html',
   styleUrl: './contact.css'
 })
-export class Contact {
+export class Contact implements OnInit {
 
-  formulario!: FormGroup
+  contactForm!: FormGroup; // Renamed to English for consistency
 
-  inquiryToSend!: GeneralInquiry
+  // Store motives retrieved from  Backend
+  motivesList: MotiveDTO[] = [];
 
-  motives!: string[]
+  // Dependency Injection
+  private fb = inject(FormBuilder);
+  private motiveService = inject(MotiveService);
+  private authService = inject(AuthService);
+  private contactService = inject(ContactService);
+  private userService = inject(UserService);
+  private route = inject(ActivatedRoute);
 
-  constructor(
-    private fb: FormBuilder,
-    private contactService: ContactService,
-    private route: ActivatedRoute  // <--- Inyectar ActivatedRoute
-  ) { }
+  // Regex Patterns
+  private namePattern = /^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]+$/;
+  private phonePattern = /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/im;
 
   ngOnInit(): void {
+    this.initForm();
 
-    //this.motives = this.contactService.getMotives()
+    this.loadMotives();
+    this.autoFillUserData()
+  }
 
-    this.formulario = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100), Validators.pattern(/^\S+\s+\S+.*$/)]],
-      email: ['', [Validators.required, Validators.email, Validators.maxLength(200)]],
-      numberPhone: ['', [Validators.required, Validators.pattern(/^\+?[0-9\s\-]+$/), Validators.maxLength(20), Validators.minLength(3)]],
+  initForm(): void {
+    this.contactForm = this.fb.group({
+      firstName: ['', [
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(50),
+        Validators.pattern(this.namePattern)
+      ]],
+      surname: ['', [
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(50),
+        Validators.pattern(this.namePattern)
+      ]],
+      email: ['', [Validators.required, Validators.email, Validators.maxLength(100)]],
+      numberPhone: ['', [Validators.required, Validators.pattern(this.phonePattern)]],
+      motive: ['', [Validators.required]], // Selected value stores here
       description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
-      motive: ['', [Validators.required]],
-      state: ['PENDIENTE', [Validators.required]]
+      state: ['PENDIENTE']
     });
+  }
 
-    this.loadMotives()
-
-    this.route.queryParams.subscribe(params => {
-      const serviceTitle = params['subject'];
-
-      if (serviceTitle) {
-        this.prefillForm(serviceTitle);
+  loadMotives(): void {
+    this.motiveService.getAllMotives().subscribe({
+      next: (data) => {
+        this.motivesList = data;
+        this.checkIncomingService();
+      },
+      error: (err) => {
+        console.error('Error loading motives:', err);
       }
     });
   }
 
-  loadMotives(){
+  private checkIncomingService(): void {
+    this.route.queryParams.pipe(take(1)).subscribe(params => {
+      const subjectFromUrl = params['subject'];
+      const msgFromUrl = params['msg'];
 
-  }
+      if (subjectFromUrl) {
+        const normalizedSubject = this.normalizeString(subjectFromUrl);
 
-  private prefillForm(serviceTitle: string): void {
-    let motiveValue = 'OTRO'; // Valor por defecto para el select
+        const foundMotive = this.motivesList.find(m =>
+          this.normalizeString(m.motiveName) === normalizedSubject
+        );
 
-    // Mapeamos el Título del Servicio (del array) al Value del Select (del HTML)
-    // Ajusta estos strings según tus títulos exactos en services.service.ts
-    if (serviceTitle.includes('Venta')) motiveValue = 'VENTA';
-    else if (serviceTitle.includes('Alquiler')) motiveValue = 'ALQUILER';
-    else if (serviceTitle.includes('Tasación')) motiveValue = 'TASACION';
-    else if (serviceTitle.includes('Administración')) motiveValue = 'OTRO'; // O agrega una opción ADMIN en tu select
+        if (foundMotive) {
 
-    // Construimos el mensaje personalizado
-    const customMessage = `Hola, me interesa el servicio de "${serviceTitle}". Me gustaría recibir más información y agendar una llamada.`;
-
-    // Actualizamos el formulario (patchValue solo actualiza los campos que le pases)
-    this.formulario.patchValue({
-      motive: motiveValue,
-      description: customMessage
+          this.contactForm.patchValue({
+            motive: foundMotive.motiveName,
+            description: msgFromUrl || ''
+          });
+        } else {
+          console.warn('No match found for subject:', subjectFromUrl);
+        }
+      }
     });
   }
 
+  private autoFillUserData(): void {
+    if (this.authService.isLoggedIn()) {
+
+      const username = this.authService.getUsername();
+
+      if (username) {
+        this.userService.getUserByUsername(username)
+          .pipe(take(1))
+          .subscribe({
+            next: (userData) => {
+              this.contactForm.patchValue({
+                firstName: userData.firstName,
+                surname: userData.surname,
+                email: userData.email,
+                numberPhone: userData.numberPhone
+              });
+            },
+            error: (err) => {
+              console.warn('No se pudieron cargar los datos del usuario', err);
+            }
+          });
+      }
+    }
+  }
 
   onSubmit(): void {
+    if (this.contactForm.invalid) {
+      this.contactForm.markAllAsTouched();
+      return;
+    }
 
-    const fullName = this.formulario.value.name;
+    // Extract raw values and sanitize
+    const rawFirstName = this.contactForm.get('firstName')?.value.trim();
+    const rawSurname = this.contactForm.get('surname')?.value.trim();
+    const rawEmail = this.contactForm.get('email')?.value.trim().toLowerCase();
+    const rawPhone = this.contactForm.get('numberPhone')?.value.trim();
+    const rawDesc = this.contactForm.get('description')?.value.trim();
+    const motive = this.contactForm.get('motive')?.value;
 
-    const lastSpace = fullName.lastIndexOf(' ');
-    const name = lastSpace !== -1 ? fullName.slice(0, lastSpace) : fullName;
-    const surname = lastSpace !== -1 ? fullName.slice(lastSpace + 1) : '';
-
-    const today = new Date();
-    const formattedDate = today.toISOString().split('T')[0]; // "2025-10-27"
-
-    this.inquiryToSend = {
-      date: formattedDate, // o new Date()
-      description: this.formulario.value.description,
-      stateDTO: this.formulario.value.state,
+    // Construct DTO
+    const generalInquiry = {
+      date: new Date().toISOString().split('T')[0],
+      description: rawDesc,
+      stateDTO: 'PENDIENTE',
       userDTO: {
-        firstName: name, // suponiendo que "name" es el nombre del usuario
-        surname: surname, // completar si tenés el campo
-        email: this.formulario.value.email,
-        numberPhone: this.formulario.value.numberPhone.trim()
+        firstName: rawFirstName,
+        surname: rawSurname,
+        email: rawEmail,
+        numberPhone: rawPhone
       },
       motiveDTO: {
-        motiveName: this.formulario.value.motive
+        motiveName: motive
       }
     };
 
-    this.contactService.post(this.inquiryToSend).subscribe({
+    this.contactService.post(generalInquiry).subscribe({
       next: (data) => console.log(data),
       error: (e) => console.log(e)
     })
+
   }
+
+  private normalizeString(str: string): string {
+    return (str || '')
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim();
+  }
+
 }

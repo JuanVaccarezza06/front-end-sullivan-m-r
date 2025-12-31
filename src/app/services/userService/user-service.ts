@@ -19,65 +19,32 @@ export class UserService {
   ) { }
 
   getAll(page: number): Observable<PageResponse<UserFull>> {
-
-    const token = localStorage.getItem(this.TOKEN_KEY)
-    if (!token) {
-      console.error("Token no existente")
-      throw new Error("There is no token in local storage")
-    }
-
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    });
-
-    return this.http.get<PageResponse<UserFull>>(`${this.API_URL}/find-all-full-users?page=${page}&size=5`, { headers: headers });
+     return this.http.get<PageResponse<UserFull>>(`${this.API_URL}/find-all-full-users?page=${page}&size=5`);
   }
 
-  update(user: User,email : string): Observable<User> {
-
-    const token = localStorage.getItem(this.TOKEN_KEY)
-    if (!token) throw new Error("Token no existente")
-
-
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    });
+  update(user: User, email: string): Observable<User> {
 
     const url = `${this.API_URL}/update/${email}`;
-
-    return this.http.put<User>(url, user, { headers: headers });
+    return this.http.put<User>(url, user);
   }
 
   getByEmail(email: string): Observable<UserFull> {
-
-    const token = localStorage.getItem(this.TOKEN_KEY)
-    if (!token) throw new Error("Token no existente")
-
-
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    });
-
     const url = `${this.API_URL}/find-by-email?email=${email}`;
+    return this.http.get<UserFull>(url);
+  }
 
-    return this.http.get<UserFull>(url, { headers: headers });
+  getUserByUsername(username: string): Observable<User> {
+    // SOLUCIÓN AQUÍ: Envolvemos la variable con encodeURIComponent
+    // Sonia123#  --->  Sonia123%23
+    const safeUsername = encodeURIComponent(username);
+    console.log(safeUsername)
+    // 4. Petición GET
+    return this.http.get<User>(`${this.API_URL}/find-by-username/${safeUsername}`);
   }
 
   delete(user: UserFull) {
-
-    const token = localStorage.getItem(this.TOKEN_KEY)
-    if (!token) throw new Error("No existe un token")
-
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    })  
-
     if (user) {
-      return this.http.delete(`${this.API_URL}/deleteByEmail/${user.email}`, { headers: headers });
+      return this.http.delete(`${this.API_URL}/deleteByEmail/${user.email}`);
     } else {
       alert("User nula. Delete fallido.")
       throw new Error("User NULL")

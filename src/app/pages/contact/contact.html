@@ -5,58 +5,103 @@
         <p>Queremos ayudarte a encontrar tu hogar ideal. ¡Escríbenos!</p>
     </div>
 
-    <div class="main-grid"> <!--  Main content --> 
-        <form class="card" [formGroup]="formulario" (submit)="onSubmit()"> <!-- Form -->
+    <div class="main-grid"> <!--  Main content -->
+        <form class="card" [formGroup]="contactForm" (submit)="onSubmit()"> <!-- Form -->
             <h2>Envíanos un mensaje</h2>
 
-            <fieldset class="form-group">  <!-- Full name input -->
-                <label>Nombre completo</label>
-                <input type="text" placeholder="Tu nombre" formControlName="name">
+            <fieldset class="form-group">
+                <label>Nombre</label>
+                <input type="text" placeholder="Tu nombre" formControlName="firstName">
             </fieldset>
-            @if (formulario.get('name')?.hasError('required') && formulario.get('name')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
-            @else if (formulario.get('name')?.hasError('minlength') && formulario.get('name')?.touched ) { <p class="p-error">El nombre debe tener al menos 3 caracteres</p> }
-            @else if (formulario.get('name')?.hasError('maxlength') && formulario.get('name')?.touched ) { <p class="p-error">El nombre debe tener un maximo de 100 caracteres</p> }
-            @else if (formulario.get('name')?.hasError('pattern') && formulario.get('name')?.touched ) { <p class="p-error">Ingrese su nombre y apellido</p> }
-            
+
+            @if (contactForm.get('firstName')?.touched && contactForm.get('firstName')?.invalid) {
+            <div class="error-msg">
+                @if (contactForm.get('firstName')?.hasError('required')) {
+                <p class="p-error">Este campo es obligatorio</p>
+                }
+                @else if (contactForm.get('firstName')?.hasError('minlength')) {
+                <p class="p-error">Mínimo 3 caracteres</p>
+                }
+                @else if (contactForm.get('firstName')?.hasError('pattern')) {
+                <p class="p-error">Solo letras permitidas</p>
+                }
+            </div>
+            }
+
+            <fieldset class="form-group">
+                <label>Apellido</label>
+                <input type="text" placeholder="Tu Apellido" formControlName="surname">
+            </fieldset>
+
+            @if (contactForm.get('surname')?.touched && contactForm.get('surname')?.invalid) {
+            <div class="error-msg">
+                @if (contactForm.get('surname')?.hasError('required')) {
+                <p class="p-error">Este campo es obligatorio</p>
+                }
+                @else if (contactForm.get('surname')?.hasError('minlength')) {
+                <p class="p-error">Mínimo 3 caracteres</p>
+                }
+                @else if (contactForm.get('surname')?.hasError('pattern')) {
+                <p class="p-error">Solo letras permitidas</p>
+                }
+            </div>
+            }
+
             <fieldset class="form-group"> <!-- Email input -->
                 <label>Email</label>
                 <input type="email" placeholder="correo@ejemplo.com" formControlName="email">
             </fieldset>
-            @if (formulario.get('email')?.hasError('required') && formulario.get('email')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
-            @else if (formulario.get('email')?.hasError('email') && formulario.get('email')?.touched ) { <p class="p-error">Debe ingresar un email de contacto</p> }
-            @else if (formulario.get('email')?.hasError('maxlength') && formulario.get('email')?.touched ) { <p class="p-error"> El email debe tener como maximo 200 caracteres</p> }
+            @if (contactForm.get('email')?.hasError('required') && contactForm.get('email')?.touched ) { <p
+                class="p-error">Este campo es obligatorio</p> }
+            @else if (contactForm.get('email')?.hasError('email') && contactForm.get('email')?.touched ) { <p
+                class="p-error">Debe ingresar un email de contacto</p> }
+            @else if (contactForm.get('email')?.hasError('maxlength') && contactForm.get('email')?.touched ) { <p
+                class="p-error"> El email debe tener como maximo 200 caracteres</p> }
 
             <fieldset class="form-group"> <!-- Phone input -->
                 <label>Teléfono</label>
                 <input type="tel" placeholder="+54 9 11 1234-5678" formControlName="numberPhone">
             </fieldset>
-                @if (formulario.get('numberPhone')?.hasError('required') && formulario.get('numberPhone')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
-                @else if (formulario.get('numberPhone')?.hasError('pattern') && formulario.get('numberPhone')?.touched ) { <p class="p-error">El telefono solo puede tener numeros, espacios y el signo '+'</p> }
-                @else if (formulario.get('numberPhone')?.hasError('minlength') && formulario.get('numberPhone')?.touched ) { <p class="p-error"> El telefono debe tener al menos 10 caracteres</p> }
-                @else if (formulario.get('numberPhone')?.hasError('maxlength') && formulario.get('numberPhone')?.touched ) { <p class="p-error"> El telefono debe tener como maximo 20 caracteres</p> }
-            
+            @if (contactForm.get('numberPhone')?.hasError('required') && contactForm.get('numberPhone')?.touched ) { <p
+                class="p-error">Este campo es obligatorio</p> }
+            @else if (contactForm.get('numberPhone')?.hasError('pattern') && contactForm.get('numberPhone')?.touched ) {
+            <p class="p-error">El telefono solo puede tener numeros, espacios y el signo '+'</p> }
+            @else if (contactForm.get('numberPhone')?.hasError('minlength') && contactForm.get('numberPhone')?.touched ) {
+            <p class="p-error"> El telefono debe tener al menos 10 caracteres</p> }
+            @else if (contactForm.get('numberPhone')?.hasError('maxlength') && contactForm.get('numberPhone')?.touched ) {
+            <p class="p-error"> El telefono debe tener como maximo 20 caracteres</p> }
+
             <fieldset class="form-group"> <!-- Motive input -->
                 <label>Motivo</label>
                 <select formControlName="motive" class="form-select">
-                    <option value="">Selecciona un motivo</option>
-                    <option value="COMPRA">Compra de propiedad</option>
-                    <option value="VENTA">Venta de propiedad</option>
-                    <option value="ALQUILER">Consulta por alquiler</option>
-                    <option value="TASACION">Solicitud de tasación</option>
-                    <option value="OTRO">Otro</option>
+                    <option value="" disabled selected>Selecciona un motivo</option>
+                    @for (m of motivesList; track $index) {
+                    <option [value]="m.motiveName">
+                        {{ m.motiveName }}
+                    </option>
+                    }
+                    @if (motivesList.length === 0) {
+                    <option value="" disabled>Cargando motivos...</option>
+                    }
                 </select>
             </fieldset>
-            @if (formulario.get('motive')?.hasError('required') && formulario.get('motive')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
+            @if (contactForm.get('motive')?.touched && contactForm.get('motive')?.hasError('required')) {
+            <p class="p-error">Debes seleccionar un motivo</p>
+            }
 
             <fieldset class="form-group"> <!-- Message input -->
                 <label>Mensaje</label>
                 <textarea rows="4" placeholder="Escribe tu mensaje..." formControlName="description"></textarea>
             </fieldset>
-            @if (formulario.get('description')?.hasError('required') && formulario.get('description')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
-            @else if (formulario.get('description')?.hasError('minlength') && formulario.get('description')?.touched ) { <p class="p-error">La descripcion debe tener al menos 10 caracteres</p> }
-            @else if (formulario.get('description')?.hasError('maxlength') && formulario.get('description')?.touched ) { <p class="p-error">La descripcion debe tener un maximo de 2000 caracteres</p> }
+            @if (contactForm.get('description')?.hasError('required') && contactForm.get('description')?.touched ) { <p
+                class="p-error">Este campo es obligatorio</p> }
+            @else if (contactForm.get('description')?.hasError('minlength') && contactForm.get('description')?.touched ) {
+            <p class="p-error">La descripcion debe tener al menos 10 caracteres</p> }
+            @else if (contactForm.get('description')?.hasError('maxlength') && contactForm.get('description')?.touched ) {
+            <p class="p-error">La descripcion debe tener un maximo de 2000 caracteres</p> }
 
-            <button type="submit" class="btn-submit" [disabled]="formulario.invalid" >Enviar Mensaje</button> <!-- Sumbit button -->
+            <button type="submit" class="btn-submit" [disabled]="contactForm.invalid">Enviar Mensaje</button>
+            <!-- Sumbit button -->
         </form>
 
         <div class="right-column"> <!-- Aside info -->
@@ -111,9 +156,9 @@
                 </div>
             </div>
 
-            <div class="card">  
+            <div class="card">
 
-                <h2>¿Cómo podemos ayudarte?</h2>    
+                <h2>¿Cómo podemos ayudarte?</h2>
                 <div class="help-section">
                     <div class="help-item"> <!-- Item box -->
                         <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -124,7 +169,7 @@
                             <h4>Encontrar la propiedad ideal</h4>
                             <p>Te ayudamos a descubrir la casa o apartamento perfecto para ti.</p>
                         </div>
-                    </div> 
+                    </div>
                     <div class="help-item"> <!-- Item box -->
                         <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
