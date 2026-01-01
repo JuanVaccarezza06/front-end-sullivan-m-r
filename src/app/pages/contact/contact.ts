@@ -48,16 +48,16 @@ export class Contact implements OnInit {
       firstName: ['', [
         Validators.required,
         Validators.minLength(2),
-        Validators.maxLength(50),
+        Validators.maxLength(100),
         Validators.pattern(this.namePattern)
       ]],
       surname: ['', [
         Validators.required,
         Validators.minLength(2),
-        Validators.maxLength(50),
+        Validators.maxLength(100),
         Validators.pattern(this.namePattern)
       ]],
-      email: ['', [Validators.required, Validators.email, Validators.maxLength(100)]],
+      email: ['', [Validators.required, Validators.email, Validators.maxLength(200)]],
       numberPhone: ['', [Validators.required, Validators.pattern(this.phonePattern)]],
       motive: ['', [Validators.required]], // Selected value stores here
       description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],

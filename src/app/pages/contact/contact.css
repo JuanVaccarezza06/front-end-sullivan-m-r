@@ -33,9 +33,9 @@
 }
 
 .p-error {
-  color: rgb(223, 121, 121);
-  font-size: 0.85rem;
-  margin: 0.3rem 0 0 0;
+    color: rgb(223, 121, 121);
+    font-size: 0.85rem;
+    margin: 0.3rem 0 0 0;
 }
 
 .main-grid {
@@ -58,8 +58,36 @@
     margin-bottom: 1.5rem;
 }
 
+/* 1. Comportamiento normal: El fieldset tiene el margen */
 .form-group {
     margin-bottom: 1.25rem;
+    /* Aseguramos que la transición sea suave si quisieras animarlo */
+    transition: margin-bottom 0.2s;
+}
+
+/* 2. Cuando aparece el error: Quitamos el margen del fieldset */
+/* "Si este .form-group tiene un hermano inmediato (+) que sea .error-msg" */
+.form-group:has(+ .error-msg) {
+    margin-bottom: 0;
+}
+
+/* 3. Le pasamos el margen al contenedor del error */
+.error-msg {
+    margin-bottom: 1.25rem;
+    /* Opcional: una pequeña animación de entrada */
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .form-group label {
@@ -108,14 +136,15 @@
 }
 
 
- .btn-submit:hover:not(:disabled) {
-     background-color: #f5f5f5;
- }
+.btn-submit:hover:not(:disabled) {
+    background-color: #f5f5f5;
+}
 
- .btn-submit:disabled {
-     opacity: 0.5;
-     cursor: not-allowed;
- }
+.btn-submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .contact-info {
     display: flex;
     flex-direction: column;
@@ -124,12 +153,12 @@
 
 /* fieldset: mantener estructura de columna */
 fieldset {
-  border: none;
-  margin: 0;
-  padding: 0;
-  min-inline-size: auto;
-  display: flex;
-  flex-direction: column;
+    border: none;
+    margin: 0;
+    padding: 0;
+    min-inline-size: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .info-item {
@@ -274,14 +303,19 @@ fieldset {
     }
 }
 
-@media (max-width: 60rem) {   /* ~960px */
-  .cards-container {
-    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-  }
+@media (max-width: 60rem) {
+
+    /* ~960px */
+    .cards-container {
+        grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    }
 }
 
-@media (max-width: 40rem) {   /* ~640px */
-  .cards-container {
-    grid-template-columns: 1fr; /* apiladas en mobile */
-  }
+@media (max-width: 40rem) {
+
+    /* ~640px */
+    .cards-container {
+        grid-template-columns: 1fr;
+        /* apiladas en mobile */
+    }
 }
