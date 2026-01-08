@@ -17,10 +17,6 @@ export class ContactService {
       return this.http.post(this.url,generalInquiry);
   }
 
-  getMotives() {
-
-  }
-
 }
 
 

@@ -28,6 +28,9 @@ export default interface Property{
   bathrooms: number;
   bedrooms: number;
 
+  latitude: number;
+  longitude: number;
+
   mainImage?: string;
 
   ownerDTO: Owner;

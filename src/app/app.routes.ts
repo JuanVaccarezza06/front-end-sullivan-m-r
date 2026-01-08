@@ -74,7 +74,7 @@ export const routes: Routes = [
             }
         ]
     },
-    { path: 'property-detail', component: PropertyDetail }
+    { path: 'property-detail/:id', component: PropertyDetail }
 
 
 

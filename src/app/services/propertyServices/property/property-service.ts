@@ -31,6 +31,10 @@ export class PropertyService {
     return this.http.get<PageResponse<Property>>(`${this.API_URL}/find-all?page=${page}&size=${this.size}`);
   }
 
+  getById(id: number){
+    return this.http.get<Property>(`${this.API_URL}/find-by-id/${id}`);
+  }
+
   getFeaturedProperties() {
     return this.http.get<Property[]>(`${this.API_URL}/featured-properties`);
   }
@@ -41,6 +45,10 @@ export class PropertyService {
 
   getAvailablePropertyTypes() {
     return this.http.get<PropertyType[]>(`${this.API_URL}/available-property-types`);
+  }
+
+  getAround(number : number){
+    return this.http.get<Property[]>(`${this.API_URL}/${number}/nearby?km=30`);
   }
 
   applyFilter(filter: PropertiesFilter, page: number) {

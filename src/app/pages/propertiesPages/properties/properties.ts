@@ -33,21 +33,16 @@ import { AuthService } from '../../../services/authService/auth-service';
 export class Properties implements OnInit {
 
   form!: FormGroup;
-  // Definimos la función del validador fuera o dentro de la clase
+
   priceRangeValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
     const min = control.get('minPrice')?.value;
     const max = control.get('maxPrice')?.value;
 
-    // Lógica de validación:
-    // 1. Si ambos tienen valor
-    // 2. Y el maximo no es 0 (asumiendo que 0 o null es "sin límite")
-    // 3. Y el mínimo es mayor que el máximo...
-    // ENTOCES: Hay error.
     if (min !== null && max !== null && max > 0 && min > max) {
-      return { rangeError: true }; // Retornamos el objeto de error
+      return { rangeError: true }; 
     }
 
-    return null; // Todo OK
+    return null; 
   };
 
   // Reference to the child. Note: When using @if in HTML, this may be undefined at the beginning.
@@ -257,7 +252,7 @@ export class Properties implements OnInit {
   }
 
   detail(propertyToSee: Property) {
-    return this.router.navigate(['property-detail'], {
+    return this.router.navigate(['property-detail',propertyToSee.id], {
       state: { propertyData: propertyToSee }
     });
   }

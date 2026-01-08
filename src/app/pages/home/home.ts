@@ -87,7 +87,7 @@ export class Home implements OnInit {
   }
 
   viewDetail(propertyToSee: Property) {
-    return this.router.navigate(['property-detail'], {
+    return this.router.navigate(['property-detail',propertyToSee.id], {
       state: { propertyData: propertyToSee }
     });
   }
