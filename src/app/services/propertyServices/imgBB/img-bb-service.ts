@@ -2,15 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import ResponseImgBb from '../../../models/property/request-response/ResponseImgBb';
+import { environment } from '../../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ImgBbService {
 
-    // 2. La API key vive en el servicio, no en el componente
-  // ¡RECUERDA! Mueve esto a tus archivos 'environments' por seguridad
-  private readonly API_KEY = '70e1b06eb4b0e0358c843bb2b0376d5a';
+  private readonly API_KEY = environment.imgBbKey;
 
   // 1. Inyectamos HttpClient aquí
   constructor(

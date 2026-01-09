@@ -6,6 +6,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { PropertyService } from '../../../services/propertyServices/property/property-service';
 import { InquiryService } from '../../../services/inquiryService/inquiry-service';
 import { InquiryModel } from '../../../models/contact/InquiryModel';
+import { environment } from '../../../../environments/environment.development';
 
 @Component({
   selector: 'app-property-detail',
@@ -27,6 +28,8 @@ export class PropertyDetail implements OnInit {
 
   center: google.maps.LatLngLiteral = { lat: -38.00347172577913, lng: -57.54663502109604 };
   zoom = 12;
+
+  mapId = environment.mapId
 
   // 2. Referencia a la ventana del HTML para controlarla desde código
   @ViewChild(MapInfoWindow) infoWindow!: MapInfoWindow;
@@ -75,6 +78,27 @@ export class PropertyDetail implements OnInit {
         console.error("Route id empty");
       }
     });
+
+    this.cargarMapaSeguro()
+  }
+
+  cargarMapaSeguro() {
+    // 1. Preguntamos: ¿Ya existe el script en la página?
+    if (document.getElementById('google-map-script')) {
+      return; // Si ya está, no hacemos nada.
+    }
+
+    // 2. Si no está, lo creamos
+    const script = document.createElement('script');
+    script.id = 'google-map-script';
+
+    // 3. Le ponemos tu CLAVE SECRETA del environment
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${environment.googleMapsApiKey}&libraries=places&loading=async`;
+    script.async = true;
+    script.defer = true;
+
+    // 4. Lo pegamos en el documento
+    document.body.appendChild(script);
   }
 
   // Extraje la llamada a la API a un método pequeño para mantener limpio el ngOnInit

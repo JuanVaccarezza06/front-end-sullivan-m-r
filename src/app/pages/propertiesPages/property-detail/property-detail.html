@@ -112,7 +112,7 @@
 
             @defer (on viewport) {
 
-            <google-map mapId="414ac1549842ea69fd78b284" height="100%" width="100%" [center]="center" [zoom]="zoom"
+            <google-map [mapId]="mapId" height="100%" width="100%" [center]="center" [zoom]="zoom"
               [options]="{ disableDefaultUI: true, zoomControl: true }">
 
               @for (item of properties; track item.id) {
