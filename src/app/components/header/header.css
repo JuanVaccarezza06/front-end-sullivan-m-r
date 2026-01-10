@@ -27,7 +27,7 @@ header {
 }
 
 #logo {
-  height: 43px; /* Ajusta esto según el tamaño real de tu png */
+  height: 60px; /* Ajusta esto según el tamaño real de tu png */
   width: auto;
   object-fit: contain;
   transition: transform 0.3s ease;
@@ -155,7 +155,7 @@ nav {
   }
   
   #logo {
-    height: 40px; /* Tamaño controlado */
+    height: 47px; /* Tamaño controlado */
   }
 
   /* 2. BOTONES (Login/Registro) */
