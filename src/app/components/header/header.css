@@ -1,91 +1,226 @@
-#logo {
-  height: 5rem;
-  width: 5rem;
+/* --- Configuración General del Header --- */
+header {
+  background-color: #ffffff;
+  width: 100%;
+  height: 80px; /* Altura fija para estabilidad */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Sombra sutil y elegante */
+  position: sticky; /* Opcional: deja el header fijo al hacer scroll */
+  top: 0;
+  z-index: 1000;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 .header-inner {
-  display: flex;
-  justify-content: space-between;
+  max-width: 1400px; /* Ancho máximo para pantallas muy grandes */
   margin: 0 auto;
-  padding: 1rem 1.5rem;
+  height: 100%;
+  display: flex;
   align-items: center;
-  gap: 1rem;
-  border-bottom: 1px solid #e5e5e5;;
-
+  justify-content: space-between;
+  padding: 0 2rem; /* Espacio a los costados */
 }
 
-/* IZQUIERDA: logo + marca */
+/* --- LOGO --- */
 #box-title {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-
-  margin-left: 2rem;
 }
 
 #logo {
-  width: 4rem;
-  height: 5rem;
+  height: 43px; /* Ajusta esto según el tamaño real de tu png */
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.3s ease;
 }
 
-#main-title {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: rgb(21, 128, 31);
-
-  font-family: Arial, Helvetica, sans-serif;
+#logo:hover {
+  transform: scale(1.05); /* Pequeño zoom al pasar el mouse por el logo */
 }
 
-.brand-sub {
-  margin-left: 0.3rem;
-  font-weight: 400;
-
+/* --- NAVEGACIÓN (Centro) --- */
+nav {
+  flex: 1; /* Ocupa el espacio disponible para centrarse */
+  display: flex;
+  justify-content: center;
 }
 
+/* OJO: En tu HTML tienes un espacio en el id " nav-box". 
+   Lo corregí aquí asumiendo que lo arreglas en el HTML a id="nav-box" */
 #nav-box {
   display: flex;
-  gap: 2rem;
-  margin-right: 10rem;
+  gap: 30px; /* Espacio entre links */
+  align-items: center;
 }
 
 .link-nav {
   text-decoration: none;
-  font-size: 1rem;
+  color: #4a5568; /* Gris oscuro suave, muy pro */
   font-weight: 500;
-  color: black;
+  font-size: 1rem;
+  position: relative;
+  transition: color 0.3s ease;
 
-  margin: 1rem;
+  padding: 1rem;
 }
 
+/* Efecto Hover en links: Color verde + linea abajo animada */
 .link-nav:hover {
-  text-decoration: dotted;
+  color: #108043; /* Verde Sullivan */
 }
 
+.link-nav::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background-color: #108043;
+  transition: width 0.3s ease;
+}
+
+.link-nav:hover::after {
+  width: 100%;
+}
+
+/* --- BOTONES (Derecha) --- */
+#image-box {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+/* Estilo base para todos los botones CTA */
 .cta {
-  color: #ffffff;
-  background-color: rgb(21, 128, 31);
-  border: 0;
-  border-radius: 0.20rem;
-  padding: 0.6rem 1rem;
-  margin: 0.30rem;
-
-  font-weight: 800;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: transparent;
 }
 
-/* Responsive */
-@media (max-width: 48rem) {
+/* Botón Secundario (Iniciar sesión / Cerrar sesión) */
+/* Asumimos que es el estilo por defecto */
+.cta {
+  color: #108043; /* Texto verde */
+}
+
+.cta:hover {
+  background-color: #f0fdf4; /* Verde muy pálido al pasar el mouse */
+  color: #15803d;
+}
+
+/* Botón Primario (Registro / Administración) */
+/* Usamos :last-child para que el último botón (Registro) sea el sólido, como en la foto */
+.cta:last-child {
+  background-color: #108043; /* Verde sólido */
+  color: white;
+  box-shadow: 0 4px 6px -1px rgba(16, 128, 67, 0.2);
+}
+
+.cta:last-child:hover {
+  background-color: #15803d; /* Verde más oscuro */
+  transform: translateY(-2px); /* Se levanta un poco */
+  box-shadow: 0 6px 8px -1px rgba(16, 128, 67, 0.3);
+}
+
+/* Estilo específico para cuando es Admin (Opcional, para que resalte) */
+/* Si quieres seleccionar específicamente el botón de admin podrías agregarle una clase extra en el HTML */
+
+
+/* =========================================
+   MEDIA QUERY: MÓVILES Y TABLETS (CORREGIDO)
+   (Max-width: 900px)
+   ========================================= */
+@media (max-width: 900px) {
+
+  header {
+    height: auto; /* Altura automática para que crezca */
+    padding: 15px 0;
+  }
 
   .header-inner {
-    grid-template-columns: 1fr;
-    text-align: center;
+    flex-wrap: wrap; /* Permite múltiples líneas */
+    justify-content: space-between; /* Logo a la izq, Botones a la der */
+    gap: 10px; /* Espacio mínimo entre elementos */
   }
 
-  #box-title, nav, #image-box {
-    justify-self: center;
+  /* 1. LOGO */
+  #box-title {
+    order: 1;
+    flex: 0 0 auto; /* No crece ni se encoge */
+  }
+  
+  #logo {
+    height: 40px; /* Tamaño controlado */
   }
 
+  /* 2. BOTONES (Login/Registro) */
+  #image-box {
+    order: 2;
+    flex: 0 0 auto;
+  }
+  
+  /* Ajustamos los botones para que no sean enormes */
+  .cta {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  /* 3. NAVEGACIÓN (El problema estaba aquí) */
+  nav {
+    order: 3;
+    /* EL FIX CLAVE: */
+    flex: 0 0 100%; /* Fuerza a ocupar el 100% del ancho, rompiendo la línea */
+    width: 100%; 
+    
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee; /* Separador sutil */
+    
+    /* Configuración para scroll horizontal invisible */
+    overflow-x: auto; 
+    -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
+    
+    /* Ocultar la barra de scroll gris fea */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE */
+  }
+  
+  nav::-webkit-scrollbar { 
+    display: none; /* Chrome/Safari */
+  }
+
+  /* El contenedor de los links */
   #nav-box {
-    gap: 1rem;
+    display: flex;
+    justify-content: flex-start; /* Alineado a la izquierda para scrollear */
+    gap: 10px;
+    padding: 0 5px; /* Margen interno para que no se corte el borde */
+    width: max-content; /* Permite que el contenido sea más ancho que la pantalla */
+  }
+
+  /* Estilo "Píldora/Botón" para los links */
+  .link-nav {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #f3f4f6;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    white-space: nowrap; /* Evita que el texto de un link se parta en dos */
+    color: #4a5568;
+  }
+
+  .link-nav:hover, .link-nav.active {
+    background-color: #108043;
+    color: white;
+  }
+
+  /* Quitamos la línea verde inferior del hover de escritorio */
+  .link-nav::after {
+    display: none;
   }
 }

@@ -1,4 +1,4 @@
-/* --- 1. Variables & Tokens --- */
+/* --- 1. Variables & Tokens (INTACTOS) --- */
 :host {
   --primary-color: #108a55;
   --primary-hover: #0c6b42;
@@ -25,13 +25,16 @@
 
 .body {
   background-color: var(--bg-page);
+  min-height: 100vh; /* Asegura que cubra toda la pantalla */
 }
 
-/* --- 2. Layout Global --- */
+/* --- 2. Layout Global Responsive --- */
 .property-page {
-  max-width: 1280px;
+  width: 100%;
+  max-width: 100%; /* Por defecto ocupa el ancho disponible con padding */
   margin: 0 auto;
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md); /* Padding menor en móbile */
+  box-sizing: border-box; /* Vital para que el padding no rompa el ancho */
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   color: var(--secondary-color);
   background-color: var(--bg-page);
@@ -55,17 +58,46 @@
   opacity: 0.8;
 }
 
-/* --- 3. Grid Principal (Asimétrico) --- */
+/* --- 3. Grid Principal (La Lógica Responsive) --- */
 .layout-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 1fr; /* Mobile: 1 sola columna */
   gap: var(--spacing-lg);
 }
 
-@media (min-width: 1024px) {
+/* MEDIA QUERY 1: Laptops y Tablets (900px) */
+@media (min-width: 900px) {
+  .property-page {
+    padding: var(--spacing-lg); /* Recuperamos padding normal */
+    max-width: 1200px; /* Ancho estándar */
+  }
+
   .layout-grid {
-    grid-template-columns: 1.8fr 1fr;
-    gap: var(--spacing-xl);
+    /* Activamos 2 columnas: Contenido (grande) | Sidebar (pequeño) */
+    grid-template-columns: 1.8fr 1fr; 
+    gap: var(--spacing-lg);
+    align-items: start; /* Importante para el sticky sidebar */
+  }
+}
+
+/* MEDIA QUERY 2: Monitores Grandes y TV (1500px) */
+@media (min-width: 1500px) {
+  .property-page {
+    max-width: 1600px; /* Permitimos que se ensanche mucho más */
+  }
+
+  .layout-grid {
+    grid-template-columns: 2fr 1fr; /* Sidebar proporcionalmente más estrecho pero elegante */
+    gap: var(--spacing-xl); /* Más aire entre columnas */
+  }
+
+  /* Escalamos títulos para pantallas grandes */
+  .property-title {
+    font-size: 3rem; 
+  }
+
+  .property-price {
+    font-size: 2.5rem;
   }
 }
 
@@ -76,6 +108,7 @@
 
 .tags-row {
   display: flex;
+  flex-wrap: wrap; /* Evita que se rompa en móviles muy pequeños */
   gap: var(--spacing-sm);
   margin-bottom: var(--spacing-sm);
 }
@@ -100,10 +133,17 @@
 }
 
 .property-title {
-  font-size: 2.25rem;
+  font-size: 1.75rem; /* Base size para móvil */
   font-weight: 700;
   margin: var(--spacing-sm) 0;
   line-height: 1.2;
+}
+
+/* Ajuste de título para Tablet/Desktop estándar */
+@media (min-width: 768px) {
+  .property-title {
+    font-size: 2.25rem;
+  }
 }
 
 .property-location {
@@ -113,17 +153,29 @@
 }
 
 .property-price {
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 700;
   color: var(--primary-color);
 }
 
+@media (min-width: 768px) {
+  .property-price {
+    font-size: 2rem;
+  }
+}
+
 .media-container {
   margin: 0;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md); /* Radio un poco menor en móvil */
   overflow: hidden;
   box-shadow: var(--shadow-md);
   margin-bottom: var(--spacing-lg);
+}
+
+@media (min-width: 900px) {
+  .media-container {
+    border-radius: var(--radius-lg);
+  }
 }
 
 .hero-image {
@@ -134,12 +186,20 @@
   display: block;
 }
 
-/* Stats Cards */
+/* Stats Cards Responsive */
 .quick-stats {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--spacing-md);
+  grid-template-columns: 1fr; /* En móviles muy pequeños, 1 columna */
+  gap: var(--spacing-sm);
   margin-bottom: var(--spacing-lg);
+}
+
+/* A partir de móviles grandes, ponemos las 3 stats en fila */
+@media (min-width: 480px) {
+  .quick-stats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+  }
 }
 
 .stat-card {
@@ -150,6 +210,8 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
+  /* Asegura que no se rompa el layout interno en pantallas chicas */
+  min-width: 0; 
 }
 
 .stat-icon {
@@ -157,46 +219,78 @@
   background: var(--bg-soft-green);
   padding: 8px;
   border-radius: var(--radius-sm);
+  flex-shrink: 0; /* Evita que el icono se aplaste */
 }
 
 .stat-info {
   display: flex;
   flex-direction: column;
+  overflow: hidden; /* Evita desbordes de texto */
 }
 
 .stat-value {
   font-weight: 700;
   font-size: 1.1rem;
+  white-space: nowrap;
 }
 
 .stat-label {
   font-size: 0.85rem;
   color: var(--text-body);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 /* Secciones Generales */
 .content-section {
-  margin-bottom: var(--spacing-xl);
+  margin-bottom: var(--spacing-lg); /* Menos margen en móvil */
+}
+
+@media (min-width: 900px) {
+  .content-section {
+    margin-bottom: var(--spacing-xl);
+  }
 }
 
 .section-heading {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: var(--spacing-md);
   padding-bottom: var(--spacing-sm);
   border-bottom: 1px solid #e2e8f0;
 }
 
+@media (min-width: 900px) {
+  .section-heading {
+    font-size: 1.5rem;
+  }
+}
+
 .text-body {
   line-height: 1.7;
   color: var(--text-body);
+  font-size: 0.95rem;
+}
+
+@media (min-width: 900px) {
+  .text-body {
+    font-size: 1rem;
+  }
 }
 
 /* Amenities Grid */
 .amenities-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  /* Auto-fill inteligente para responsive */
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
   gap: var(--spacing-sm);
+}
+
+@media (min-width: 900px) {
+  .amenities-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
 }
 
 .amenity-item {
@@ -204,6 +298,7 @@
   align-items: center;
   gap: 10px;
   color: var(--secondary-color);
+  font-size: 0.9rem;
 }
 
 .check-icon {
@@ -227,6 +322,13 @@
   justify-content: space-between;
   padding: 8px 0;
   border-bottom: 1px dashed #e2e8f0;
+  font-size: 0.9rem;
+}
+
+@media (min-width: 900px) {
+  .detail-row {
+    font-size: 1rem;
+  }
 }
 
 .detail-row:last-child {
@@ -239,85 +341,54 @@
 
 .detail-value {
   font-weight: 600;
+  text-align: right;
 }
 
 /* --- 5. Sidebar Sticky (Columna Derecha) --- */
 .sidebar {
   position: relative;
+  height: 100%; /* Asegura altura completa en grid */
 }
 
 .sticky-wrapper {
-  position: sticky;
-  top: 2rem;
+  /* En móvil no queremos sticky, solo en desktop */
+  position: static; 
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
 }
 
-/* Agent Card */
-.agent-card {
-  background: var(--bg-card);
-  padding: var(--spacing-lg);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid #f1f5f9;
+@media (min-width: 900px) {
+  .sticky-wrapper {
+    position: sticky;
+    top: 2rem;
+  }
 }
 
-.agent-header {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  margin-bottom: var(--spacing-md);
-}
-
-.agent-avatar {
-  width: 50px;
-  height: 50px;
-  background: #e2e8f0;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  color: var(--text-body);
-}
-
-.agent-name {
-  font-size: 1.1rem;
-  margin: 0;
-}
-
-.agent-role {
-  font-size: 0.85rem;
-  color: var(--text-body);
-  display: block;
-}
-
-.agent-contact-links {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-}
-
-.contact-link {
-  color: var(--primary-color);
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 0.9rem;
-}
-
-/* Formulario */
+/* Formulario - Ajustes responsive */
 .form-card {
   background: var(--bg-card);
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sticky);
+}
+
+@media (min-width: 900px) {
+  .form-card {
+    padding: var(--spacing-lg);
+  }
 }
 
 .form-heading {
   margin-top: 0;
   margin-bottom: var(--spacing-md);
-  font-size: 1.25rem;
+  font-size: 1.15rem;
+}
+
+@media (min-width: 900px) {
+  .form-heading {
+    font-size: 1.25rem;
+  }
 }
 
 .contact-form {
@@ -340,6 +411,8 @@
 
 .field-input,
 .field-textarea {
+  width: 100%; /* Asegura que no se desborde */
+  box-sizing: border-box; /* Vital para inputs */
   padding: 12px;
   border: 1px solid #cbd5e1;
   border-radius: var(--radius-sm);
@@ -369,7 +442,7 @@
 
 .form-checkbox {
   display: flex;
-  align-items: center;
+  align-items: flex-start; /* Alinea checkbox arriba si el texto es largo */
   gap: 8px;
   font-size: 0.85rem;
   color: var(--text-body);
@@ -390,6 +463,7 @@
   cursor: pointer;
   transition: background 0.2s;
   margin-top: var(--spacing-sm);
+  width: 100%; /* Botón full width en todos los dispositivos */
 }
 
 .btn-submit:hover {
@@ -410,11 +484,17 @@
 
 .map-wrapper {
   width: 100%;
-  height: 500px;
+  height: 350px; /* Altura más amigable para móvil */
   border-radius: 12px;
   overflow: hidden;
   position: relative;
   background-color: #f0f0f0;
+}
+
+@media (min-width: 900px) {
+  .map-wrapper {
+    height: 500px; /* Altura completa para desktop */
+  }
 }
 
 /* --- Loader Simple --- */
@@ -428,7 +508,7 @@
   margin-bottom: 2rem;
 }
 
-/* --- Estilos del InfoWindow (Refactorizado) --- */
+/* --- Estilos del InfoWindow --- */
 .info-card {
   max-width: 200px;
   padding: 0;
@@ -506,11 +586,10 @@
   color: #1e4885;
 }
 
-/* Asegura que el placeholder ocupe el mismo espacio que el mapa */
 .map-placeholder {
   width: 100%;
-  height: 100%; /* Hereda los 500px del padre .map-wrapper */
-  background-color: #f0f0f0; /* Color gris de fondo */
+  height: 100%; 
+  background-color: #f0f0f0; 
   display: flex;
   flex-direction: column;
   justify-content: center;

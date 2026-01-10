@@ -15,3 +15,7 @@
 app-header { grid-area: header; }
 .main      { grid-area: main; background-color: #DFF7EB;}
 app-footer { grid-area: footer;}
+
+p{
+  font-family:'Times New Roman', Times, serif;
+}
