@@ -52,9 +52,9 @@ export class UserInfo implements OnInit {
   loadUsers() {
     this.userService.getAll(this.pageSelected).subscribe({
       next: (data) => {
-        this.lastPage = data.totalPages - 1
-        this.pageSelected = data.number
-        this.users = data.content
+        // this.lastPage = data.totalPages - 1
+        // this.pageSelected = data.number
+        // this.users = data.content
         this.numberOfPropertiesLoadInArray = this.users.length
 
       },

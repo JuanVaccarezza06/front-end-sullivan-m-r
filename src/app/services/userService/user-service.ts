@@ -1,9 +1,9 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { PageResponse } from '../../models/pagable/PageResponse';
 import UserFull from '../../models/actors/UserFull';
 import User from '../../models/actors/User';
+import { HatoasPageResponse } from '../../models/pagable/HatoasPageResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -18,8 +18,8 @@ export class UserService {
     private http: HttpClient
   ) { }
 
-  getAll(page: number): Observable<PageResponse<UserFull>> {
-     return this.http.get<PageResponse<UserFull>>(`${this.API_URL}/find-all-full-users?page=${page}&size=5`);
+  getAll(page: number): Observable<HatoasPageResponse<UserFull>> {
+     return this.http.get<HatoasPageResponse<UserFull>>(`${this.API_URL}/find-all-full-users?page=${page}&size=5`);
   }
 
   update(user: User, email: string): Observable<User> {

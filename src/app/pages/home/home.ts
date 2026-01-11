@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterLink } from "@angular/router";
+import { Router, RouterLink } from '@angular/router';
 import Property from '../../models/property/Property';
 import { PropertyService } from '../../services/propertyServices/property/property-service';
 import { ImgBbService } from '../../services/propertyServices/imgBB/img-bb-service';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import PropertiesFilter from '../../models/property/request-response/PropertiesFilter';
 import ZoneDTO from '../../models/property/geography/Zone';
 import PropertyType from '../../models/property/types/PropertyType';
@@ -14,25 +14,24 @@ import { ZoneService } from '../../services/propertyServices/zone/zone-service';
   selector: 'app-home',
   imports: [RouterLink, ReactiveFormsModule],
   templateUrl: './home.html',
-  styleUrl: './home.css'
+  styleUrl: './home.css',
 })
 export class Home implements OnInit {
-
-  form!: FormGroup
+  form!: FormGroup;
 
   // With this variables I can control the messages from login page
   sucessMessage: string = '';
   isFromLogin: boolean = false;
 
   // Image not found for the properties main images not found
-  imageNotFound!: string
+  imageNotFound!: string;
 
   // Objects that I need to show
-  propertiesfeature!: Property[]
-  zoneArray!: ZoneDTO[]
-  zoneArrayFeatured!: ZoneDTO[]
-  propertyTypesArray!: PropertyType[]
-  operationTypeArray!: OperationType[]
+  propertiesfeature!: Property[];
+  zoneArray!: ZoneDTO[];
+  zoneArrayFeatured!: ZoneDTO[];
+  propertyTypesArray!: PropertyType[];
+  operationTypeArray!: OperationType[];
 
   constructor(
     private service: PropertyService,
@@ -40,30 +39,28 @@ export class Home implements OnInit {
     private imgService: ImgBbService,
     private router: Router,
     private fb: FormBuilder
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-
     const state = this.router.lastSuccessfulNavigation?.extras?.state as { message?: string };
     let message = state?.message || undefined;
 
     this.isFromAuthPage(message); // It validate if we have to show the message from any auth page
 
-    this.formInitializer()
+    this.formInitializer();
 
     this.loadAvailablesZones();
     this.loadAvailablesOperationTypes();
     this.loadAvailablePropertyTypes();
     this.loadFeaturedProperties();
 
-    this.imageNotFound = this.imgService.getNotFound() // Load the not found image
-
+    this.imageNotFound = this.imgService.getNotFound(); // Load the not found image
   }
 
   isFromAuthPage(message?: string) {
     if (message) {
       this.isFromLogin = true;
-      this.sucessMessage = message
+      this.sucessMessage = message;
       setTimeout(() => {
         this.isFromLogin = false;
       }, 2000);
@@ -73,22 +70,26 @@ export class Home implements OnInit {
   loadFeaturedProperties() {
     this.service.getFeaturedProperties().subscribe({
       next: (data) => {
-        this.propertiesfeature = data
-        this.propertiesfeature.forEach((value) => this.choiceMainImage(value))
+        this.propertiesfeature = data;
+        this.propertiesfeature.forEach((value) => this.choiceMainImage(value));
       },
-      error: (e) => console.log(e)
+      error: (e) => console.log(e),
     });
   }
 
   choiceMainImage(p: Property) {
-    if (!p.imageDTOList || p.imageDTOList.length == 0) p.mainImage = this.imageNotFound; // If the image array is null or empty, we load the not found image in the cards
-    else if (!p.imageDTOList.find(img => img.name.includes("Portada"))) p.mainImage = p.imageDTOList[0].url // If the image array don't has any image with 'portada' name, load any image
-    else p.mainImage = p.imageDTOList.find(img => img.name.includes("Portada"))?.url // If the image array has the 'portada' image, it returs
+    if (!p.imageDTOList || p.imageDTOList.length == 0)
+      p.mainImage =
+        this.imageNotFound; // If the image array is null or empty, we load the not found image in the cards
+    else if (!p.imageDTOList.find((img) => img.name.includes('Portada')))
+      p.mainImage =
+        p.imageDTOList[0].url; // If the image array don't has any image with 'portada' name, load any image
+    else p.mainImage = p.imageDTOList.find((img) => img.name.includes('Portada'))?.url; // If the image array has the 'portada' image, it returs
   }
 
   viewDetail(propertyToSee: Property) {
-    return this.router.navigate(['property-detail',propertyToSee.id], {
-      state: { propertyData: propertyToSee }
+    return this.router.navigate(['property-detail', propertyToSee.id], {
+      state: { propertyData: propertyToSee },
     });
   }
 
@@ -100,13 +101,12 @@ export class Home implements OnInit {
     });
   }
 
-
   loadAvailablesOperationTypes() {
     this.service.getAvailablesOperationTypes().subscribe({
       next: (data) => {
         this.operationTypeArray = data;
       },
-      error: (e) => console.log(e)
+      error: (e) => console.log(e),
     });
   }
 
@@ -115,7 +115,7 @@ export class Home implements OnInit {
       next: (data) => {
         this.propertyTypesArray = data;
       },
-      error: (e) => console.log(e)
+      error: (e) => console.log(e),
     });
   }
 
@@ -123,56 +123,54 @@ export class Home implements OnInit {
     this.zoneService.getAll().subscribe({
       next: (data) => {
         this.zoneArray = data;
-        this.zoneArrayFeatured = data.filter(value => value.isFeatured);
+        this.zoneArrayFeatured = data.filter((value) => value.isFeatured);
       },
-      error: (e) => console.log(e)
+      error: (e) => console.log(e),
     });
   }
 
   makeFilter() {
-
     const filterResult = {
-      operationTypeDTO: { "operationName": this.form.get('operationTypes')?.value },
-      propertyTypeDTO: { "typeName": this.form.get('propertyTypes')?.value },
+      operationTypeDTO: { operationName: this.form.get('operationTypes')?.value },
+      propertyTypeDTO: { typeName: this.form.get('propertyTypes')?.value },
       zoneDTO: {
-        "zoneName": this.form.get('zone')?.value.zoneName,
-        "cityDTO": {
-          "cityName": this.form.get('zone')?.value.cityDTO.cityName,
-          "provinceDTO": {
-            "provinceName": this.form.get('zone')?.value.cityDTO.provinceDTO.provinceName,
-            "countryDTO": {
-              "countryName": this.form.get('zone')?.value.cityDTO.provinceDTO.countryDTO.countryName
-            }
-          }
+        zoneName: this.form.get('zone')?.value.zoneName,
+        cityDTO: {
+          cityName: this.form.get('zone')?.value.cityDTO.cityName,
+          provinceDTO: {
+            provinceName: this.form.get('zone')?.value.cityDTO.provinceDTO.provinceName,
+            countryDTO: {
+              countryName: this.form.get('zone')?.value.cityDTO.provinceDTO.countryDTO.countryName,
+            },
+          },
         },
-        isFeatured: false
+        isFeatured: false,
       },
       minPrice: 0,
       maxPrice: 0,
       rooms: 0,
-      amenityDTOList: []
-    } as PropertiesFilter
+      amenityDTOList: [],
+    } as PropertiesFilter;
 
     this.service.applyFilter(filterResult, 0).subscribe({
       next: (data) => {
-        if (data.content?.length > 0 && data.first) {
-          console.log(data)
-          this.router
-          .navigate
-          (
-            ['properties'], 
-            { state: { homeResponse: data }}
-          )
+        // 1. Extraemos el contenido de forma segura
+        const content = data._embedded ? data._embedded.propertyDTOList : [];
+
+        if (content.length > 0) {
+          console.log('Resultados encontrados:', data);
+
+          this.router.navigate(['properties'], {
+            // Enviamos el objeto 'data' COMPLETO (que tiene _embedded y page)
+            state: { homeResponse: data },
+          });
         } else {
-          this.router
-          .navigate(
-            ['properties'], 
-            { state: { homeResponse: false }}
-        )
+          this.router.navigate(['properties'], {
+            state: { homeResponse: false },
+          });
         }
       },
-      error: (e) => console.log(e)
-    })
+      error: (e) => console.log(e),
+    });
   }
-
 }

@@ -33,9 +33,6 @@ export class PropertyList implements OnInit {
   loadProperties() {
     this.propertyService.getAll(this.pageSelected).subscribe({
       next: (data) => {
-        this.lastPage = data.totalPages - 1
-        this.pageSelected = data.number
-        this.properties = data.content
         this.numberOfPropertiesLoadInArray = this.properties.length
         this.properties.forEach((value) => this.choiceMainImage(value))
 

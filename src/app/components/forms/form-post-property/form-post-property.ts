@@ -7,7 +7,6 @@ import PropertyType from '../../../models/property/types/PropertyType';
 import ZoneDTO from '../../../models/property/geography/Zone';
 import { PropertyService } from '../../../services/propertyServices/property/property-service';
 import Property from '../../../models/property/Property';
-import { PageResponse } from '../../../models/pagable/PageResponse';
 import { FormZone } from '../sub-forms/form-zone/form-zone';
 import { FormAddress } from '../sub-forms/form-address/form-address';
 import { FormOwner } from '../sub-forms/form-owner/form-owner';
