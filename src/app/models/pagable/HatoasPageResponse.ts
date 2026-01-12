@@ -1,12 +1,13 @@
 export interface HatoasPageResponse<T> {
   _embedded: {
-    propertyDTOList: T[]; // Spring suele usar el nombre de la clase + List
+    // Esto es un "Index Signature". Significa: "Cualquier string que use como clave, devuelve un array de T"
+    [key: string]: T[]; 
   };
   _links: {
     first: { href: string };
-    prev?: { href: string }; // Puede ser undefined si estás en la primera pag
+    prev?: { href: string };
     self: { href: string };
-    next?: { href: string }; // Puede ser undefined si estás en la última pag
+    next?: { href: string };
     last: { href: string };
   };
   page: {

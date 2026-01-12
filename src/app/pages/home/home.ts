@@ -155,7 +155,7 @@ export class Home implements OnInit {
     this.service.applyFilter(filterResult, 0).subscribe({
       next: (data) => {
         // 1. Extraemos el contenido de forma segura
-        const content = data._embedded ? data._embedded.propertyDTOList : [];
+        const content = data._embedded ? data._embedded['propertyDTOList'] : [];
 
         if (content.length > 0) {
           console.log('Resultados encontrados:', data);

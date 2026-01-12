@@ -25,13 +25,10 @@ import { ImgBbService } from '../../../services/propertyServices/imgBB/img-bb-se
 import { AmenityService } from '../../../services/propertyServices/amenity/amenity-service';
 
 // Components
-import { ConfigurationFilter } from '../../../components/configuration-filter/configuration-filter';
 import { AdapterItem } from '../../../components/adapter-item/adapter-item';
 import { ZoneService } from '../../../services/propertyServices/zone/zone-service';
 import { ConfigurationType } from '../../../models/property/complements/ConfigurationType';
-import { setThrowInvalidWriteToSignalError } from '@angular/core/primitives/signals';
 import { AuthService } from '../../../services/authService/auth-service';
-import { HatoasPageResponse } from '../../../models/pagable/HatoasPageResponse';
 
 @Component({
   selector: 'app-properties',
@@ -171,7 +168,7 @@ export class Properties implements OnInit {
 
         // CAMBIOS AQUÍ:
         // 1. La data real ahora está dentro de _embedded.propertyDTOList
-        const content = data._embedded ? data._embedded.propertyDTOList : [];
+        const content = data._embedded ? data._embedded['propertyDTOList'] : [];
 
         // 2. La info de paginación está dentro de data.page
         this.updatePageInfo(data.page.totalPages - 1, data.page.number, content);
@@ -456,7 +453,7 @@ export class Properties implements OnInit {
         // Si Spring no encuentra nada, a veces no manda _embedded.
         // Usamos el operador ternario para evitar errores.
         // IMPORTANTE: Spring suele llamar a la lista "propertyDTOList".
-        const content = data._embedded ? data._embedded.propertyDTOList : [];
+        const content = data._embedded ? data._embedded['propertyDTOList'] : [];
 
         // 3. Validamos si hay contenido
         if (content.length > 0) {

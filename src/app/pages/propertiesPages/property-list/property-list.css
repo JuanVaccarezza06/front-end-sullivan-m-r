@@ -90,7 +90,6 @@
        .filter-input input::placeholder {
            color: #999;
        }
-
        .filter-select {
            padding: 10px 16px;
            border: 1px solid #e0e0e0;
