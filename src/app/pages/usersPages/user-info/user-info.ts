@@ -239,6 +239,7 @@ export class UserInfo implements OnInit {
 
   cleanFilter() {
     this.isFindBy = false;
+    this.form.get('inputToFind')?.patchValue("");
     this.loadUsers();
   }
 

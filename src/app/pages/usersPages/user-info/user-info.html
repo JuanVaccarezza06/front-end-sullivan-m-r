@@ -78,7 +78,6 @@
             Limpiar
           </button>
         </div>
-
         @if (form.get('inputToFind')?.hasError('required') && form.get('inputToFind')?.touched ) {
         <p class="p-error">Este campo es obligatorio</p>
         } @else if (form.get('inputToFind')?.hasError('maxlength') &&

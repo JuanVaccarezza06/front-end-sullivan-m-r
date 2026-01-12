@@ -155,7 +155,6 @@
    ========================================================================== */
 
 .search-filter {
-  margin-bottom: 1rem;
   display: flex;
 }
 
@@ -245,6 +244,12 @@ svg {
   background-color: #dc3545;
   color: white;
 }
+
+ .p-error {
+     color: rgb(223, 121, 121);
+     font-size: 0.85rem;
+     margin: 0.3rem 0 0 0;
+ }
 
 /* ==========================================================================
    4. LISTA DE USUARIOS (ITEMS)
