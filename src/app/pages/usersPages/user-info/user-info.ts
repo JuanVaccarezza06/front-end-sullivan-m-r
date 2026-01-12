@@ -181,12 +181,6 @@ export class UserInfo implements OnInit {
     this.userSelected = user;
   }
 
-  updateUser(user: UserFull) {
-    return this.router.navigate(['admin/user-update'], {
-      state: { userToUpdate: user },
-    });
-  }
-
   onSubmit() {
     if (this.form.invalid) return;
 
