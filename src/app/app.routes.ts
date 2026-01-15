@@ -15,6 +15,7 @@ import { Register } from './pages/authPages/register/register';
 import { UserUpdate } from './pages/usersPages/user-update/user-update';
 import { Dashboard } from './pages/admistration/dashboard/dashboard';
 import { Consults } from './pages/admistration/consults/consults';
+import { RoleAssignation } from './components/role-assignation/role-assignation';
 
 export const routes: Routes = [
 
@@ -25,6 +26,8 @@ export const routes: Routes = [
     { path: 'services', component: Services },
     { path: 'log-in', component: LogIn },
     { path: 'register', component: Register },
+    { path: 'property-detail/:id', component: PropertyDetail },
+    { path: 'prueba', component: RoleAssignation },
     {
         path: 'admin',
         component: Admin, // Este es tu componente "layout" con el sidebar
@@ -74,7 +77,7 @@ export const routes: Routes = [
             }
         ]
     },
-    { path: 'property-detail/:id', component: PropertyDetail }
+
 
 
 

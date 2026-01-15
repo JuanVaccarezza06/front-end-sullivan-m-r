@@ -1,17 +1,36 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { UserService } from '../../../services/userService/user-service';
-import UserFull from '../../../models/actors/UserFull';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { UserService } from '../../../services/userService/user-service';
+import { RolesService } from '../../../services/authService/roles/roles-service';
+import UserFull from '../../../models/actors/UserFull';
+import Role from '../../../models/auth/Role';
 import { HatoasPageResponse } from '../../../models/pagable/HatoasPageResponse';
+import { RoleAssignation } from '../../../components/role-assignation/role-assignation';
 
 @Component({
   selector: 'app-user-detail',
-  imports: [RouterLink, ReactiveFormsModule],
+  imports: [RouterLink, ReactiveFormsModule, RoleAssignation],
   templateUrl: './user-info.html',
   styleUrl: './user-info.css',
 })
 export class UserInfo implements OnInit {
+
+  // --- INJECTIONS ---
+  private userService = inject(UserService);
+  private roleService = inject(RolesService);
+  private fb = inject(FormBuilder);
+  private router = inject(Router);
+
+  // --- SIGNALS ---
+  isRoleModalOpen = signal(false);
+  availableRoles = signal<Role[]>([]);        // All the roles of the DBs (to the modal)
+  currentUserRoles = signal<string[]>([]);    // IDS of user roles (to the checkboxes from modal)
+  currentUserRolesObjects = signal<Role[]>([]);// Full objects (for show names in the cards)
+  
+  inputTypeDetected = signal<'EMAIL' | 'PHONE' | 'NAME' | 'UNKNOWN'>('UNKNOWN');
+
+  // --- STATE ---
   userSelected: UserFull = {
     firstName: 'Elliot',
     surname: 'Alderson',
@@ -21,34 +40,34 @@ export class UserInfo implements OnInit {
   };
 
   users: UserFull[] = [];
-
   form!: FormGroup;
 
+  // Pagination & Search
   isFindBy: boolean = false;
   userNotFound: boolean = false;
-
-  numberPagesInDatabase: number = 0;
-  numberOfPropertiesLoadInArray: number = 0;
   pageSelected: number = 0;
   lastPage: number = 0;
-
-  // Para persistir el término de búsqueda al paginar
   currentSearchTerm: string = '';
-
-  // 1. ACTUALIZAMOS EL TIPO DE LA SIGNAL
-  inputTypeDetected = signal<'EMAIL' | 'PHONE' | 'NAME' | 'UNKNOWN'>('UNKNOWN');
-
-  constructor(private userService: UserService, private router: Router, private fb: FormBuilder) {}
+  numberOfPropertiesLoadInArray: number = 0;
 
   ngOnInit(): void {
+    
     this.formInitilizer();
     this.loadUsers();
 
-    // NUEVO: Escuchar cambios para feedback visual inmediato
+    // Detección automática del tipo de input
     this.form.get('inputToFind')?.valueChanges.subscribe((value) => {
       this.detectInputType(value);
     });
+
+    // Cargar la lista maestra de roles una sola vez al inicio
+    this.roleService.getRoles().subscribe({
+      next: (roles) => this.availableRoles.set(roles),
+      error: (err) => console.error('Error cargando roles maestros', err),
+    });
   }
+
+  // --- FORMULARIOS Y BÚSQUEDA ---
 
   formInitilizer() {
     this.form = this.fb.group({
@@ -56,42 +75,49 @@ export class UserInfo implements OnInit {
     });
   }
 
-  // 2. NUEVA LÓGICA DE DETECCIÓN (Agregamos NAME)
-  detectInputType(value: string) {
-    if (!value) {
-      this.inputTypeDetected.set('UNKNOWN');
-      return;
-    }
+  onSubmit() {
+    if (this.form.invalid) return;
+    const inputValue = this.form.get('inputToFind')?.value;
+    const type = this.inputTypeDetected();
 
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const phonePattern = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
-    const hasNumbers = /\d/.test(value);
+    this.userNotFound = false;
+    this.currentSearchTerm = inputValue;
+    this.pageSelected = 0;
 
-    if (emailPattern.test(value) || value.includes('@')) {
-      this.inputTypeDetected.set('EMAIL');
-    } else if (hasNumbers && value.length > 6) {
-      this.inputTypeDetected.set('PHONE');
-    } else if (value.trim().length >= 3) {
-      // Si tiene más de 3 letras y no es email ni teléfono, es NOMBRE
-      this.inputTypeDetected.set('NAME');
+    if (type === 'NAME') {
+      this.searchByName();
+    } else if (type === 'EMAIL') {
+      this.executeSearch(this.userService.getByEmail(inputValue));
+    } else if (type === 'PHONE') {
+      this.executeSearch(this.userService.getByPhone(inputValue));
     } else {
-      this.inputTypeDetected.set('UNKNOWN');
+      if (inputValue.includes('@')) {
+        this.executeSearch(this.userService.getByEmail(inputValue));
+      } else {
+        this.inputTypeDetected.set('NAME');
+        this.searchByName();
+      }
     }
   }
 
-  // 3. NUEVO MÉTODO: BÚSQUEDA POR NOMBRE (HATEOAS)
+  detectInputType(value: string) {
+    if (!value) { this.inputTypeDetected.set('UNKNOWN'); return; }
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const hasNumbers = /\d/.test(value);
+
+    if (emailPattern.test(value) || value.includes('@')) this.inputTypeDetected.set('EMAIL');
+    else if (hasNumbers && value.length > 6) this.inputTypeDetected.set('PHONE');
+    else if (value.trim().length >= 3) this.inputTypeDetected.set('NAME');
+    else this.inputTypeDetected.set('UNKNOWN');
+  }
+
   searchByName() {
-    // Usamos currentSearchTerm para asegurar consistencia al paginar
     this.userService.getByName(this.currentSearchTerm, this.pageSelected).subscribe({
       next: (data: HatoasPageResponse<UserFull>) => {
         this.processHatoasResponse(data);
         this.isFindBy = true;
-        console.log('Usuarios cargados (BY NAME):', this.users.length);
-
-        // Feedback visual si no hay resultados en la lista
         if (!this.users || this.users.length === 0) {
           this.userNotFound = true;
-          console.log('Lista vacía o indefinida');
           setTimeout(() => (this.userNotFound = false), 3000);
           this.loadUsers();
         }
@@ -100,125 +126,12 @@ export class UserInfo implements OnInit {
     });
   }
 
-  private processHatoasResponse(data: HatoasPageResponse<UserFull>) {
-    // CORRECCIÓN AQUÍ:
-    // 1. data?.  -> ¿Existe data?
-    // 2. _embedded?. -> ¿Existe _embedded? (Si la lista es vacía, esto es false)
-    // 3. ['userFullDTOList'] -> ¿Existe la lista con ese nombre exacto?
-    // 4. ?? [] -> Si CUALQUIERA de las anteriores falla, usa un array vacío.
-
-    const content = data?._embedded?.['userDTOList'] ?? [];
-
-    // El resto sigue igual
-    const totalPages = data?.page?.totalPages ?? 0;
-    const pageNum = data?.page?.number ?? 0;
-
-    this.lastPage = totalPages - 1;
-    this.pageSelected = pageNum;
-
-    this.users = content;
-    this.numberOfPropertiesLoadInArray = this.users.length;
-  }
-
-  // 4. CHANGE PAGE INTELIGENTE
-  changePage(signal: boolean) {
-    let newPage = this.pageSelected;
-
-    // Calcular nueva página localmente primero
-    if (signal && this.pageSelected < this.lastPage) {
-      newPage++;
-    } else if (!signal && this.pageSelected > 0) {
-      newPage--;
-    } else {
-      return; // No hay cambio
-    }
-
-    this.pageSelected = newPage;
-
-    // Decidir qué cargar
-    if (this.isFindBy && this.inputTypeDetected() === 'NAME') {
-      this.searchByName(); // Pagina sobre la búsqueda de nombre
-    } else if (
-      this.isFindBy &&
-      (this.inputTypeDetected() === 'EMAIL' || this.inputTypeDetected() === 'PHONE')
-    ) {
-      // Email/Phone no suelen tener paginación real (es 1 resultado), pero si tuvieran, iría aquí.
-      // Por ahora no hacemos nada o reseteamos.
-    } else {
-      this.loadUsers(); // Pagina sobre todos
-    }
-  }
-
-  // user-info.ts
-
-  loadUsers() {
-    this.userService.getAll(this.pageSelected).subscribe({
-      next: (data: HatoasPageResponse<UserFull>) => {
-        // Usamos 'any' o HatoasPageResponse<UserFull>
-
-        // 1. Extraer la lista de _embedded
-        // Spring suele generar el nombre "userFullDTOList"
-        const content = data._embedded['userFullDTOList'];
-
-        // 2. Extraer info de paginación desde 'page'
-        // Usamos el operador ?. por seguridad
-        const totalPages = data.page?.totalPages ?? 0;
-        const pageNum = data.page?.number ?? 0;
-
-        // 3. Asignar variables
-        this.lastPage = totalPages - 1;
-        this.pageSelected = pageNum;
-        this.users = content;
-        this.numberOfPropertiesLoadInArray = this.users.length;
-
-        console.log('Usuarios cargados vía HATEOAS:', this.users.length);
-      },
-      error: (e) => console.log(e),
-    });
-  }
-
-  selectUser(user: UserFull) {
-    this.userSelected = user;
-  }
-
-  onSubmit() {
-    if (this.form.invalid) return;
-
-    const inputValue = this.form.get('inputToFind')?.value;
-    const type = this.inputTypeDetected();
-
-    this.userNotFound = false;
-    this.currentSearchTerm = inputValue; // Guardamos el término actual
-    this.pageSelected = 0; // Resetear a página 0 en nueva búsqueda
-
-    if (type === 'NAME') {
-      // Flujo HATEOAS (Lista)
-      this.searchByName();
-    } else if (type === 'EMAIL') {
-      // Flujo Único
-      this.executeSearch(this.userService.getByEmail(inputValue));
-    } else if (type === 'PHONE') {
-      // Flujo Único
-      this.executeSearch(this.userService.getByPhone(inputValue));
-    } else {
-      // Fallback
-      if (inputValue.includes('@')) {
-        this.executeSearch(this.userService.getByEmail(inputValue));
-      } else {
-        // Intentamos nombre como último recurso si no parece email
-        this.inputTypeDetected.set('NAME');
-        this.searchByName();
-      }
-    }
-  }
-
-  // Helper para no repetir código en el subscribe
   executeSearch(observableRequest: any) {
     observableRequest.subscribe({
       next: (data: UserFull) => {
-        this.users = [data]; // Array de 1 elemento
+        this.users = [data];
         this.isFindBy = true;
-        this.lastPage = 0; // Búsqueda única no tiene páginas
+        this.lastPage = 0;
         this.pageSelected = 0;
         this.userNotFound = false;
       },
@@ -233,30 +146,114 @@ export class UserInfo implements OnInit {
 
   cleanFilter() {
     this.isFindBy = false;
-    this.form.get('inputToFind')?.patchValue("");
+    this.form.get('inputToFind')?.patchValue('');
     this.loadUsers();
+  }
+
+  // --- LÓGICA DE USUARIOS ---
+
+  selectUser(user: UserFull) {
+    this.userSelected = user;
+    // CRUCIAL: Cargar los roles inmediatamente al seleccionar para verlos en la tarjeta
+    this.reloadUserRoles(user.username);
+  }
+
+  // Helper centralizado para refrescar roles (se usa al seleccionar y al guardar)
+  reloadUserRoles(username: string) {
+    this.userService.getRolesByUsername(username).subscribe({
+      next: (roles) => {
+        // 1. Para la tarjeta visual (Chips con nombre)
+        this.currentUserRolesObjects.set(roles);
+        
+        // 2. Para el modal (Checkboxes por ID)
+        const roleIds = roles.map((r) => r.roleId);
+        this.currentUserRoles.set(roleIds);
+      },
+      error: (e) => console.error('Error cargando roles del usuario', e),
+    });
+  }
+
+  // --- LÓGICA DEL MODAL DE ROLES ---
+
+  openRolesModal(user: UserFull) {
+    // Solo abrimos, porque selectUser ya cargó los datos
+    this.userSelected = user;
+    this.isRoleModalOpen.set(true);
+  }
+
+  handleSaveRoles(newRoleIds: string[]) {
+    const allRoles = this.availableRoles();
+
+    // Construimos el DTO complejo que espera Java
+    const roleDTOList = newRoleIds.map((id) => {
+      const roleOriginal = allRoles.find((r) => r.roleId === id);
+      return {
+        roleId: Number(id), // Convertimos a número para Java
+        roleName: roleOriginal ? roleOriginal.roleName : '',
+      };
+    });
+
+    const payload = {
+      roleDTOList: roleDTOList,
+      userFullDTO: { ...this.userSelected }, // Copia del usuario
+    };
+
+    console.log('Enviando payload:', payload);
+
+    this.roleService.assignRolesToUser(payload).subscribe({
+      next: () => {
+        console.log('Roles actualizados exitosamente');
+        this.isRoleModalOpen.set(false);
+        this.reloadUserRoles(this.userSelected.username); // Refrescar vista
+      },
+      error: (err) => console.error('Error guardando roles', err),
+    });
+  }
+
+  deleteRoleFromCard(roleIdToDelete: string, roleName: string) {
+    if (!confirm(`¿Quitar el rol "${roleName}" de ${this.userSelected.username}?`)) {
+      return;
+    }
+    // Filtramos localmente y reutilizamos la lógica de guardado
+    const currentIds = this.currentUserRoles();
+    const newIds = currentIds.filter((id) => id !== roleIdToDelete);
+    this.handleSaveRoles(newIds);
+  }
+
+  // --- PAGINACIÓN ---
+
+  loadUsers() {
+    this.userService.getAll(this.pageSelected).subscribe({
+      next: (data: HatoasPageResponse<UserFull>) => {
+        this.processHatoasResponse(data);
+      },
+      error: (e) => console.log(e),
+    });
+  }
+
+  private processHatoasResponse(data: HatoasPageResponse<UserFull>) {
+    const content = data?._embedded?.['userFullDTOList'] ?? []; // Asegúrate que el backend envía 'userFullDTOList'
+    this.lastPage = (data.page?.totalPages ?? 0) - 1;
+    this.pageSelected = data.page?.number ?? 0;
+    this.users = content;
+    this.numberOfPropertiesLoadInArray = this.users.length;
+  }
+
+  changePage(forward: boolean) {
+    if (forward && this.pageSelected < this.lastPage) this.pageSelected++;
+    else if (!forward && this.pageSelected > 0) this.pageSelected--;
+    else return;
+
+    if (this.isFindBy && this.inputTypeDetected() === 'NAME') this.searchByName();
+    else this.loadUsers();
   }
 
   deleteUser(user: UserFull) {
     if (confirm(`¿Estás seguro de eliminar a ${user.username}?`)) {
       this.userService.delete(user).subscribe({
-        next: () => {
-          console.log('Delete exitoso');
-          // Si el usuario eliminado era el seleccionado, reseteamos selección o seleccionamos el primero
-          if (this.userSelected.email === user.email && this.users.length > 0) {
-            // Lógica opcional para resetear selección
-          }
-          this.loadUsers();
-        },
+        next: () => this.loadUsers(),
         error: (e) => console.log(e),
       });
     }
-  }
-
-  openRolesModal(user: UserFull) {
-    // Pendiente: Implementar lógica de apertura del modal de roles
-    console.log('Abriendo modal de roles para:', user.username);
-    this.userSelected = user;
-    // Aquí iría la lógica para abrir el modal (ej: document.getElementById...)
   }
 }

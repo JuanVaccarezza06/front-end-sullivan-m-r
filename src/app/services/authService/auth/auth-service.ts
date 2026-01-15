@@ -1,13 +1,13 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import CredentialRegister from '../../models/auth/CredentialRegister';
-import CredentialLogIn from '../../models/auth/CredentialLogIn';
+import CredentialRegister from '../../../models/auth/CredentialRegister';
+import CredentialLogIn from '../../../models/auth/CredentialLogIn';
 import { jwtDecode } from 'jwt-decode';
 import { Observable } from 'rxjs';
-import TokenResponseDTO from '../../models/auth/TokenResponseDTO';
+import TokenResponseDTO from '../../../models/auth/TokenResponseDTO';
 import { Token } from '@angular/compiler';
-import JwtPayload from '../../models/auth/JwtPayload';
-import User from '../../models/actors/User';
+import JwtPayload from '../../../models/auth/JwtPayload';
+import User from '../../../models/actors/User';
 
 @Injectable({
   providedIn: 'root'

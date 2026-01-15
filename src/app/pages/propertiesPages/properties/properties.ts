@@ -28,7 +28,7 @@ import { AmenityService } from '../../../services/propertyServices/amenity/ameni
 import { AdapterItem } from '../../../components/adapter-item/adapter-item';
 import { ZoneService } from '../../../services/propertyServices/zone/zone-service';
 import { ConfigurationType } from '../../../models/property/complements/ConfigurationType';
-import { AuthService } from '../../../services/authService/auth-service';
+import { AuthService } from '../../../services/authService/auth/auth-service';
 
 @Component({
   selector: 'app-properties',

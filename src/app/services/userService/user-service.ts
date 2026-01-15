@@ -1,9 +1,10 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import UserFull from '../../models/actors/UserFull';
 import User from '../../models/actors/User';
 import { HatoasPageResponse } from '../../models/pagable/HatoasPageResponse';
+import Role from '../../models/auth/Role';
 
 @Injectable({
   providedIn: 'root',
@@ -30,6 +31,16 @@ export class UserService {
   getByEmail(email: string): Observable<UserFull> {
     const url = `${this.API_URL}/find-by-email?email=${email}`;
     return this.http.get<UserFull>(url);
+  }
+
+  getRolesByUsername(username: string): Observable<Role[]> {
+    // 2. Usamos HttpParams para que Angular codifique automáticamente
+    // El caracter '#' se convertirá en '%23' solo
+    const params = new HttpParams().set('username', username);
+
+    // 3. Pasamos { params } como segundo argumento
+    // NOTA: Quité el query string manual de la URL, Angular lo agrega
+    return this.http.get<Role[]>(`${this.API_URL}/find-roles-by-username`, { params });
   }
 
   // user-service.ts

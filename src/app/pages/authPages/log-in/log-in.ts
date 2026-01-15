@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import CredentialLogIn from '../../../models/auth/CredentialLogIn';
-import { AuthService } from '../../../services/authService/auth-service';
+import { AuthService } from '../../../services/authService/auth/auth-service';
 
 @Component({
   selector: 'app-log-in',

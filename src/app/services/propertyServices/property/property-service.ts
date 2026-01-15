@@ -7,7 +7,7 @@ import PropertyType from '../../../models/property/types/PropertyType';
 import Amenity from '../../../models/property/complements/Amenity';
 import { Observable } from 'rxjs';
 import PropertiesFilter from '../../../models/property/request-response/PropertiesFilter';
-import { AuthService } from '../../authService/auth-service';
+import { AuthService } from '../../authService/auth/auth-service';
 import PropertyPost from '../../../models/property/PropertyPost';
 import { HatoasPageResponse } from '../../../models/pagable/HatoasPageResponse';
 

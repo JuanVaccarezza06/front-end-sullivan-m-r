@@ -7,7 +7,7 @@ import { take } from 'rxjs/operators'; // <--- Senior Tip: Import this
 import GeneralInquiry from '../../models/contact/GeneralInquiry';
 import { MotiveService } from '../../services/propertyServices/motive/motive-service';
 import MotiveDTO from '../../models/contact/MotiveDTO';
-import { AuthService } from '../../services/authService/auth-service';
+import { AuthService } from '../../services/authService/auth/auth-service';
 import { UserService } from '../../services/userService/user-service';
 import { ContactService } from '../../services/contactService/contact-service';
 

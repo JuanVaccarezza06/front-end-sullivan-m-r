@@ -1,9 +1,7 @@
 <div class="body">
-  <!-- Main Content -->
   <div class="main-content">
-    <!-- Content -->
     <div class="content">
-      <!-- Users List -->
+      
       <div class="users-list-section">
         <div class="section-header">
           <div>
@@ -12,118 +10,56 @@
           </div>
           <div class="box-header">
             <button class="btn-add" routerLink="../../register">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
               Crear Usuario
             </button>
             <div class="pagination pagination--minimal">
-              <button
-                class="pagination__button"
-                id="prevBtn2"
-                (click)="changePage(false)"
-                [disabled]="pageSelected === 0"
-                [style.opacity]="pageSelected === 0 ? '0.5' : '1'"
-              >
-                ‹
-              </button>
-
-              <span class="pagination__info">
-                Página <span>{{ pageSelected + 1 }}</span> de <span>{{ lastPage + 1 }}</span>
-              </span>
-
-              <button
-                class="pagination__button"
-                id="nextBtn2"
-                (click)="changePage(true)"
-                [disabled]="pageSelected >= lastPage"
-                [style.opacity]="pageSelected >= lastPage ? '0.5' : '1'"
-              >
-                ›
-              </button>
+              <button class="pagination__button" id="prevBtn2" (click)="changePage(false)" [disabled]="pageSelected === 0" [style.opacity]="pageSelected === 0 ? '0.5' : '1'">‹</button>
+              <span class="pagination__info">Página <span>{{ pageSelected + 1 }}</span> de <span>{{ lastPage + 1 }}</span></span>
+              <button class="pagination__button" id="nextBtn2" (click)="changePage(true)" [disabled]="pageSelected >= lastPage" [style.opacity]="pageSelected >= lastPage ? '0.5' : '1'">›</button>
             </div>
           </div>
         </div>
 
         <div class="search-filter" [formGroup]="form" (submit)="onSubmit()">
           <fieldset class="search-input">
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-            <input
-              type="text"
-              placeholder="Buscar usuarios por email..."
-              formControlName="inputToFind"
-            />
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input type="text" placeholder="Buscar usuarios por email..." formControlName="inputToFind" />
           </fieldset>
-          <button
-            class="btn btn-primary"
-            id="btn-filter"
-            (click)="onSubmit()"
-            [disabled]="this.form.invalid"
-          >
-            Buscar
-          </button>
-          <button class="btn btn-primary" (click)="cleanFilter()" [disabled]="!this.isFindBy">
-            Limpiar
-          </button>
+          <button class="btn btn-primary" id="btn-filter" (click)="onSubmit()" [disabled]="this.form.invalid">Buscar</button>
+          <button class="btn btn-primary" (click)="cleanFilter()" [disabled]="!this.isFindBy">Limpiar</button>
         </div>
+        
         @if (form.get('inputToFind')?.hasError('required') && form.get('inputToFind')?.touched ) {
-        <p class="p-error">Este campo es obligatorio</p>
-        } @else if (form.get('inputToFind')?.hasError('maxlength') &&
-        form.get('inputToFind')?.touched ) {
-        <p class="p-error">Máximo 200 caracteres</p>
+          <p class="p-error">Este campo es obligatorio</p>
+        } @else if (form.get('inputToFind')?.hasError('maxlength') && form.get('inputToFind')?.touched ) {
+          <p class="p-error">Máximo 200 caracteres</p>
         }@else if (userNotFound) {
-        <p class="p-error">
-          Usuario no encontrado. Verifique el
-          {{ inputTypeDetected() === 'PHONE' ? 'teléfono' : 'email' }}.
-        </p>
+          <p class="p-error">Usuario no encontrado. Verifique el {{ inputTypeDetected() === 'PHONE' ? 'teléfono' : 'email' }}.</p>
         }
 
         <div class="users-list">
           @for (i of users; track $index) {
-          <div class="user-item selected" (click)="selectUser(i)">
-            <div class="user-item-info">
-              <div class="user-item-avatar">
-                {{ i.firstName.charAt(0) }}{{ i.surname.charAt(0) }}
+            <div class="user-item selected" (click)="selectUser(i)">
+              <div class="user-item-info">
+                <div class="user-item-avatar">{{ i.firstName.charAt(0) }}{{ i.surname.charAt(0) }}</div>
+                <div class="user-item-details">
+                  <h3>{{ i.firstName }}</h3>
+                  <p>{{ i.email }}</p>
+                </div>
               </div>
-              <div class="user-item-details">
-                <h3>{{ i.firstName }}</h3>
-                <p>{{ i.email }}</p>
+              <div class="user-item-arrow">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
               </div>
             </div>
-            <div class="user-item-arrow">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </div>
-          </div>
           }
         </div>
       </div>
 
-      <!-- User Detail -->
       <div class="user-detail-section">
         <div class="detail-card">
           <div class="detail-header">
-            <div class="detail-avatar">
-              {{ userSelected.firstName.charAt(0) }}{{ userSelected.surname.charAt(0) }}
-            </div>
+            <div class="detail-avatar">{{ userSelected.firstName.charAt(0) }}{{ userSelected.surname.charAt(0) }}</div>
             <h2 class="detail-name">{{ userSelected.firstName }} {{ userSelected.surname }}</h2>
             <p class="detail-username">{{ userSelected.username }}</p>
             <p class="detail-email">{{ userSelected.email }}</p>
@@ -131,132 +67,66 @@
 
           <div class="detail-section">
             <h3 class="detail-section-title">Información Personal</h3>
+            <div class="detail-field"><div class="detail-label">Nombre</div><div class="detail-value">{{ userSelected.firstName }}</div></div>
+            <div class="detail-field"><div class="detail-label">Apellido</div><div class="detail-value">{{ userSelected.surname }}</div></div>
+            <div class="detail-field"><div class="detail-label">Username</div><div class="detail-value">{{ userSelected.username }}</div></div>
+            <div class="detail-field"><div class="detail-label">Email</div><div class="detail-value">{{ userSelected.email }}</div></div>
+            <div class="detail-field"><div class="detail-label">Teléfono</div><div class="detail-value">{{ userSelected.numberPhone }}</div></div>
+          </div>
 
-            <div class="detail-field">
-              <div class="detail-label">Nombre</div>
-              <div class="detail-value">{{ userSelected.firstName }}</div>
-            </div>
-
-            <div class="detail-field">
-              <div class="detail-label">Apellido</div>
-              <div class="detail-value">{{ userSelected.surname }}</div>
-            </div>
-
-            <div class="detail-field">
-              <div class="detail-label">Username</div>
-              <div class="detail-value">{{ userSelected.username }}</div>
-            </div>
-
-            <div class="detail-field">
-              <div class="detail-label">Email</div>
-              <div class="detail-value">{{ userSelected.email }}</div>
-            </div>
-
-            <div class="detail-field">
-              <div class="detail-label">Teléfono</div>
-              <div class="detail-value">{{ userSelected.numberPhone }}</div>
+          <div class="detail-section" style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px;">
+            <h3 class="detail-section-title">Roles Asignados</h3>
+            
+            <div class="roles-display-container">
+              @if (currentUserRolesObjects().length === 0) {
+                <p style="font-size: 0.85rem; color: #9ca3af; font-style: italic;">Sin roles asignados</p>
+              } @else {
+                <div class="chips-list" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                  @for (role of currentUserRolesObjects(); track role.roleId) {
+                    <div class="role-chip-card" style="background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 20px; padding: 4px 12px; display: flex; align-items: center; gap: 6px; font-size: 0.85rem;">
+                      <span style="font-weight: 500; color: #374151;">{{ role.roleName }}</span>
+                      <button (click)="deleteRoleFromCard(role.roleId, role.roleName)" title="Quitar rol" style="border: none; background: none; color: #9ca3af; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; padding: 0;">&times;</button>
+                    </div>
+                  }
+                </div>
+              }
             </div>
           </div>
 
           <div class="detail-actions">
-
-            <button
-              class="btn btn-roles"
-              (click)="openRolesModal(userSelected)"
-              [disabled]="userSelected.username === 'bonsoir_elliot'"
-            >
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                />
-              </svg>
-              Roles
+            <button class="btn btn-roles" (click)="openRolesModal(userSelected)" [disabled]="userSelected.username === 'bonsoir_elliot'">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+              Gestionar Roles
             </button>
-            <button
-              class="btn btn-danger"
-              (click)="deleteUser(userSelected)"
-              [disabled]="userSelected.username === 'bonsoir_elliot'"
-            >
-              Eliminar
-            </button>
+            <button class="btn btn-danger" (click)="deleteUser(userSelected)" [disabled]="userSelected.username === 'bonsoir_elliot'">Eliminar</button>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Modal Crear/Editar Usuario -->
   <div class="modal" id="userModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 class="modal-title" id="modalTitle">Crear Usuario</h2>
-        <button class="modal-close" onclick="closeModal()">&times;</button>
-      </div>
-      <div class="modal-body">
-        <form id="userForm">
-          <div class="form-group">
-            <label class="form-label">Nombre</label>
-            <input
-              type="text"
-              class="form-input"
-              id="nombre"
-              placeholder="Ingresa el nombre"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Apellido</label>
-            <input
-              type="text"
-              class="form-input"
-              id="apellido"
-              placeholder="Ingresa el apellido"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Username</label>
-            <input type="text" class="form-input" id="username" placeholder="@username" required />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Email</label>
-            <input
-              type="email"
-              class="form-input"
-              id="email"
-              placeholder="email@ejemplo.com"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Teléfono</label>
-            <input
-              type="tel"
-              class="form-input"
-              id="telefono"
-              placeholder="+34 XXX XXX XXX"
-              required
-            />
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-secondary" onclick="closeModal()">Cancelar</button>
-        <button class="btn btn-primary" onclick="saveUser()">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
-          Guardar
-        </button>
-      </div>
-    </div>
+     <div class="modal-content">
+        <div class="modal-header">
+           <h2 class="modal-title">Crear Usuario</h2>
+           <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+           <form id="userForm">
+              </form>
+        </div>
+        <div class="modal-footer">
+           <button class="btn-secondary" onclick="closeModal()">Cancelar</button>
+           <button class="btn btn-primary" onclick="saveUser()">Guardar</button>
+        </div>
+     </div>
   </div>
 </div>
+
+<app-role-assignation
+  [isOpen]="isRoleModalOpen()"
+  [allRoles]="availableRoles()"
+  [userCurrentRoleIds]="currentUserRoles()"
+  (closeModal)="isRoleModalOpen.set(false)"
+  (saveRoles)="handleSaveRoles($event)">
+</app-role-assignation>
