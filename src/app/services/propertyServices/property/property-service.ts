@@ -35,6 +35,12 @@ export class PropertyService {
     return this.http.get<Property>(`${this.API_URL}/find-by-id/${id}`);
   }
 
+  // --- MÉTODO NUEVO: REGISTRAR VISITA ---
+  registerView(id: number | string) {
+    // POST /api/properties/123/view
+    return this.http.post<void>(`${this.API_URL}/${id}/view`, {});
+  }
+
   getFeaturedProperties() {
     return this.http.get<Property[]>(`${this.API_URL}/featured-properties`);
   }

@@ -12,24 +12,23 @@ import { environment } from '../../../../environments/environment.development';
   selector: 'app-property-detail',
   imports: [RouterLink, ReactiveFormsModule, GoogleMap, MapAdvancedMarker, MapInfoWindow],
   templateUrl: './property-detail.html',
-  styleUrl: './property-detail.css'
+  styleUrl: './property-detail.css',
 })
 export class PropertyDetail implements OnInit {
+  form!: FormGroup;
 
-  form!: FormGroup
+  lastPage!: number;
+  pageSelected!: number;
+  properties: Property[] = [];
+  propertySelected!: Property;
+  numberOfPropertiesLoadInArray!: number;
 
-  lastPage!: number
-  pageSelected!: number
-  properties: Property[] = []
-  propertySelected!: Property
-  numberOfPropertiesLoadInArray!: number
-
-  imageNotFound!: string
+  imageNotFound!: string;
 
   center: google.maps.LatLngLiteral = { lat: -38.00347172577913, lng: -57.54663502109604 };
   zoom = 12;
 
-  mapId = environment.mapId
+  mapId = environment.mapId;
 
   // 2. Referencia a la ventana del HTML para controlarla desde código
   @ViewChild(MapInfoWindow) infoWindow!: MapInfoWindow;
@@ -47,7 +46,7 @@ export class PropertyDetail implements OnInit {
     private propertyService: PropertyService,
     private fb: FormBuilder,
     private inquiryService: InquiryService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     // 1. Iniciamos el formulario (solo una vez)
@@ -55,7 +54,7 @@ export class PropertyDetail implements OnInit {
 
     // 2. Nos SUSCRIBIMOS a los cambios de la URL.
     // Esto soluciona el problema de que no recargaba al hacer clic en el mapa.
-    this.route.paramMap.subscribe(params => {
+    this.route.paramMap.subscribe((params) => {
       const idString = params.get('id');
 
       if (idString) {
@@ -65,7 +64,7 @@ export class PropertyDetail implements OnInit {
         // Usamos history.state, que atrapa el "extras.state" enviado por el Router
         const state = window.history.state as { propertyData: Property };
 
-        // VALIDACIÓN CLAVE: 
+        // VALIDACIÓN CLAVE:
         // Verificamos si existe state Y si el ID del state coincide con la URL actual.
         // (Esto evita que uses datos viejos si navegas de la Propiedad A a la B)
         if (state && state.propertyData && state.propertyData.id === id) {
@@ -75,11 +74,81 @@ export class PropertyDetail implements OnInit {
           this.loadPropertyFromApi(id);
         }
       } else {
-        console.error("Route id empty");
+        console.error('Route id empty');
       }
     });
 
-    this.cargarMapaSeguro()
+    this.cargarMapaSeguro();
+  }
+
+  formInitializer() {
+    this.form = this.fb.group({
+      // CAMBIO: Dividido en firstName y surname con validadores de Contact.ts
+      firstName: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(2),
+          Validators.maxLength(100),
+          Validators.pattern(this.namePattern),
+        ],
+      ],
+      surname: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(2),
+          Validators.maxLength(100),
+          Validators.pattern(this.namePattern),
+        ],
+      ],
+      email: ['', [Validators.required, Validators.email, Validators.maxLength(200)]],
+      numberPhone: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(this.phonePattern), // Usando el patrón estricto
+        ],
+      ],
+      description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
+      state: ['PENDIENTE', [Validators.required]],
+      conditions: [false, [Validators.requiredTrue]], // Cambié a false default y requiredTrue
+    });
+  }
+
+  // Extraje la llamada a la API a un método pequeño para mantener limpio el ngOnInit
+  loadPropertyFromApi(id: number) {
+    this.propertyService.getById(id).subscribe({
+      next: (prop) => {
+        this.initProperty(prop);
+      },
+      error: () => this.router.navigate(['properties']),
+    });
+  }
+
+  // Método auxiliar para no repetir código
+  initProperty(prop: Property) {
+    this.propertySelected = prop;
+    this.choiceMainImage(this.propertySelected);
+    this.center = { lat: this.propertySelected.latitude, lng: this.propertySelected.longitude };
+
+    if (this.infoWindow) this.infoWindow.close();
+
+    this.propertyService.getAround(this.propertySelected.id).subscribe({
+      next: (data: Property[]) => {
+        this.properties = data;
+        this.properties.forEach((value) => this.choiceMainImage(value));
+      },
+      error: (err) => {
+        console.error('Error al cargar propiedades cercanas:', err);
+        // Opcional: Podrías vaciar la lista si falla
+        this.properties = [];
+      },
+    });
+
+    this.propertyService.registerView(prop.id).subscribe({
+      next: (data) => console.log("View registered")
+    });
   }
 
   cargarMapaSeguro() {
@@ -101,75 +170,12 @@ export class PropertyDetail implements OnInit {
     document.body.appendChild(script);
   }
 
-  // Extraje la llamada a la API a un método pequeño para mantener limpio el ngOnInit
-  loadPropertyFromApi(id: number) {
-    this.propertyService.getById(id).subscribe({
-      next: (prop) => this.initProperty(prop),
-      error: () => this.router.navigate(['properties'])
-    });
-  }
-
   openInfoWindow(marker: MapAdvancedMarker, property: Property) {
-    console.log("Click en propiedad ID:", property.id); // ¿Cambia el ID o es siempre el mismo?
-    console.log("Imagen que debería mostrar:", property.mainImage);
+    console.log('Click en propiedad ID:', property.id); // ¿Cambia el ID o es siempre el mismo?
+    console.log('Imagen que debería mostrar:', property.mainImage);
 
     this.infoWindowData = property;
     this.infoWindow.open(marker);
-  }
-
-  formInitializer() {
-    this.form = this.fb.group({
-      // CAMBIO: Dividido en firstName y surname con validadores de Contact.ts
-      firstName: ['', [
-        Validators.required,
-        Validators.minLength(2),
-        Validators.maxLength(100),
-        Validators.pattern(this.namePattern)
-      ]],
-      surname: ['', [
-        Validators.required,
-        Validators.minLength(2),
-        Validators.maxLength(100),
-        Validators.pattern(this.namePattern)
-      ]],
-      email: ['', [
-        Validators.required,
-        Validators.email,
-        Validators.maxLength(200)
-      ]],
-      numberPhone: ['', [
-        Validators.required,
-        Validators.pattern(this.phonePattern) // Usando el patrón estricto
-      ]],
-      description: ['', [
-        Validators.required,
-        Validators.minLength(10),
-        Validators.maxLength(500)
-      ]],
-      state: ['PENDIENTE', [Validators.required]],
-      conditions: [false, [Validators.requiredTrue]] // Cambié a false default y requiredTrue
-    });
-  }
-
-  // Método auxiliar para no repetir código
-  initProperty(prop: Property) {
-    this.propertySelected = prop;
-    this.choiceMainImage(this.propertySelected);
-    this.center = { lat: this.propertySelected.latitude, lng: this.propertySelected.longitude };
-
-    if (this.infoWindow) this.infoWindow.close();
-
-    this.propertyService.getAround(this.propertySelected.id).subscribe({
-      next: (data: Property[]) => {
-        this.properties = (data);
-        this.properties.forEach((value) => this.choiceMainImage(value))
-      },
-      error: (err) => {
-        console.error('Error al cargar propiedades cercanas:', err);
-        // Opcional: Podrías vaciar la lista si falla
-        this.properties = []
-      }
-    });
   }
 
   onSumbit() {
@@ -196,11 +202,11 @@ export class PropertyDetail implements OnInit {
       state: this.form.value.state,
       user: {
         firstName: rawFirstName, // Asignación directa
-        surname: rawSurname,     // Asignación directa
+        surname: rawSurname, // Asignación directa
         email: rawEmail,
-        numberPhone: rawPhone
+        numberPhone: rawPhone,
       },
-      propertyDTO: this.propertySelected
+      propertyDTO: this.propertySelected,
     } as InquiryModel;
 
     this.inquiryService.post(result).subscribe({
@@ -209,16 +215,16 @@ export class PropertyDetail implements OnInit {
         // Opcional: Resetear formulario o mostrar éxito
         this.form.reset({ state: 'PENDIENTE' });
       },
-      error: (e) => console.log(e)
+      error: (e) => console.log(e),
     });
   }
 
   choiceMainImage(p: Property) {
-    if (!p.imageDTOList || p.imageDTOList.length == 0) p.mainImage = this.imageNotFound; // If the image array is null or empty, we load the not found image in the cards
-    else if (!p.imageDTOList.find(img => img.name.includes("Portada"))) p.mainImage = p.imageDTOList[0].url // If the image array don't has any image with 'portada' name, load any image
-    else p.mainImage = p.imageDTOList.find(img => img.name.includes("Portada"))?.url // If the image array has the 'portada' image, it returs
+    if (!p.imageDTOList || p.imageDTOList.length == 0) p.mainImage = this.imageNotFound;
+    // If the image array is null or empty, we load the not found image in the cards
+    else if (!p.imageDTOList.find((img) => img.name.includes('Portada')))
+      p.mainImage = p.imageDTOList[0].url;
+    // If the image array don't has any image with 'portada' name, load any image
+    else p.mainImage = p.imageDTOList.find((img) => img.name.includes('Portada'))?.url; // If the image array has the 'portada' image, it returs
   }
-
-
-
 }

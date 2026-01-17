@@ -13,72 +13,66 @@ import { UserInfo } from './pages/usersPages/user-info/user-info';
 import { LogIn } from './pages/authPages/log-in/log-in';
 import { Register } from './pages/authPages/register/register';
 import { UserUpdate } from './pages/usersPages/user-update/user-update';
-import { Dashboard } from './pages/admistration/dashboard/dashboard';
 import { Consults } from './pages/admistration/consults/consults';
 import { RoleAssignation } from './components/role-assignation/role-assignation';
+import { DashboardPage } from './pages/dashboard-page/dashboard-page';
 
 export const routes: Routes = [
-
-    { path: '', component: Home },
-    { path: 'properties', component: Properties },
-    { path: 'contact', component: Contact },
-    { path: 'about-us', component: AboutUs },
-    { path: 'services', component: Services },
-    { path: 'log-in', component: LogIn },
-    { path: 'register', component: Register },
-    { path: 'property-detail/:id', component: PropertyDetail },
-    { path: 'prueba', component: RoleAssignation },
-    {
-        path: 'admin',
-        component: Admin, // Este es tu componente "layout" con el sidebar
+  { path: '', component: Home },
+  { path: 'properties', component: Properties },
+  { path: 'contact', component: Contact },
+  { path: 'about-us', component: AboutUs },
+  { path: 'services', component: Services },
+  { path: 'log-in', component: LogIn },
+  { path: 'register', component: Register },
+  { path: 'property-detail/:id', component: PropertyDetail },
+  { path: 'prueba', component: RoleAssignation },
+  {
+    path: 'admin',
+    component: Admin, // Este es tu componente "layout" con el sidebar
+    canActivate: [adminGuardGuard],
+    children: [
+      {
+        path: '',
         canActivate: [adminGuardGuard],
-        children: [
-            {
-                path: '',
-                canActivate: [adminGuardGuard],
-                component: FormPostProperty
-            },
-            {
-                path: 'form-post',
-                canActivate: [adminGuardGuard],
-                component: FormPostProperty
-            },
+        component: FormPostProperty,
+      },
+      {
+        path: 'form-post',
+        canActivate: [adminGuardGuard],
+        component: FormPostProperty,
+      },
 
-            {
-                path: 'form-update',
-                canActivate: [adminGuardGuard],
-                component: FormPostProperty
-            },
-            {
-                path: 'property-list',
-                canActivate: [adminGuardGuard],
-                component: PropertyList
-            },
-            {
-                path: 'user-info',
-                canActivate: [adminGuardGuard],
-                component: UserInfo
-            },
-            {
-                path: 'user-update',
-                canActivate: [adminGuardGuard],
-                component: UserUpdate
-            },
-            {
-                path: 'dashboard',
-                canActivate: [adminGuardGuard],
-                component: Dashboard
-            }
-            ,
-            {
-                path: 'consults',
-                canActivate: [adminGuardGuard],
-                component: Consults
-            }
-        ]
-    },
-
-
-
-
+      {
+        path: 'form-update',
+        canActivate: [adminGuardGuard],
+        component: FormPostProperty,
+      },
+      {
+        path: 'property-list',
+        canActivate: [adminGuardGuard],
+        component: PropertyList,
+      },
+      {
+        path: 'user-info',
+        canActivate: [adminGuardGuard],
+        component: UserInfo,
+      },
+      {
+        path: 'user-update',
+        canActivate: [adminGuardGuard],
+        component: UserUpdate,
+      },
+      {
+        path: 'consults',
+        canActivate: [adminGuardGuard],
+        component: Consults,
+      },
+      {
+        path: 'dashboard',
+        canActivate: [adminGuardGuard],
+        component: DashboardPage,
+      }
+    ],
+  },
 ];
