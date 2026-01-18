@@ -1,8 +1,9 @@
 export interface Metric {
+  key: string;   // <--- Campo nuevo
   title: string;
   value: string;
   trend: string;
-  trendDirection: 'up' | 'down' | 'neutral';
+  trendDirection: string;
 }
 
 export interface TopProperty {

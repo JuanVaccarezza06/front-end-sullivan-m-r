@@ -9,7 +9,7 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
   templateUrl: './dashboard-page.html',
   styleUrl: './dashboard-page.css',
 })
-export class DashboardPage implements OnInit{
+export class DashboardPage implements OnInit {
   private dashboardService = inject(DashboardService);
 
   // Estado reactivo con Signals
@@ -60,21 +60,69 @@ export class DashboardPage implements OnInit{
     }
   }
 
-  // Lógica de colores para los iconos
-  getIconClass(title: string): string {
+  // Lógica de ICONOS (Basada en KEY, no en Title)
+  getIconClass(key: string): string {
     const base = 'pi text-2xl ';
-    if (title.includes('Propiedades')) return base + 'pi-home text-blue-600';
-    if (title.includes('Consultas')) return base + 'pi-inbox text-purple-600';
-    if (title.includes('Vistas')) return base + 'pi-eye text-teal-600';
-    if (title.includes('Usuarios')) return base + 'pi-users text-orange-600';
-    return base + 'pi-info-circle text-gray-600';
+
+    switch (key) {
+      case 'PROPERTIES':
+        return base + 'pi-home text-blue-600';
+      case 'INQUIRIES':
+        return base + 'pi-inbox text-purple-600';
+      case 'VIEWS':
+        return base + 'pi-eye text-teal-600';
+      case 'USERS':
+        return base + 'pi-users text-orange-600';
+      default:
+        return base + 'pi-info-circle text-gray-600';
+    }
   }
 
-  getBgClass(title: string): string {
-    if (title.includes('Propiedades')) return 'bg-blue-100';
-    if (title.includes('Consultas')) return 'bg-purple-100';
-    if (title.includes('Vistas')) return 'bg-teal-100';
-    if (title.includes('Usuarios')) return 'bg-orange-100';
-    return 'bg-gray-100';
+  // Lógica de COLORES DE FONDO (Basada en KEY)
+  getBgClass(key: string): string {
+    switch (key) {
+      case 'PROPERTIES':
+        return 'bg-blue-100';
+      case 'INQUIRIES':
+        return 'bg-purple-100';
+      case 'VIEWS':
+        return 'bg-teal-100';
+      case 'USERS':
+        return 'bg-orange-100';
+      default:
+        return 'bg-gray-100';
+    }
+  }
+
+  // Agrega esto en tu clase
+  getAvatarColor(name: string): string {
+    const colors = [
+      'bg-red-100 text-red-600',
+      'bg-orange-100 text-orange-600',
+      'bg-amber-100 text-amber-600',
+      'bg-green-100 text-green-600',
+      'bg-teal-100 text-teal-600',
+      'bg-blue-100 text-blue-600',
+      'bg-indigo-100 text-indigo-600',
+      'bg-violet-100 text-violet-600',
+      'bg-pink-100 text-pink-600',
+    ];
+    // Truco simple para que el mismo nombre siempre tenga el mismo color
+    const index = name.length % colors.length;
+    return colors[index];
+  }
+
+  // ... dentro de tu clase HomeComponent
+
+  // Método nuevo para reemplazar al ngClass del fondo
+  getTrendBgClass(direction: string): string {
+    switch (direction) {
+      case 'up':
+        return 'bg-green-100';
+      case 'down':
+        return 'bg-red-100';
+      default:
+        return 'bg-slate-100';
+    }
   }
 }
