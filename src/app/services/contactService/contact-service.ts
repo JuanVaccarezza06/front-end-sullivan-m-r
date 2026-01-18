@@ -7,14 +7,14 @@ import GeneralInquiry from '../../models/contact/GeneralInquiry';
 })
 export class ContactService {
 
-  readonly url: string = "http://localhost:8080/general-inquiry/post"
+  readonly url: string = "http://localhost:8080/general-inquiry"
 
   constructor(
     private http: HttpClient
   ) { }
 
   post(generalInquiry: GeneralInquiry) {
-      return this.http.post(this.url,generalInquiry);
+      return this.http.post(`${this.url}/post`,generalInquiry);
   }
 
 }

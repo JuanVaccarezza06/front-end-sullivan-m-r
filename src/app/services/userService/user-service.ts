@@ -63,7 +63,6 @@ export class UserService {
     // SOLUCIÓN AQUÍ: Envolvemos la variable con encodeURIComponent
     // Sonia123#  --->  Sonia123%23
     const safeUsername = encodeURIComponent(username);
-    console.log(safeUsername);
     // 4. Petición GET
     return this.http.get<User>(`${this.API_URL}/find-by-username/${safeUsername}`);
   }

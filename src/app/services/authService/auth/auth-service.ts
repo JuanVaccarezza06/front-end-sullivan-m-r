@@ -75,7 +75,6 @@ export class AuthService {
 
       const decoded = JSON.parse(jsonPayload);
 
-      console.log('Token decodificado:', decoded); // <--- Debug: mira si aquí sale el #
       return decoded.sub;
 
     } catch (error) {
