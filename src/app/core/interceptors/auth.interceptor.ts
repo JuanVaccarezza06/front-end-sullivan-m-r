@@ -5,7 +5,7 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { catchError, throwError } from 'rxjs';
-import { AuthService } from '../../services/authService/auth/auth-service';
+import { AuthService } from '../auth-service/auth-service';
 
 
 
