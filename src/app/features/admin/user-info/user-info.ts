@@ -32,10 +32,12 @@ export class UserInfo implements OnInit {
 
   // --- STATE ---
   userSelected: UserFull = {
+    id: 0,
     firstName: 'Elliot',
     surname: 'Alderson',
     email: 'mr.robot@fsociety.dat',
     numberPhone: '+1 212-555-0100',
+    createrAt: "2000-01-01",
     username: 'bonsoir_elliot',
   };
 

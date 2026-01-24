@@ -1,15 +1,16 @@
 <header>
   <div class="header-inner">
-    <div id="box-title" routerLink="">
+    <div id="box-title" routerLink="/">
       <img id="logo" src="SullivanMor other font (2).png" alt="logo" />
     </div>
+
     <nav>
       <div id="nav-box">
-        <a class="link-nav" routerLink="">Inicio</a>
-        <a class="link-nav" routerLink="properties">Propiedades</a>
-        <a class="link-nav" routerLink="services">Servicios</a>
-        <a class="link-nav" routerLink="about-us">Nosotros</a>
-        <a class="link-nav" routerLink="contact">Contacto</a>
+        <a class="link-nav" routerLink="/">Inicio</a>
+        <a class="link-nav" routerLink="/properties">Propiedades</a>
+        <a class="link-nav" routerLink="/services">Servicios</a>
+        <a class="link-nav" routerLink="/about-us">Nosotros</a>
+        <a class="link-nav" routerLink="/contact">Contacto</a>
       </div>
     </nav>
 
@@ -61,7 +62,8 @@
             <div class="py-2 bg-white">
               @if (isAdmin()) {
                 <a
-                  (click)="closeMenu(); router.navigate(['admin/form-post'])"
+                  [routerLink]="['/admin/dashboard']"
+                  (click)="closeMenu()"
                   class="cursor-pointer flex items-center gap-3 px-4 py-3 text-sm font-semibold text-green-800 bg-green-50 hover:bg-green-100 transition-colors mb-1"
                 >
                   <i class="pi pi-shield"></i> Panel de Administración
@@ -69,23 +71,27 @@
               }
 
               <a
-                (click)="closeMenu(); router.navigate(['/perfil'])"
+                [routerLink]="['/admin/users/profile']"
+                (click)="closeMenu()"
                 class="cursor-pointer flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 transition-colors"
               >
                 <i class="pi pi-user"></i> Mi Perfil
               </a>
+
               <a
                 (click)="closeMenu()"
                 class="cursor-pointer flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 transition-colors"
               >
                 <i class="pi pi-cog"></i> Editar Credenciales
               </a>
+
               <a
                 (click)="closeMenu()"
                 class="cursor-pointer flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 transition-colors"
               >
                 <i class="pi pi-heart"></i> Propiedades Favoritas
               </a>
+
               <a
                 (click)="closeMenu()"
                 class="cursor-pointer flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 transition-colors"
@@ -105,8 +111,8 @@
           </div>
         }
       } @else {
-        <button type="button" class="cta" routerLink="log-in">Iniciar sesion</button>
-        <button type="button" class="cta" routerLink="register">Registrarse</button>
+        <button type="button" class="cta" routerLink="/auth/login">Iniciar sesión</button>
+        <button type="button" class="cta" routerLink="/auth/register">Registrarse</button>
       }
     </div>
   </div>

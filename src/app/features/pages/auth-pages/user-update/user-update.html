@@ -1,46 +1,254 @@
-<main class="login-wrap">
-    <form class="login-card" [formGroup]="formulario" (submit)="onSumbit()">
+<div class="min-h-screen bg-gray-50 p-4 md:p-8 flex justify-center">
+  <div class="w-full max-w-2xl space-y-6">
+    
+    <div>
+      <button routerLink="/admin/users/profile" class="text-gray-500 hover:text-gray-700 flex items-center gap-2 mb-4 text-sm font-medium transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+        Volver al perfil
+      </button>
 
-        <h2>Actualizar user</h2>
+      <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm flex items-center gap-5">
+        <div class="relative">
+          <div class="w-16 h-16 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center text-white text-xl font-bold shadow-md">
+            {{ userInitials() }}
+          </div>
+          <div class="absolute bottom-0 right-0 bg-green-600 w-6 h-6 rounded-full flex items-center justify-center text-white border-2 border-white">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+          </div>
+        </div>
 
-        <fieldset>
-            <label for="firstName">Ingrese su nombre</label>
-            <input id="firstName" type="text" placeholder="Carlos" formControlName="firstName">
-            @if (formulario.get('firstName')?.hasError('required') && formulario.get('firstName')?.touched )  { <p class="p-error">Este campo es obligatorio</p> }
-            @else if (formulario.get('firstName')?.hasError('minlength') && formulario.get('firstName')?.touched )  { <p class="p-error">Este campo tiene un minimo de 3 caracteres</p> }
-            @else if (formulario.get('firstName')?.hasError('maxlength') && formulario.get('firstName')?.touched )  { <p class="p-error">Este campo tiene un maximo de 20 caracteres</p> }
-        </fieldset>
+        <div>
+          <h1 class="text-xl font-bold text-gray-900">Editar Credenciales</h1>
+          <p class="text-gray-500 text-sm">Actualiza tu información personal y seguridad</p>
+        </div>
+      </div>
+    </div>
 
+    <div class="flex gap-4">
+      <button 
+        (click)="switchTab('personal')"
+        class="flex-1 py-3 px-4 rounded-lg font-medium text-sm transition-colors duration-200 border"
+        [class.bg-green-700]="activeTab() === 'personal'"
+        [class.text-white]="activeTab() === 'personal'"
+        [class.border-green-700]="activeTab() === 'personal'"
+        [class.bg-white]="activeTab() !== 'personal'"
+        [class.text-gray-600]="activeTab() !== 'personal'"
+        [class.border-gray-200]="activeTab() !== 'personal'"
+        [class.hover:bg-gray-50]="activeTab() !== 'personal'">
+        Datos Personales
+      </button>
 
-        <fieldset>
-            <label for="surname">Ingrese su apellido</label>
-            <input id="surname" type="text" placeholder="Saul" formControlName="surname">
-            @if (formulario.get('surname')?.hasError('required') && formulario.get('surname')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
-            @else if (formulario.get('surname')?.hasError('minlength') && formulario.get('surname')?.touched ) { <p class="p-error">Este campo tiene un minimo de 3 caracteres</p> }
-            @else if (formulario.get('surname')?.hasError('maxlength') && formulario.get('surname')?.touched ) { <p class="p-error">Este campo tiene un maximo de 20 caracteres</p> }
-        </fieldset>
+      <button 
+        (click)="switchTab('password')"
+        class="flex-1 py-3 px-4 rounded-lg font-medium text-sm transition-colors duration-200 border"
+        [class.bg-green-700]="activeTab() === 'password'"
+        [class.text-white]="activeTab() === 'password'"
+        [class.border-green-700]="activeTab() === 'password'"
+        [class.bg-white]="activeTab() !== 'password'"
+        [class.text-gray-600]="activeTab() !== 'password'"
+        [class.border-gray-200]="activeTab() !== 'password'"
+        [class.hover:bg-gray-50]="activeTab() !== 'password'">
+        Cambiar Contraseña
+      </button>
+    </div>
 
-        <fieldset>
-            <label for="email">Ingrese su email</label>
-            <input id="email" type="email" placeholder="example@email.com" formControlName="email">
-            @if (formulario.get('email')?.hasError('required') && formulario.get('email')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
-            @else if (formulario.get('email')?.hasError('email') && formulario.get('email')?.touched ) { <p class="p-error">Debe ingresar un email de contacto</p> }
-            @else if (formulario.get('email')?.hasError('maxlength') && formulario.get('email')?.touched ) { <p class="p-error">Este campo debe tener un minimo de 6 caracteres</p> }
-            @else if (formulario.get('email')?.hasError('minlength') && formulario.get('email')?.touched ) { <p class="p-error">Este campo debe tener un maximo de 254 caracteres</p> }
-        </fieldset>
+    <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+      
+      @if (activeTab() === 'personal') {
+        <h2 class="text-lg font-bold text-gray-900 mb-6">Información Personal</h2>
+        
+        <form [formGroup]="personalForm" (ngSubmit)="savePersonalData()" class="space-y-5">
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-1.5">
+              <label class="text-sm font-medium text-gray-700">Nombre</label>
+              <div class="relative">
+                <input 
+                  type="text" 
+                  formControlName="firstName" 
+                  class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-gray-700 text-sm transition-all" 
+                  placeholder="Nombre">
+              </div>
+              @if (personalForm.get('firstName')?.hasError('required') && personalForm.get('firstName')?.touched) {
+                <span class="text-xs text-red-500">Requerido</span>
+              }
+            </div>
 
+            <div class="space-y-1.5">
+              <label class="text-sm font-medium text-gray-700">Apellido</label>
+              <div class="relative">
+                <input 
+                  type="text" 
+                  formControlName="surname" 
+                  class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-gray-700 text-sm transition-all" 
+                  placeholder="Apellido">
+              </div>
+              @if (personalForm.get('surname')?.hasError('required') && personalForm.get('surname')?.touched) {
+                <span class="text-xs text-red-500">Requerido</span>
+              }
+            </div>
+          </div>
 
-        <fieldset class="phone-group">
-            <label>Teléfono</label>
-            <input id="numberPhone" type="text" placeholder="+54 (223) 154-123321" formControlName="numberPhone">
-        </fieldset>
-        @if (formulario.get('numberPhone')?.hasError('required') && formulario.get('numberPhone')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
-        @else if (formulario.get('numberPhone')?.hasError('pattern') && formulario.get('numberPhone')?.touched ) { <p class="p-error">El telefono solo puede tener numeros, espacios y el signo '+'</p> }
-        @else if (formulario.get('numberPhone')?.hasError('minlength') && formulario.get('numberPhone')?.touched ) { <p class="p-error"> El telefono debe tener al menos 10 caracteres</p> }
-        @else if (formulario.get('numberPhone')?.hasError('maxlength') && formulario.get('numberPhone')?.touched ) { <p class="p-error"> El telefono debe tener como maximo 20 caracteres</p> }
+          <div class="space-y-1.5">
+            <label class="text-sm font-medium text-gray-700">Correo electrónico</label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+              </span>
+              <input type="email" formControlName="email" class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-gray-700 text-sm transition-all" placeholder="tucorreo@email.com">
+            </div>
+          </div>
 
-        <button type="submit" [disabled]="this.formulario.invalid"> Actualizar </button>
-        @if (formulario.invalid) { <p class="p-error">El formulario es inválido.</p> }
+          <div class="space-y-1.5">
+            <label class="text-sm font-medium text-gray-700">Teléfono</label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              </span>
+              <input type="tel" formControlName="numberPhone" class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-gray-700 text-sm transition-all" placeholder="+54 ...">
+            </div>
+          </div>
 
-    </form>
-</main>
+          <div class="space-y-1.5">
+            <label class="text-sm font-medium text-gray-700">Nombre de usuario</label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"/></svg>
+              </span>
+              <input type="text" formControlName="username" class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-gray-700 text-sm transition-all" placeholder="Ej: juanmartinez23">
+            </div>
+          </div>
+
+          <div class="pt-4 flex gap-3">
+            <button 
+                type="submit" 
+                [disabled]="isSubmitting()"
+                class="flex-1 bg-green-700 hover:bg-green-800 disabled:bg-green-700/60 disabled:cursor-not-allowed text-white font-medium py-2.5 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm shadow-green-700/20">
+              @if (isSubmitting()) {
+                <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Guardando...
+              } @else {
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                  Guardar Cambios
+              }
+            </button>
+            <button type="button" [disabled]="isSubmitting()" class="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors">
+              Cancelar
+            </button>
+          </div>
+
+        </form>
+      }
+
+      @if (activeTab() === 'password') {
+        <h2 class="text-lg font-bold text-gray-900 mb-4">Cambiar Contraseña</h2>
+        
+        <p class="text-sm text-gray-500 mb-6">Asegúrate de usar una contraseña segura que no uses en otro sitio</p>
+
+        <div class="mb-6 p-4 bg-orange-50 border border-orange-100 rounded-lg flex items-start gap-3">
+          <svg class="text-orange-500 mt-0.5 shrink-0" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+          <div>
+            <h4 class="text-sm font-semibold text-orange-800">Importante</h4>
+            <p class="text-sm text-orange-700 mt-0.5">Después de cambiar tu contraseña, deberás iniciar sesión nuevamente.</p>
+          </div>
+        </div>
+
+        <form [formGroup]="passwordForm" (ngSubmit)="updatePassword()" class="space-y-5">
+          
+          <div class="space-y-1.5">
+            <label class="text-sm font-medium text-gray-700">Contraseña actual</label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </span>
+              <input 
+                type="password" 
+                formControlName="currentPassword" 
+                class="w-full pl-10 pr-10 py-2.5 rounded-lg border focus:ring-1 outline-none text-gray-700 text-sm transition-all"
+                [class.border-red-500]="passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched"
+                [class.border-gray-200]="!passwordForm.get('currentPassword')?.invalid"
+                [class.focus:border-green-500]="!passwordForm.get('currentPassword')?.invalid"
+                [class.focus:ring-green-500]="!passwordForm.get('currentPassword')?.invalid"
+                placeholder="Tu contraseña actual">
+            </div>
+            
+            @if (passwordForm.get('currentPassword')?.touched) {
+                @if (passwordForm.get('currentPassword')?.hasError('required')) {
+                    <span class="text-xs text-red-500">La contraseña actual es requerida.</span>
+                }
+                @if (passwordForm.get('currentPassword')?.hasError('invalidPassword')) {
+                    <span class="text-xs text-red-600 font-bold flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+                        La contraseña actual es incorrecta.
+                    </span>
+                }
+            }
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="text-sm font-medium text-gray-700">Nueva contraseña</label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </span>
+              <input 
+                type="password" 
+                formControlName="newPassword" 
+                class="w-full pl-10 pr-10 py-2.5 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-gray-700 text-sm transition-all" 
+                placeholder="Mínimo 6 caracteres">
+            </div>
+            @if (passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.hasError('minlength')) {
+                <span class="text-xs text-red-500">Debe tener al menos 6 caracteres.</span>
+            }
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="text-sm font-medium text-gray-700">Confirmar nueva contraseña</label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </span>
+              <input 
+                type="password" 
+                formControlName="confirmPassword" 
+                class="w-full pl-10 pr-10 py-2.5 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-gray-700 text-sm transition-all" 
+                placeholder="Repite la nueva contraseña">
+            </div>
+            
+            @if (passwordForm.errors?.['passwordMismatch'] && passwordForm.get('confirmPassword')?.touched) {
+                <span class="text-xs text-red-600 font-medium flex items-center gap-1">
+                    Las contraseñas no coinciden.
+                </span>
+            }
+          </div>
+
+          <div class="pt-4 flex gap-3">
+            <button 
+                type="submit" 
+                [disabled]="passwordForm.invalid || isSubmitting()"
+                class="flex-1 bg-green-700 hover:bg-green-800 disabled:bg-green-700/60 disabled:cursor-not-allowed text-white font-medium py-2.5 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm shadow-green-700/20">
+              
+              @if (isSubmitting()) {
+                <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Actualizando...
+              } @else {
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                Actualizar Contraseña
+              }
+            </button>
+            <button type="button" [disabled]="isSubmitting()" class="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors">
+              Cancelar
+            </button>
+          </div>
+
+        </form>
+      }
+    </div>
+  </div>
+</div>

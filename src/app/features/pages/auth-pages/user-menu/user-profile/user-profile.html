@@ -1,1 +1,173 @@
-<p>user-profile works!</p>
+<div class="min-h-screen bg-gray-50 pb-12 font-sans">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <div class="mt-8 relative rounded-2xl overflow-hidden bg-green-800 shadow-lg">
+      <div class="absolute inset-0 opacity-10 pattern-dots"></div>
+      
+      <div class="relative z-10 px-8 py-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        
+        <div class="text-white">
+          @if (user) {
+            <h1 class="text-3xl font-bold tracking-tight">{{ user.username }}</h1>
+          } @else {
+            <h1 class="text-3xl font-bold tracking-tight">Cargando...</h1>
+          }
+          
+          <div class="flex items-center gap-2 mt-2 text-green-100 opacity-90">
+            <i class="pi pi-calendar"></i>
+            <span class="text-sm font-medium">Miembro de Sullivan Mor</span>
+          </div>
+        </div>
+
+        <button class="bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-sm px-6 py-2.5 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2">
+          <i class="pi pi-cog"></i>
+          <span>Editar Perfil</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-5 transition-transform hover:-translate-y-1">
+        <div class="w-14 h-14 rounded-full bg-red-50 flex items-center justify-center text-red-500 text-2xl">
+          <i class="pi pi-heart"></i>
+        </div>
+        <div>
+          <p class="text-2xl font-bold text-gray-800">12</p>
+          <p class="text-sm text-gray-500 font-medium">Propiedades Favoritas</p>
+        </div>
+      </div>
+
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-5 transition-transform hover:-translate-y-1">
+        <div class="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 text-2xl">
+          <i class="pi pi-comments"></i>
+        </div>
+        <div>
+          <p class="text-2xl font-bold text-gray-800">8</p>
+          <p class="text-sm text-gray-500 font-medium">Consultas Realizadas</p>
+        </div>
+      </div>
+
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-5 transition-transform hover:-translate-y-1">
+        <div class="w-14 h-14 rounded-full bg-green-50 flex items-center justify-center text-green-600 text-2xl">
+          <i class="pi pi-calendar"></i>
+        </div>
+        <div>
+          <p class="text-2xl font-bold text-gray-800">3</p>
+          <p class="text-sm text-gray-500 font-medium">Visitas Agendadas</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 mt-8">
+      
+      <aside class="col-span-1">
+        <nav class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <ul class="flex flex-col">
+            @for (item of menuItems; track item.label) {
+              <li>
+                <button 
+                  class="w-full text-left px-5 py-4 flex items-center gap-3 transition-colors duration-200 border-l-4"
+                  [class]="item.active 
+                    ? 'border-green-600 bg-green-50 text-green-800 font-semibold' 
+                    : 'border-transparent hover:bg-gray-50 text-gray-600 hover:text-gray-900'"
+                >
+                  <i [class]="item.icon"></i>
+                  <span>{{ item.label }}</span>
+                  
+                  @if (item.active) {
+                    <i class="pi pi-chevron-right ml-auto text-xs"></i>
+                  }
+                </button>
+              </li>
+            }
+          </ul>
+        </nav>
+      </aside>
+
+      <main class="col-span-1 lg:col-span-3">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+          
+          <div class="mb-8 border-b border-gray-100 pb-4">
+            <h2 class="text-xl font-bold text-gray-800">Información Personal</h2>
+            <p class="text-sm text-gray-500 mt-1">Gestiona tu información básica de contacto.</p>
+          </div>
+
+          @if (loading) {
+            <div class="flex flex-col items-center justify-center py-10 text-gray-400">
+               <i class="pi pi-spin pi-spinner text-3xl mb-3"></i>
+               <p>Cargando datos del usuario...</p>
+            </div>
+          } @else if (user) {
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              
+              <div class="space-y-2">
+                <label class="text-sm font-semibold text-gray-700">Nombre Completo</label>
+                <div class="flex items-center bg-gray-50 rounded-lg px-4 py-3 border border-gray-200">
+                  <i class="pi pi-id-card text-gray-400 mr-3"></i>
+                  <input 
+                    type="text" 
+                    [value]="user.firstName + ' ' + user.surname" 
+                    readonly
+                    class="bg-transparent border-none w-full text-gray-700 font-medium focus:ring-0 cursor-default"
+                  >
+                </div>
+              </div>
+
+              <div class="space-y-2">
+                <label class="text-sm font-semibold text-gray-700">Nombre de Usuario</label>
+                <div class="flex items-center bg-gray-50 rounded-lg px-4 py-3 border border-gray-200">
+                  <i class="pi pi-user text-gray-400 mr-3"></i>
+                  <input 
+                    type="text" 
+                    [value]="user.username" 
+                    readonly
+                    class="bg-transparent border-none w-full text-gray-700 font-medium focus:ring-0 cursor-default"
+                  >
+                </div>
+              </div>
+
+              <div class="space-y-2">
+                <label class="text-sm font-semibold text-gray-700">Correo Electrónico</label>
+                <div class="flex items-center bg-gray-50 rounded-lg px-4 py-3 border border-gray-200">
+                  <i class="pi pi-envelope text-gray-400 mr-3"></i>
+                  <input 
+                    type="email" 
+                    [value]="user.email" 
+                    readonly
+                    class="bg-transparent border-none w-full text-gray-700 font-medium focus:ring-0 cursor-default"
+                  >
+                </div>
+              </div>
+
+              <div class="space-y-2">
+                <label class="text-sm font-semibold text-gray-700">Teléfono</label>
+                <div class="flex items-center bg-gray-50 rounded-lg px-4 py-3 border border-gray-200">
+                  <i class="pi pi-phone text-gray-400 mr-3"></i>
+                  <input 
+                    type="text" 
+                    [value]="user.numberPhone" 
+                    readonly
+                    class="bg-transparent border-none w-full text-gray-700 font-medium focus:ring-0 cursor-default"
+                  >
+                </div>
+              </div>
+
+            </div>
+          }
+
+          <div class="mt-10 pt-6 border-t border-gray-100">
+            <button 
+            (click)="userEdit()"
+            class="bg-green-700 hover:bg-green-800 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2">
+              <i class="pi pi-file-edit"></i>
+              Editar Información
+            </button>
+          </div>
+
+        </div>
+      </main>
+    </div>
+
+  </div>
+</div>

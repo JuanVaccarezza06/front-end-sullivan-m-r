@@ -25,11 +25,11 @@
             </button>
 
             <div class="submenu" [class.expanded]="menuAbierto === 'propiedades'">
-                <a routerLink="/admin/property-list" class="submenu-item">
+                <a routerLink="properties/list" class="submenu-item">
                     <span class="submenu-spacer"></span>
                     <span>Todas las propiedades</span>
                 </a>
-                <a routerLink="/admin/form-post" routerLinkActive="active" class="submenu-item">
+                <a routerLink="properties/create" routerLinkActive="active" class="submenu-item">
                     <span class="submenu-icon"><i class="fas fa-plus"></i></span>
                     <span>Añadir nueva</span>
                 </a>
@@ -62,7 +62,7 @@
         </div>
 
         <div class="nav-item">
-            <a routerLink="user-info"  class="nav-link">
+            <a routerLink="users/list"  class="nav-link">
                 <div class="nav-link-content">
                     <svg viewBox="0 0 640 512" fill="#10a37f" style="width: 20px; height: 20px;">
                     <path
