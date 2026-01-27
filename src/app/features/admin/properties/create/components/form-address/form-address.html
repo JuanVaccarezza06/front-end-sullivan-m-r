@@ -1,25 +1,21 @@
-<div class="form-grid" [formGroup]="group">
-    <div class="form-group">
-        <label>Calle principal <span class="required">*</span></label>
-        <input type="text" formControlName="mainStreet">
-        @if (group.get('mainStreet')?.hasError('required') && group.get('mainStreet')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
-        @else if (group.get('mainStreet')?.hasError('minlength') && group.get('mainStreet')?.touched ) { <p class="p-error">Este campo tiene un minimo de 2 caracteres</p> }
-        @else if (group.get('mainStreet')?.hasError('maxlength') && group.get('mainStreet')?.touched ) { <p class="p-error">Este campo tiene un maximo de 50 caracteres</p> }
+<div class="address-grid" [formGroup]="form">
+  <div class="form-group full-width">
+    <label>Calle Principal <span class="required">*</span></label>
+    <input type="text" formControlName="mainStreet" placeholder="Ej: Av. Santa Fe">
+    @if (form.get('mainStreet')?.touched && form.get('mainStreet')?.invalid) {
+      <small class="error-msg">Nombre de calle demasiado corto</small>
+    }
+  </div>
+
+  <div class="form-row">
+    <div class="form-group flex-2">
+      <label>Calle Secundaria <span class="required">*</span></label>
+      <input type="text" formControlName="secondaryStreet" placeholder="Ej: Entre Rios">
     </div>
 
-    <div class="form-group">
-        <label>Calle secundaria <span class="required">*</span></label>
-        <input type="text" formControlName="secondaryStreet">
-        @if (group.get('secondaryStreet')?.hasError('required') && group.get('secondaryStreet')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
-        @else if (group.get('secondaryStreet')?.hasError('minlength') && group.get('secondaryStreet')?.touched ) { <p class="p-error">Este campo tiene un minimo de 2 caracteres</p> }
-        @else if (group.get('secondaryStreet')?.hasError('maxlength') && group.get('secondaryStreet')?.touched ) { <p class="p-error">Este campo tiene un maximo de 50 caracteres</p> }
+    <div class="form-group flex-1">
+      <label>Número <span class="required">*</span></label>
+      <input type="number" formControlName="numbering" placeholder="1234">
     </div>
-
-    <div class="form-group">
-        <label>Numeracion <span class="required">*</span></label>
-        <input type="number" formControlName="numbering">
-        @if (group.get('numbering')?.hasError('required') && group.get('numbering')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
-        @else if (group.get('numbering')?.hasError('min') && group.get('numbering')?.touched ) { <p class="p-error">Este campo tiene un minimo de 1</p> }
-        @else if (group.get('numbering')?.hasError('max') && group.get('numbering')?.touched ) { <p class="p-error">Este campo tiene un maximo de 100000000</p> }
-    </div>
+  </div>
 </div>

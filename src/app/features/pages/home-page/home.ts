@@ -34,11 +34,11 @@ export class Home implements OnInit {
   operationTypeArray!: OperationType[];
 
   constructor(
-    private service: PropertyService  ,
+    private service: PropertyService,
     private zoneService: ZoneService,
     private imgService: ImgBbService,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
   ) {}
 
   ngOnInit(): void {
@@ -77,14 +77,22 @@ export class Home implements OnInit {
     });
   }
 
-  choiceMainImage(p: Property) {
-    if (!p.imageDTOList || p.imageDTOList.length == 0)
-      p.mainImage =
-        this.imageNotFound; // If the image array is null or empty, we load the not found image in the cards
-    else if (!p.imageDTOList.find((img) => img.name.includes('Portada')))
-      p.mainImage =
-        p.imageDTOList[0].url; // If the image array don't has any image with 'portada' name, load any image
-    else p.mainImage = p.imageDTOList.find((img) => img.name.includes('Portada'))?.url; // If the image array has the 'portada' image, it returs
+  choiceMainImage(p: Property): string {
+    const images = p.imageDTOList;
+
+    // 1. Caso: No hay imágenes
+    if (!images || images.length === 0) {
+      return this.imageNotFound;
+    }
+
+    // 2. Caso: Buscar la imagen marcada como primaria (isPrimary: true)
+    const primaryImg = images.find((img) => img.isPrimary);
+    if (primaryImg) {
+      return primaryImg.url;
+    }
+
+    // 3. Caso: No hay ninguna marcada como primaria, usamos la primera (fallback)
+    return images[0].url;
   }
 
   viewDetail(propertyToSee: Property) {

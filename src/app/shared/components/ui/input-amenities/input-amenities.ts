@@ -1,132 +1,123 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { PropertyService } from '../../../../core/services/property-service/property-service';
 import { AmenityService } from '../../../../core/services/amenity-service/amenity-service';
-import { animationFrameProvider } from 'rxjs/internal/scheduler/animationFrameProvider';
 import Amenity from '../../../../core/models/Amenity';
+import { Component, forwardRef, OnInit, OnDestroy } from '@angular/core';
+import {
+  ReactiveFormsModule,
+  NG_VALUE_ACCESSOR,
+  ControlValueAccessor,
+  FormControl,
+} from '@angular/forms';
 
 @Component({
   selector: 'app-input-amenities',
   imports: [ReactiveFormsModule],
   templateUrl: './input-amenities.html',
   styleUrl: './input-amenities.css',
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => InputAmenities),
+      multi: true,
+    },
+  ],
 })
-export class InputAmenities implements OnInit, OnChanges {
+export class InputAmenities implements OnInit, OnDestroy, ControlValueAccessor {
+  // Listas
+  amenitiesArray: Amenity[] = []; // Disponibles desde backend
+  amenitiesLoad: Amenity[] = []; // Seleccionadas por el usuario
 
-  @Input() group!: FormGroup;
+  // Inputs internos
+  amenityControlNew = new FormControl('');
+  amenityControlExisting = new FormControl('');
 
-  @Input() startSignal!: number;
+  // Callbacks de CVA
+  onChange: any = () => {};
+  onTouch: any = () => {};
 
-  @Input() isUpdate!: boolean;
-
-  @Output() finishEvent = new EventEmitter<boolean>();
-
-  amenitiesArray: Amenity[] = []
-
-  amenitiesLoad: Amenity[] = []
-
-  amenityControlNew = new FormControl('', [Validators.required]);
-  amenityControlExisting = new FormControl('', [Validators.required]);
-
-  constructor(
-    private fb: FormBuilder,
-    private service: PropertyService,
-    private amenityService: AmenityService
-  ) { }
+  constructor(private amenityService: AmenityService) {}
 
   ngOnInit(): void {
-    this.loadAmenities()
-    if (this.isUpdate) this.patchValues()
+    this.loadAvailableAmenities();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    // 1. Verifica si el Input cambió
-    if (changes['startSignal']) {
+  ngOnDestroy(): void {}
 
-      // 2. Opcional: Solo ejecutamos si el valor es mayor a 0 (es decir, ya se hizo un submit)
-      // O solo ejecutamos si NO es la primera vez que se inicializa.
-      if (!changes['startSignal'].firstChange) {
-        this.setAmenitiesWithFrom();
-      }
-    }
-  }
-
-  loadAmenities() {
+  loadAvailableAmenities() {
     this.amenityService.getAll().subscribe({
-      next: (data) => {
-        this.amenitiesArray = data;
-      },
-      error: (e) => console.log(e)
+      next: (data) => (this.amenitiesArray = data),
+      error: (e) => console.error(e),
     });
   }
 
+  // --- LÓGICA DE AGREGAR ---
+
   addExistingAmenity() {
-    let amenity = {
-      amenityName: this.amenityControlExisting.value
-    } as Amenity
+    const name = this.amenityControlExisting.value;
+    // Buscamos el objeto completo que ya tiene su isFeatured correcto
+    const originalAmenity = this.amenitiesArray.find((a) => a.amenityName === name);
 
-    if (amenity.amenityName == undefined || amenity.amenityName == "") return
+    if (originalAmenity && !this.amenitiesLoad.find((a) => a.amenityName === name)) {
+      this.amenitiesLoad.push({ ...originalAmenity }); // Clonamos para evitar mutaciones
+      this.updateModel();
+    }
+    this.amenityControlExisting.setValue('');
+  }
 
-    if (!this.amenitiesLoad.find((value) => value.amenityName == amenity.amenityName)) this.amenitiesLoad.push(amenity)
+  addNewAmenity() {
+    const name = this.amenityControlNew.value;
+    if (!name || name.trim().length < 2) return;
 
+    // Verificar si ya existe en la lista cargada
+    if (this.amenitiesLoad.find((a) => a.amenityName.toLowerCase() === name.toLowerCase())) return;
+
+    // Crear objeto Amenity
+    const newAmenity: Amenity = {
+      amenityName: name,
+      isFeatured: false,
+    };
+
+    // Opción A: Guardarlo en Backend YA (como tenías antes)
+    this.amenityService.post(newAmenity).subscribe({
+      next: (savedAmenity) => {
+        this.amenitiesLoad.push(savedAmenity);
+        this.updateModel();
+        // Recargar la lista de disponibles por si queremos agregarla de nuevo
+        this.loadAvailableAmenities();
+      },
+      error: (e) => console.error('Error creando amenity', e),
+    });
+
+    this.amenityControlNew.setValue('');
   }
 
   deleteAmenityFromArray(name: string) {
-
-    let newAmenities = this.amenitiesLoad.filter((value) => value.amenityName != name)
-
-    if (newAmenities) this.amenitiesLoad = newAmenities
-    else console.log("No hay valor en el name llegado por parametro")
-
+    this.amenitiesLoad = this.amenitiesLoad.filter((a) => a.amenityName !== name);
+    this.updateModel();
   }
 
-
-  addNewAmenity() {
-    let amenity = {
-      amenityName: this.amenityControlNew.value
-    } as Amenity
-
-    if (amenity.amenityName == undefined || amenity.amenityName == "") return
-
-    if (!this.amenitiesLoad.find(
-      (value) => value.amenityName == amenity.amenityName
-    )) {
-      this.amenityService
-        .post(amenity)
-        .subscribe({
-          next: (data) => this.amenitiesLoad.push(data),
-          error: (e) => console.log(e)
-        })
-    } else return
+  // Notificar al padre
+  private updateModel() {
+    this.onChange(this.amenitiesLoad);
+    this.onTouch();
   }
 
-  setAmenitiesWithFrom() {
-    this.group.get('amenities')?.setValue(this.amenitiesLoad)
-    console.log("Amenity input. Ya termine de setear los group.")
-    this.finishEvent.emit()
-  }
+  // --- IMPLEMENTACIÓN CVA ---
 
-  patchValues() {
-    if (this.isUpdate) {
-      // Tengo solo las imagenes en formato image, que es una url (la de imgbb) y un nombre, NO tengo la url de preview!!!!!
-      const amenities = this.group.get('amenities')?.value as Amenity[]
-      amenities.forEach(value => {
-        this.amenitiesLoad.push({
-          amenityName: value.amenityName,
-          isFeatured: value.isFeatured
-        })
-      })
-
+  writeValue(value: Amenity[]): void {
+    if (value && Array.isArray(value)) {
+      this.amenitiesLoad = [...value]; // Copia para evitar mutaciones externas
+    } else {
+      this.amenitiesLoad = [];
     }
   }
 
-
-
-  // Nota de compatibilidad:
-  // Ya que las funciones 'addExistingAmenity', 'addNewAmenity' y 'removeAmenity' se llaman directamente
-  // desde el HTML usando `onclick="..."`, en un entorno modular de TypeScript (como en frameworks),
-  // estas funciones tendrían que ser exportadas y posiblemente accesibles desde el ámbito global (window)
-  // o el HTML tendría que ser gestionado por un framework (como Angular, React, etc.).
-  // Para este ejemplo de vanilla TS que emula el JS original, se asume un script global.
-
-} 
+  registerOnChange(fn: any): void {
+    this.onChange = fn;
+  }
+  registerOnTouched(fn: any): void {
+    this.onTouch = fn;
+  }
+  setDisabledState?(isDisabled: boolean): void {
+    isDisabled ? this.amenityControlNew.disable() : this.amenityControlNew.enable();
+  }
+}

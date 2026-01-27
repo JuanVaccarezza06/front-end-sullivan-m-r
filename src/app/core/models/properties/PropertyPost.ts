@@ -2,7 +2,7 @@ import Owner from "../actors/Owner"
 import Amenity from "../Amenity"
 import Address from "../geography/Address"
 import ZoneDTO from "../geography/Zone"
-import Image from "../Image"
+import { ImageItem } from "../ImageItem"
 import OperationType from "../OperationType"
 import PropertyType from "../PropertyType"
 
@@ -30,5 +30,5 @@ export default interface PropertyPost {
     ownerDTO: Owner
 
     amenitiesList: Amenity[]
-    imageDTOList: Image[]
+    imageDTOList: ImageItem[]
 }

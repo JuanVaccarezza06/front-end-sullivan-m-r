@@ -142,7 +142,6 @@ export class Contact implements OnInit {
 
     // Construct DTO
     const generalInquiry = {
-      date: new Date().toISOString().split('T')[0],
       description: rawDesc,
       stateDTO: 'PENDIENTE',
       userDTO: {

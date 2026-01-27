@@ -10,25 +10,19 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-
-// Models
-import Property from '../../../../../../core/models/properties/Property';
-import ZoneDTO from '../../../../../../core/models/geography/Zone';
-import PropertiesFilter from '../../../../../../core/models/PropertiesFilter';
-
-// Services
-import { PropertyService } from '../../../../../../core/services/property-service/property-service';
-import { ImgBbService } from '../../../../../../core/services/imgbb-service/img-bb-service';
-import { AmenityService } from '../../../../../../core/services/amenity-service/amenity-service';
-
-// Components
-import { AdapterItem } from '../../../../../../shared/components/ui/adapter-item/adapter-item';
-import { ZoneService } from '../../../../../../core/services/zone-service/zone-service';
-import { AuthService } from '../../../../../../core/auth-service/auth-service';
-import Amenity from '../../../../../../core/models/Amenity';
-import OperationType from '../../../../../../core/models/OperationType';
-import PropertyType from '../../../../../../core/models/PropertyType';
-import { ConfigurationType } from '../../../../../../core/models/ConfigurationType';
+import { AuthService } from '../../../../../core/auth-service/auth-service';
+import Amenity from '../../../../../core/models/Amenity';
+import { ConfigurationType } from '../../../../../core/models/ConfigurationType';
+import OperationType from '../../../../../core/models/OperationType';
+import Property from '../../../../../core/models/properties/Property';
+import PropertiesFilter from '../../../../../core/models/PropertiesFilter';
+import PropertyType from '../../../../../core/models/PropertyType';
+import ZoneDTO from '../../../../../core/models/Zone';
+import { AmenityService } from '../../../../../core/services/amenity-service/amenity-service';
+import { ImgBbService } from '../../../../../core/services/imgbb-service/img-bb-service';
+import { PropertyService } from '../../../../../core/services/property-service/property-service';
+import { ZoneService } from '../../../../../core/services/zone-service/zone-service';
+import { AdapterItem } from '../../../../../shared/components/ui/adapter-item/adapter-item';
 
 @Component({
   selector: 'app-properties',
@@ -92,7 +86,7 @@ export class Properties implements OnInit {
     private imgService: ImgBbService,
     private router: Router,
     private fb: FormBuilder,
-    public auth: AuthService
+    public auth: AuthService,
   ) {}
 
   ngOnInit(): void {
@@ -152,7 +146,7 @@ export class Properties implements OnInit {
         amenities: this.fb.array([]),
         zone: ['', [Validators.required]],
       },
-      { validators: this.priceRangeValidator }
+      { validators: this.priceRangeValidator },
     ); // <--- AQUÍ SE APLICA LA VALIDACIÓN CRUZADA
   }
 
@@ -173,7 +167,6 @@ export class Properties implements OnInit {
         // 2. La info de paginación está dentro de data.page
         this.updatePageInfo(data.page.totalPages - 1, data.page.number, content);
 
-        this.properties.forEach((value) => this.choiceMainImage(value));
         console.log('Properties load from database via HATEOAS.');
       },
       error: (e) => console.log(e),
@@ -184,7 +177,7 @@ export class Properties implements OnInit {
     if (propertiesArray && propertiesArray.length > 0) {
       this.isFilter = true;
       this.properties = propertiesArray;
-      this.properties.forEach((value) => this.choiceMainImage(value));
+
       this.numberOfPropertiesLoadInArray = this.properties.length;
       console.log('Properties load from filter.');
     } else {
@@ -239,13 +232,28 @@ export class Properties implements OnInit {
   // UTILS & PAGINATION
   // ==========================================
 
-  choiceMainImage(p: Property) {
-    if (!p.imageDTOList || p.imageDTOList.length == 0) {
-      p.mainImage = this.imageNotFound;
-    } else {
-      const portada = p.imageDTOList.find((img) => img.name.includes('Portada'));
-      p.mainImage = portada ? portada.url : p.imageDTOList[0].url;
+  choiceMainImage(p: Property): string {
+    const images = p.imageDTOList;
+
+    // 1. Si no hay imágenes, devolvemos el placeholder
+    if (!images || images.length === 0) {
+      return this.imageNotFound;
     }
+
+    // 2. Buscamos la que sea Primary
+    const primaryImg = images.find((img) => img.isPrimary);
+    if (primaryImg) {
+      return primaryImg.url;
+    }
+
+    // 3. Fallback inteligente: Si no hay primary, buscamos la posición 0
+    const firstPositionImg = images.find((img) => img.position === 0);
+    if (firstPositionImg) {
+      return firstPositionImg.url;
+    }
+
+    // 4. Último recurso: la primera del array
+    return images[0].url;
   }
 
   // changePage(signal: boolean) {
@@ -288,7 +296,7 @@ export class Properties implements OnInit {
   updatePageInfo(
     totalPageToUpdate: number,
     numberPageToUpdate: number,
-    contentToUpdate: Property[]
+    contentToUpdate: Property[],
   ) {
     this.lastPage = totalPageToUpdate;
     this.pageSelected = numberPageToUpdate;
@@ -343,7 +351,7 @@ export class Properties implements OnInit {
     // Map the true/false values to the actual Amenity objects
     // IMPORTANT: This assumes the index of the form array matches 'amenitiesArrayFeatured'
     const selectedAmenitiesDTO: Amenity[] = this.amenitiesArrayFeatured.filter(
-      (_, index) => selectedBooleans[index] === true
+      (_, index) => selectedBooleans[index] === true,
     );
 
     // 2. Safe extraction of Zone
@@ -462,7 +470,6 @@ export class Properties implements OnInit {
           // Extraemos la paginación del objeto 'page' de HATEOAS
           this.updatePageInfo(data.page.totalPages - 1, data.page.number, content);
 
-          this.properties.forEach((value) => this.choiceMainImage(value));
           this.filterFailed = false;
           console.log('Properties loaded successfully from filter via HATEOAS');
         } else {
@@ -537,5 +544,25 @@ export class Properties implements OnInit {
 
   turnOffAdminMode() {
     this.adminMode = false;
+  }
+
+  // ESTE ES EL MÉTODO QUE USARÁ EL HTML DIRECTAMENTE
+  getCoverImage(p: Property): string {
+    const images = p.imageDTOList;
+
+    // 1. Si no hay imágenes, devolvemos el placeholder
+    if (!images || images.length === 0) {
+      return this.imageNotFound;
+    }
+
+    // 2. Ordenamos visualmente por 'position' para asegurar consistencia (opcional pero recomendado)
+    // Nota: slice() crea una copia para no mutar el array original en cada render
+    const sortedImages = images.slice().sort((a, b) => a.position - b.position);
+
+    // 3. Buscamos la que tenga isPrimary: true
+    const primaryImg = sortedImages.find(img => img.isPrimary);
+    
+    // 4. Si existe primary, devolvemos esa. Si no, la primera de la lista (posición 0)
+    return primaryImg ? primaryImg.url : sortedImages[0].url;
   }
 }

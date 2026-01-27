@@ -1,12 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { GoogleMap, MapAdvancedMarker, MapInfoWindow } from '@angular/google-maps';
-import Property from '../../../../../../core/models/properties/Property';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { PropertyService } from '../../../../../../core/services/property-service/property-service';
-import { environment } from '../../../../../../../environments/environment.development';
-import { InquiryModel } from '../../../../../../core/models/InquiryModel';
-import { InquiryService } from '../../../../../../core/services/inquiry-service/inquiry-service';
+import { environment } from '../../../../../../environments/environment.development';
+import { InquiryModel } from '../../../../../core/models/InquiryModel';
+import Property from '../../../../../core/models/properties/Property';
+import { InquiryService } from '../../../../../core/services/inquiry-service/inquiry-service';
+import { PropertyService } from '../../../../../core/services/property-service/property-service';
 
 @Component({
   selector: 'app-property-detail',
@@ -24,6 +24,9 @@ export class PropertyDetail implements OnInit {
   numberOfPropertiesLoadInArray!: number;
 
   imageNotFound!: string;
+
+  // 1. NUEVAS VARIABLES DE ESTADO
+  currentImageIndex: number = 0;
 
   center: google.maps.LatLngLiteral = { lat: -38.00347172577913, lng: -57.54663502109604 };
   zoom = 12;
@@ -45,7 +48,7 @@ export class PropertyDetail implements OnInit {
     private route: ActivatedRoute,
     private propertyService: PropertyService,
     private fb: FormBuilder,
-    private inquiryService: InquiryService
+    private inquiryService: InquiryService,
   ) {}
 
   ngOnInit(): void {
@@ -129,51 +132,92 @@ export class PropertyDetail implements OnInit {
   // Método auxiliar para no repetir código
   initProperty(prop: Property) {
     this.propertySelected = prop;
-    this.choiceMainImage(this.propertySelected);
+
+    // A. LÓGICA DEL CARRUSEL (ESTO NO LO TOCAMOS, ESTÁ BIEN)
+    if (this.propertySelected.imageDTOList && this.propertySelected.imageDTOList.length > 0) {
+      this.propertySelected.imageDTOList.sort((a, b) => a.position - b.position);
+      const primaryIndex = this.propertySelected.imageDTOList.findIndex((img) => img.isPrimary);
+      this.currentImageIndex = primaryIndex !== -1 ? primaryIndex : 0;
+    } else {
+      this.currentImageIndex = 0;
+    }
+
+    // B. LÓGICA DEL MAPA (AQUÍ ESTABA EL ERROR)
+    // >>> RECUPERAMOS ESTA LÍNEA QUE SE HABÍA BORRADO <<<
     this.center = { lat: this.propertySelected.latitude, lng: this.propertySelected.longitude };
 
+    // Cerramos infoWindow si estaba abierta (buena práctica del código viejo)
     if (this.infoWindow) this.infoWindow.close();
 
+    // C. CARGA DE VECINOS
     this.propertyService.getAround(this.propertySelected.id).subscribe({
       next: (data: Property[]) => {
+        // Guardamos la data cruda. El HTML se encargará de buscar la imagen con getCoverImage
         this.properties = data;
-        this.properties.forEach((value) => this.choiceMainImage(value));
       },
       error: (err) => {
         console.error('Error al cargar propiedades cercanas:', err);
-        // Opcional: Podrías vaciar la lista si falla
         this.properties = [];
       },
     });
 
     this.propertyService.registerView(prop.id).subscribe({
-      next: (data) => console.log("View registered")
+      next: () => console.log('View registered'),
     });
   }
 
-  cargarMapaSeguro() {
-    // 1. Preguntamos: ¿Ya existe el script en la página?
-    if (document.getElementById('google-map-script')) {
-      return; // Si ya está, no hacemos nada.
-    }
+  // 3. MÉTODOS DE NAVEGACIÓN (Para el HTML)
 
-    // 2. Si no está, lo creamos
+  // Devuelve la URL actual o la imagen de error si no hay fotos
+  get currentImageUrl(): string {
+    console.log('current image');
+
+    const images = this.propertySelected?.imageDTOList;
+    if (!images || images.length === 0) {
+      return this.imageNotFound || 'assets/images/placeholder-property.jpg'; // Tu fallback
+    }
+    return images[this.currentImageIndex].url;
+  }
+
+  // 2. Para las Propiedades del Mapa (Busca isPrimary dinámicamente)
+  getCoverImage(p: Property): string {
+    console.log('get cover image');
+    if (!p.imageDTOList || p.imageDTOList.length === 0) {
+      return this.imageNotFound || 'assets/images/placeholder.jpg';
+    }
+    // Busca la que sea isPrimary, sino la primera (posición 0)
+    const primary = p.imageDTOList.find((img) => img.isPrimary);
+    return primary ? primary.url : p.imageDTOList[0].url;
+  }
+
+  // Devuelve true si hay más de 1 imagen (para mostrar flechas)
+  get showNavigation(): boolean {
+    return this.propertySelected?.imageDTOList?.length > 1;
+  }
+
+  nextImage(event?: Event) {
+    if (event) event.stopPropagation();
+    const length = this.propertySelected.imageDTOList.length;
+    this.currentImageIndex = (this.currentImageIndex + 1) % length;
+  }
+
+  prevImage(event?: Event) {
+    if (event) event.stopPropagation();
+    const length = this.propertySelected.imageDTOList.length;
+    this.currentImageIndex = (this.currentImageIndex - 1 + length) % length;
+  }
+
+  cargarMapaSeguro() {
+    if (document.getElementById('google-map-script')) return;
     const script = document.createElement('script');
     script.id = 'google-map-script';
-
-    // 3. Le ponemos tu CLAVE SECRETA del environment
     script.src = `https://maps.googleapis.com/maps/api/js?key=${environment.googleMapsApiKey}&libraries=places&loading=async`;
     script.async = true;
     script.defer = true;
-
-    // 4. Lo pegamos en el documento
     document.body.appendChild(script);
   }
 
   openInfoWindow(marker: MapAdvancedMarker, property: Property) {
-    console.log('Click en propiedad ID:', property.id); // ¿Cambia el ID o es siempre el mismo?
-    console.log('Imagen que debería mostrar:', property.mainImage);
-
     this.infoWindowData = property;
     this.infoWindow.open(marker);
   }
@@ -192,12 +236,8 @@ export class PropertyDetail implements OnInit {
     const rawPhone = this.form.get('numberPhone')?.value.trim();
     const rawDesc = this.form.get('description')?.value.trim();
 
-    const today = new Date();
-    const formattedDate = today.toISOString().split('T')[0];
-
     // Construcción del DTO
     let result = {
-      date: formattedDate,
       description: rawDesc,
       state: this.form.value.state,
       user: {
@@ -219,12 +259,21 @@ export class PropertyDetail implements OnInit {
     });
   }
 
-  choiceMainImage(p: Property) {
-    if (!p.imageDTOList || p.imageDTOList.length == 0) p.mainImage = this.imageNotFound;
-    // If the image array is null or empty, we load the not found image in the cards
-    else if (!p.imageDTOList.find((img) => img.name.includes('Portada')))
-      p.mainImage = p.imageDTOList[0].url;
-    // If the image array don't has any image with 'portada' name, load any image
-    else p.mainImage = p.imageDTOList.find((img) => img.name.includes('Portada'))?.url; // If the image array has the 'portada' image, it returs
+  choiceMainImage(p: Property): string {
+    const images = p.imageDTOList;
+
+    // 1. Caso: No hay imágenes
+    if (!images || images.length === 0) {
+      return this.imageNotFound;
+    }
+
+    // 2. Caso: Buscar la imagen marcada como primaria (isPrimary: true)
+    const primaryImg = images.find((img) => img.isPrimary);
+    if (primaryImg) {
+      return primaryImg.url;
+    }
+
+    // 3. Caso: No hay ninguna marcada como primaria, usamos la primera (fallback)
+    return images[0].url;
   }
 }

@@ -207,3 +207,19 @@
      min-width: 0;
      /* Importante para que el grid no se rompa */
  }
+
+ .btn-seed {
+    background-color: #0ea5e9;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.btn-seed:hover {
+    background-color: #0284c7;
+}

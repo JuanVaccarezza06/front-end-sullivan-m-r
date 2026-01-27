@@ -1,8 +1,6 @@
 import { Routes } from '@angular/router';
-import { Properties } from './features/pages/auth-pages/public/properties/properties-page/properties';
 import { adminGuardGuard } from './core/guards/admin-guard/admin-guard-guard';
 import { FormPostProperty } from './features/admin/properties/create/create-property/form-post-property';
-import { PropertyDetail } from './features/pages/auth-pages/public/properties/property-detail/property-detail';
 import { UserInfo } from './features/admin/user-info/user-info';
 import { LogIn } from './features/pages/auth-pages/log-in/log-in';
 import { Register } from './features/pages/auth-pages/register/register';
@@ -16,6 +14,8 @@ import { DashboardPage } from './features/admin/dashboard/dashboard-page';
 import { Admin } from './features/admin/main-admin-page/admin';
 import { UserUpdate } from './features/pages/auth-pages/user-update/user-update';
 import { UserProfile } from './features/pages/auth-pages/user-menu/user-profile/user-profile';
+import { Properties } from './features/pages/public/properties/properties-page/properties';
+import { PropertyDetail } from './features/pages/public/properties/property-detail/property-detail';
 
 export const routes: Routes = [
   // ==========================================

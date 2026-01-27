@@ -4,7 +4,7 @@ import OperationType from "../OperationType";
 import PropertyType from "../PropertyType";
 import ZoneDTO from "../geography/Zone";
 import Amenity from "../Amenity";
-import Image from "../Image";
+import { ImageItem } from "../ImageItem";
 
 export default interface Property{
   id: number;
@@ -22,7 +22,7 @@ export default interface Property{
   amenitiesList: Amenity[];
   zoneDTO: ZoneDTO;
   addressDTO: Address;
-  imageDTOList: Image[];
+  imageDTOList: ImageItem[];
 
   rooms: number;
   bathrooms: number;
@@ -30,8 +30,6 @@ export default interface Property{
 
   latitude: number;
   longitude: number;
-
-  mainImage?: string;
 
   ownerDTO: Owner;
 }

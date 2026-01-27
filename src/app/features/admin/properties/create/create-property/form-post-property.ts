@@ -1,354 +1,272 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import OperationType from '../../../../../core/models/OperationType';
+import Property from '../../../../../core/models/properties/Property';
+import PropertyType from '../../../../../core/models/PropertyType';
+import { PropertyService } from '../../../../../core/services/property-service/property-service';
 import { InputAmenities } from '../../../../../shared/components/ui/input-amenities/input-amenities';
 import { InputImages } from '../../../../../shared/components/ui/input-images/input-images';
-import ZoneDTO from '../../../../../core/models/geography/Zone';
-import { PropertyService } from '../../../../../core/services/property-service/property-service';
-import Property from '../../../../../core/models/properties/Property';
-import { FormZone } from '../components/form-zone/form-zone';
 import { FormAddress } from '../components/form-address/form-address';
 import { FormOwner } from '../components/form-owner/form-owner';
-import { ActivatedRoute, Route, Router } from '@angular/router';
-import Amenity from '../../../../../core/models/Amenity';
-import OperationType from '../../../../../core/models/OperationType';
-import PropertyType from '../../../../../core/models/PropertyType';
-import Image from '../../../../../core/models/Image';
-
+import { FormZone } from '../components/form-zone/form-zone';
 
 @Component({
   selector: 'app-form-property',
-  imports: [ReactiveFormsModule,
-    InputAmenities,
-    InputImages,
-    FormZone,
-    FormAddress,
-    FormOwner
-  ],
+  imports: [ReactiveFormsModule, InputAmenities, InputImages, FormZone, FormAddress, FormOwner],
   templateUrl: './form-post-property.html',
   styleUrl: './form-post-property.css',
 })
 export class FormPostProperty implements OnInit {
+  form!: FormGroup;
 
-  operationsTypesArray: OperationType[] = []
-  propertyTypesArray: PropertyType[] = []
+  // Estado
+  isUpdate: boolean = false;
+  propertyUpdate!: Property;
 
-  form!: FormGroup
-
-  isUpdate!: boolean
-  propertyUpdate!: Property
-
-  // Supongamos que tienes 3 hijos en tu HTML (o el length de tu array si es *ngFor)
-  totalChildren = 3;
-
-  // Un contador que empieza en 0
-  finishedChildrenCount = 0;
-
-  // Variable para disparar a los hijos (tu signal)
-  startSignal = 0;
+  // Listas para selects
+  operationsTypesArray: OperationType[] = [];
+  propertyTypesArray: PropertyType[] = [];
 
   constructor(
     private fb: FormBuilder,
     private service: PropertyService,
-    private route: ActivatedRoute,
-    private router: Router
-  ) { }
+    private router: Router,
+  ) {}
 
   ngOnInit(): void {
+    // 1. Inicializar estructura del formulario
+    this.initForm();
 
-    this.formInitilizer()
-    this.loadAvailablesOperationTypes()
-    this.loadPropertyTypes()
+    // 2. Cargar datos auxiliares (Selects)
+    this.loadAvailablesOperationTypes();
+    this.loadPropertyTypes();
 
+    // 3. Verificar si estamos en modo EDICIÓN
     const state = this.router.lastSuccessfulNavigation?.extras?.state as { info?: Property };
-    let property = state?.info || undefined;
-
-    if (property) {
-      this.propertyUpdate = property
-      this.isUpdate = true
-      this.patchValues()
+    if (state?.info) {
+      this.propertyUpdate = state.info;
+      this.isUpdate = true;
+      this.patchValuesForEdit(); // Método dedicado a poblar el form
     }
-
   }
 
-  formInitilizer() {
-
+  // --- 1. Inicialización "Clean Code" ---
+  initForm() {
     this.form = this.fb.group({
-      id: [null],
-      title: ['', [
-        Validators.required,
-        Validators.minLength(10),
-        Validators.maxLength(50),
-        Validators.pattern(/^\S+\s+\S+\s+\S+.*$/)]
-      ],
-      description: ['', [
-        Validators.required,
-        Validators.minLength(30),
-        Validators.maxLength(300),]
-      ],
-      price: ['', [
-        Validators.required,
-        Validators.min(0),
-        Validators.max(1000000000)]
-      ],
-      yearConstruction: ['', [
-        Validators.required,
-        Validators.min(0),
-        Validators.max(1000000000)]
-      ],
-      areaStructure: ['', [
-        Validators.required,
-        Validators.min(0),
-        Validators.max(1000000000)]
-      ],
-      totalArea: ['', [
-        Validators.required,
-        Validators.min(0),
-        Validators.max(1000000000)]
-      ],
-      rooms: ['', [
-        Validators.required,
-        Validators.min(0),
-        Validators.max(1000000000)]
-      ],
-      bathrooms: ['', [
-        Validators.required,
-        Validators.min(0),
-        Validators.max(1000000000)]
-      ],
-      bedrooms: ['', [
-        Validators.required,
-        Validators.min(0),
-        Validators.max(1000000000)]
+      // -- Datos Primitivos --
+      id: [null], // Solo para update
+
+      title: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(10),
+          Validators.maxLength(50),
+          Validators.pattern(/^\S+\s+\S+\s+\S+.*$/), // Mínimo 3 palabras
+        ],
       ],
 
-      propertyTypes: ['', [Validators.required]],
-      operationTypes: ['', [Validators.required]],
+      description: ['', [Validators.required, Validators.minLength(30), Validators.maxLength(300)]],
 
-      zone: ['', [
-        Validators.required,
-        Validators.minLength(2)]
-      ],
-      city: ['', [
-        Validators.required,
-        Validators.minLength(2)]
-      ],
-      province: ['', [
-        Validators.required,
-        Validators.minLength(2)]
-      ],
-      country: ['', [
-        Validators.required,
-        Validators.minLength(2)]
+      price: [
+        '',
+        [
+          Validators.required,
+          Validators.min(1), // Corregido de 0 a 1 lógico
+          Validators.max(1000000000),
+        ],
       ],
 
-      mainStreet: ['', [
-        Validators.required,
-        Validators.minLength(2),
-        Validators.maxLength(50)]
-      ],
-      secondaryStreet: ['', [
-        Validators.required,
-        Validators.minLength(2),
-        Validators.maxLength(50)]
-      ],
-      numbering: ['', [
-        Validators.required,
-        Validators.min(1),
-        Validators.max(1000000000)]
-      ],
+      // Selects simples
+      propertyTypeName: ['', [Validators.required]],
+      operationTypeName: ['', [Validators.required]],
 
-      firstName: ['', [
-        Validators.required,
-        Validators.maxLength(100),
-        Validators.minLength(3)]
+      // Datos Numéricos de Estructura
+      yearConstruction: [
+        '',
+        [Validators.required, Validators.min(1800), Validators.max(new Date().getFullYear())],
       ],
-      surname: ['', [
-        Validators.required,
-        Validators.maxLength(100),
-        Validators.minLength(3)]
-      ],
-      email: ['', [
-        Validators.required,
-        Validators.email,
-        Validators.maxLength(254),
-        Validators.minLength(6)]
-      ],
-      numberPhone: ['', [
-        Validators.required]
-      ],
-      amenities: ['', []],
-      images: ['', []],
+      areaStructure: ['', [Validators.required, Validators.min(1)]],
+      totalArea: ['', [Validators.required, Validators.min(1)]],
+      rooms: ['', [Validators.required, Validators.min(1)]],
+      bathrooms: ['', [Validators.required, Validators.min(1)]],
+      bedrooms: ['', [Validators.required, Validators.min(1)]],
+
+      // -- SUB-COMPONENTES (La magia del CVA) --
+      // Estos campos esperan OBJETOS completos, no strings sueltos.
+      // Si el hijo es inválido, estos campos serán inválidos.
+
+      zoneDTO: [null, Validators.required],
+      addressDTO: [null, Validators.required],
+      ownerDTO: [null, Validators.required],
+
+      amenitiesList: [[]], // Array de amenities
+      imageDTOList: [[]], // Array de imágenes con lógica de portada/orden
     });
   }
 
+  // --- 2. Carga de Selects ---
   loadAvailablesOperationTypes() {
     this.service.getAvailablesOperationTypes().subscribe({
-      next: (data) => {
-        this.operationsTypesArray = data;
-      },
-      error: (e) => console.log(e)
+      next: (data) => (this.operationsTypesArray = data),
+      error: (e) => console.error('Error loading operations', e),
     });
   }
 
   loadPropertyTypes() {
     this.service.getAvailablePropertyTypes().subscribe({
-      next: (data) => {
-        this.propertyTypesArray = data;
-      },
-      error: (e) => console.log(e)
+      next: (data) => (this.propertyTypesArray = data),
+      error: (e) => console.error('Error loading property types', e),
     });
   }
 
-  startProcess() {
-    // 1. Reseteamos el contador por si acaso
-    this.finishedChildrenCount = 0;
+  fillFormForTesting() {
+    this.form.patchValue({
+      title: 'Hermoso Departamento con Vista al Mar',
+      description:
+        'Increíble propiedad ubicada en la mejor zona de la ciudad. Cuenta con acabados de lujo, excelente iluminación natural y seguridad 24/7. Cerca de centros comerciales y parques.',
+      price: 155000,
+      propertyTypeName: 'Departamento', // Asegúrate que coincida con un valor de tu array
+      operationTypeName: 'Venta', // Asegúrate que coincida con un valor de tu array
+      yearConstruction: 2022,
+      areaStructure: 85,
+      totalArea: 95,
+      rooms: 3,
+      bathrooms: 2,
+      bedrooms: 2,
 
-    // 2. Avisamos a los hijos que arranquen (tu lógica actual)
-    this.startSignal++;
-  }
-
-  onOneChildFinished() {
-
-    // 1. Sumamos uno al contador
-    this.finishedChildrenCount++;
-    console.log(`Terminó un hijo. Llevamos ${this.finishedChildrenCount} de ${this.totalChildren}`);
-
-    // 2. Preguntamos: ¿Ya están todos?
-    if (this.finishedChildrenCount === this.totalChildren) {
-      this.finishSubmit();
-    }
-  }
-
-  finishSubmit() {
-
-    let finalZone = {
-      "zoneName": this.form.get('zone')?.value,
-      "cityDTO": {
-        "cityName": this.form.get('city')?.value,
-        "provinceDTO": {
-          "provinceName": this.form.get('province')?.value,
-          "countryDTO": {
-            "countryName": this.form.get('country')?.value
-          }
-        }
-      }
-    } as ZoneDTO
-
-    let finalAmenities = this.form.get('amenities')?.value as Amenity[]
-    let finalImages = this.form.get('images')?.value as Image[]
-
-    let result = {
-      id: this.isUpdate ? this.propertyUpdate.id : null,
-      title: this.form.get('title')?.value,
-      description: this.form.get('description')?.value,
-      price: this.form.get('price')?.value,
-      publicationDate: "",
-      yearConstruction: this.form.get('yearConstruction')?.value,
-      areaStructure: this.form.get('areaStructure')?.value,
-      totalArea: this.form.get('totalArea')?.value,
-      rooms: this.form.get('rooms')?.value,
-      bathrooms: this.form.get('bathrooms')?.value,
-      bedrooms: this.form.get('bedrooms')?.value,
-
-      propertyTypeDTO: {
-        "typeName": this.form.get('propertyTypes')?.value
-      },
-      operationTypeDTO: {
-        "operationName": this.form.get('operationTypes')?.value,
+      // Datos para app-form-zone (CVA)
+      zoneDTO: {
+        zoneName: 'Playa Grande',
+        cityDTO: {
+          cityName: 'Mar del Plata',
+          provinceDTO: {
+            provinceName: 'Buenos Aires',
+            countryDTO: { countryName: 'Argentina' },
+          },
+        },
       },
 
-      zoneDTO: finalZone,
-
+      // Datos para app-form-address (CVA)
       addressDTO: {
-        "mainStreet": this.form.get('mainStreet')?.value,
-        "secondaryStreet": this.form.get('secondaryStreet')?.value,
-        "numbering": this.form.get('numbering')?.value,
+        mainStreet: 'Boulevard Marítimo',
+        secondaryStreet: 'General Roca',
+        numbering: 2540,
       },
 
+      // Datos para app-form-owner (CVA)
       ownerDTO: {
-        "firstName": this.form.get('firstName')?.value,
-        "surname": this.form.get('surname')?.value,
-        "email": this.form.get('email')?.value,
-        "numberPhone": this.form.get('numberPhone')?.value
+        firstName: 'Juan',
+        surname: 'Pérez',
+        email: 'juan.perez@test.com',
+        numberPhone: 2235123456,
       },
 
-      amenitiesList: finalAmenities,
-      imageDTOList: finalImages
-    }
+      // Lista de Amenities (CVA)
+      amenitiesList: [
+        { amenityName: 'Piscina', isFeatured: true },
+        { amenityName: 'Gimnasio', isFeatured: false },
+        { amenityName: 'Cochera', isFeatured: true },
+      ],
 
-    if (this.isUpdate) this.service.put(result)?.subscribe({
-      next: (data) => {
-        console.log("Actualizado correctamente!")
-        this.router.navigate(['admin/property-list'])
+      // Lista de Imágenes (CVA) - Usamos una URL real de placeholder
+      imageDTOList: [
+        {
+          url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80',
+          isPrimary: true,
+          position: 0,
+          name: 'foto_living_mock.jpg', // <--- ¡FALTABA ESTO!
+        },
+        {
+          url: 'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=800&q=80',
+          isPrimary: false,
+          position: 0,
+          name: 'foto_cocina_mock.jpg' // <--- ¡FALTABA ESTO!
+        },
+      ],
+    });
+
+    console.log('✅ Formulario cargado con datos de prueba.');
+
+    // LOG DE DEPURACIÓN SENIOR:
+    Object.keys(this.form.controls).forEach((key) => {
+      const controlErrors = this.form.get(key)?.errors;
+      if (controlErrors != null) {
+        console.error(`❌ Campo inválido: ${key}`, controlErrors);
       }
-      ,
-      error: (e) => console.log(e)
-    })
-    else this.service.post(result)?.subscribe({
-      next: (data) => console.log(data),
-      error: (e) => console.log(e)
-    })
+    });
+
+    // Si el error está dentro de un CVA, revisa si el objeto que pasaste es null
+    console.log('Estado del Formulario:', this.form.status); // Debería decir 'VALID'
   }
 
+  // --- 3. Lógica de Submit Simplificada ---
+  onSubmit() {
+    if (this.form.invalid) {
+      console.warn('Formulario inválido. Revisar campos marcados.');
+      this.form.markAllAsTouched(); // Esto pinta de rojo TODOS los inputs, incluidos los hijos
+      return;
+    }
 
-  private mostrarErroresFormulario(form: FormGroup): void {
-    Object.keys(form.controls).forEach(key => {
-      const control = form.get(key);
+    // Preparar el objeto para el Backend
+    // Mapeamos los valores planos del form a la estructura DTO compleja
+    const formValue = this.form.value;
 
-      // 1. Si es un sub-grupo (FormGroup anidado), llamar recursivamente
-      if (control instanceof FormGroup) {
-        this.mostrarErroresFormulario(control);
-      }
-      // 2. Si es un control simple y es inválido
-      if (control?.invalid) {
-        console.log(`🔥 Campo inválido: [${key}]`);
-        console.log(`   Tipo de error:`, control.errors);
+    const finalDTO: any = {
+      id: this.isUpdate ? this.propertyUpdate.id : null,
 
-        // 3. Forzar la validación visual en el HTML
-        control.markAsTouched();
-        control.markAsDirty();
-      }
+      // Datos directos
+      title: formValue.title,
+      description: formValue.description,
+      price: formValue.price,
+      yearConstruction: formValue.yearConstruction,
+      areaStructure: formValue.areaStructure,
+      totalArea: formValue.totalArea,
+      rooms: formValue.rooms,
+      bathrooms: formValue.bathrooms,
+      bedrooms: formValue.bedrooms,
+      publicationDate: this.isUpdate ? this.propertyUpdate.publicationDate : new Date(), // Fecha actual si es nuevo
+
+      // Objetos anidados (Selects convertidos a DTO)
+      propertyTypeDTO: { typeName: formValue.propertyTypeName },
+      operationTypeDTO: { operationName: formValue.operationTypeName },
+
+      // Sub-componentes (Ya vienen como objetos gracias a CVA)
+      zoneDTO: formValue.zoneDTO,
+      addressDTO: formValue.addressDTO,
+      ownerDTO: formValue.ownerDTO,
+
+      // Listas
+      amenitiesList: formValue.amenitiesList,
+      imageDTOList: formValue.imageDTOList,
+    };
+
+    console.log('🚀 Payload listo para enviar:', finalDTO);
+
+    // Llamada al servicio
+    const request = this.isUpdate ? this.service.put(finalDTO) : this.service.post(finalDTO);
+
+    request?.subscribe({
+      next: (response) => {
+        console.log('Éxito:', response);
+        this.router.navigate(['admin/property-list']);
+      },
+      error: (err) => console.error('Error al guardar:', err),
     });
   }
 
-  cargarForm() {
-    let result = {
-      title: "Titulo hermoso",
-      description: "Esta es la desc",
-      price: 230000,
-      publicationDate: "",
-      yearConstruction: 2002,
-      areaStructure: 250,
-      totalArea: 300,
-      rooms: 5,
-      bathrooms: 5,
-      bedrooms: 4,
+  // --- 4. Edición (Patch Value) ---
+  patchValuesForEdit() {
+    if (!this.propertyUpdate) return;
 
-      propertyTypes: "Casa",
-
-      operationTypes: "Venta",
-
-      mainStreet: "Carasa",
-      secondaryStreet: "Aguado",
-      numbering: 6789,
-
-      firstName: "Santiago",
-      surname: "Vaccarezza",
-      email: "jprvs@gmail.com",
-      numberPhone: 12345678,
-    }
-
-    this.form.patchValue(result)
-  }
-
-  patchValues() {
-
-    let result = {
+    // Aquí "aplanamos" lo necesario y pasamos los objetos complejos tal cual
+    this.form.patchValue({
       id: this.propertyUpdate.id,
       title: this.propertyUpdate.title,
       description: this.propertyUpdate.description,
       price: this.propertyUpdate.price,
-      publicationDate: this.propertyUpdate.publicationDate,
+
       yearConstruction: this.propertyUpdate.yearConstruction,
       areaStructure: this.propertyUpdate.areaStructure,
       totalArea: this.propertyUpdate.totalArea,
@@ -356,70 +274,23 @@ export class FormPostProperty implements OnInit {
       bathrooms: this.propertyUpdate.bathrooms,
       bedrooms: this.propertyUpdate.bedrooms,
 
-      propertyTypes: this.propertyUpdate.propertyTypeDTO.typeName,
+      // Selects: Extraemos el string del DTO
+      propertyTypeName: this.propertyUpdate.propertyTypeDTO?.typeName,
+      operationTypeName: this.propertyUpdate.operationTypeDTO?.operationName,
 
-      operationTypes: this.propertyUpdate.operationTypeDTO.operationName,
+      // Componentes Complejos: Pasamos el DTO entero
+      // Los componentes hijos CVA sabrán leer este objeto en su método `writeValue`
+      zoneDTO: this.propertyUpdate.zoneDTO,
+      addressDTO: this.propertyUpdate.addressDTO,
+      ownerDTO: this.propertyUpdate.ownerDTO,
 
-      zone: this.propertyUpdate.zoneDTO.zoneName,
-      city: this.propertyUpdate.zoneDTO.cityDTO.cityName,
-      province: this.propertyUpdate.zoneDTO.cityDTO.provinceDTO.provinceName,
-      country: this.propertyUpdate.zoneDTO.cityDTO.provinceDTO.countryDTO.countryName,
-
-      mainStreet: this.propertyUpdate.addressDTO.mainStreet,
-      secondaryStreet: this.propertyUpdate.addressDTO.secondaryStreet,
-      numbering: this.propertyUpdate.addressDTO.numbering,
-
-      firstName: this.propertyUpdate.ownerDTO.firstName,
-      surname: this.propertyUpdate.ownerDTO.surname,
-      email: this.propertyUpdate.ownerDTO.email,
-      numberPhone: this.propertyUpdate.ownerDTO.numberPhone,
-
-      amenities: this.propertyUpdate.amenitiesList,
-      images: this.propertyUpdate.imageDTOList
-    }
-
-    this.form.patchValue(result)
+      amenitiesList: this.propertyUpdate.amenitiesList,
+      imageDTOList: this.propertyUpdate.imageDTOList,
+    });
   }
 
-  cargarValores() {
-
-    let result = {
-      title: 'Espectacular Casa en el Centro', // > 10 chars
-      description: 'Esta es una descripción de prueba lo suficientemente larga para superar la validación de 30 caracteres obligatoria del sistema.', // > 30 chars
-      price: 250000,
-      publicationDate: '2025-11-19',
-      yearConstruction: 2020,
-      areaStructure: 150,
-      totalArea: 300,
-      rooms: 5,
-      bathrooms: 2,
-      bedrooms: 3,
-
-      // Asegúrate que estos valores existan en tus <select> o arrays cargados
-      propertyTypes: 'Casa',
-      operationTypes: 'Venta',
-
-      zone: 'Playa Grande',
-      city: 'Mar del Plata',
-      province: 'Buenos Aires',
-      country: 'Argentina',
-
-      mainStreet: 'Av. Colón',
-      secondaryStreet: 'Calle Güemes',
-      numbering: '1234',
-
-      firstName: 'Juan Pablo',
-      surname: 'Rodriguez',
-      email: 'juan.prueba@gmail.com',
-      numberPhone: 5492235559999, // Cumple el pattern con + y espacios
-
-    }
-    this.form.patchValue(result)
-    if (this.form.invalid) {
-      console.warn('⚠️ El formulario no es válido. Revisa la consola:');
-
-      // LLAMAS AL MÉTODO AQUÍ
-      this.mostrarErroresFormulario(this.form);
-    }
+  // Botón de Cancelar
+  onCancel() {
+    this.router.navigate(['admin/property-list']); // O volver atrás
   }
 }

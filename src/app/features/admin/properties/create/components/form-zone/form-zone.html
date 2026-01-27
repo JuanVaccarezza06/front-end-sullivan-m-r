@@ -1,64 +1,47 @@
-<div>
-    @if (addZone) {
+<div class="form-container-zone" [formGroup]="form">
+  @if (addZone) {
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Zona <span class="required">*</span></label>
+        <input type="text" formControlName="zone" placeholder="Ej: Centro" />
+        @if (form.get('zone')?.hasError('required') && form.get('zone')?.touched) {
+          <p class="p-error">Requerido</p>
+        }
+      </div>
 
-    <div class="form-grid" [formGroup]="group">
+      <div class="form-group">
+        <label>Ciudad <span class="required">*</span></label>
+        <input type="text" formControlName="city" />
+      </div>
 
- <div class="form-group">
-            <label>Zona <span class="required">*</span></label>
-            <input type="text" formControlName="zone" placeholder="Ej: Centro">
-            @if (group.get('zone')?.hasError('required') && group.get('zone')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
-            @else if (group.get('zone')?.hasError('minlength') && group.get('zone')?.touched ) { <p class="p-error">Este campo tiene un minimo de 2 caracteres</p> }
-            @else if (group.get('zone')?.hasError('maxlength') && group.get('zone')?.touched ) { <p class="p-error">Este campo tiene un maximo de 50 caracteres</p> }
-        </div>
-        <div class="form-group">
-            <label>Ciudad <span class="required">*</span></label>
-            <input type="text" formControlName="city" placeholder="Ej: Buenos Aires">
-            @if (group.get('city')?.hasError('required') && group.get('city')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
-            @else if (group.get('city')?.hasError('minlength') && group.get('city')?.touched ) { <p class="p-error">Este campo tiene un minimo de 2 caracteres</p> }
-            @else if (group.get('city')?.hasError('maxlength') && group.get('city')?.touched ) { <p class="p-error">Este campo tiene un maximo de 50 caracteres</p> }
-        </div>
+      <div class="form-group">
+        <label>Provincia <span class="required">*</span></label>
+        <input type="text" formControlName="province" />
+      </div>
 
-        <div class="form-group">
-            <label>Provincia <span class="required">*</span></label>
-            <input type="text" formControlName="province" placeholder="Ej: Buenos Aires">
-            @if (group.get('province')?.hasError('required') && group.get('province')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
-            @else if (group.get('province')?.hasError('minlength') && group.get('province')?.touched ) { <p class="p-error">Este campo tiene un minimo de 2 caracteres</p> }
-            @else if (group.get('province')?.hasError('maxlength') && group.get('province')?.touched ) { <p class="p-error">Este campo tiene un maximo de 50 caracteres</p> }
-        </div>
-
-        <div class="form-group">
-            <label>País <span class="required">*</span></label>
-            <input type="text" formControlName="country" placeholder="Ej: Argentina">
-            @if (group.get('country')?.hasError('required') && group.get('country')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
-            @else if (group.get('country')?.hasError('minlength') && group.get('country')?.touched ) { <p class="p-error">Este campo tiene un minimo de 2 caracteres</p> }
-            @else if (group.get('country')?.hasError('maxlength') && group.get('country')?.touched ) { <p class="p-error">Este campo tiene un maximo de 50 caracteres</p> }
-        </div>
-
+      <div class="form-group">
+        <label>País <span class="required">*</span></label>
+        <input type="text" formControlName="country" />
+      </div>
     </div>
-    } @else {
-    <div class="form-group" [formGroup]="group">
-        <label> Ubicación <span class="required">*</span></label>
-
-        <select formControlName="zone">
-            <option value="">Seleccionar ubicación...</option>
-            @for (z of zoneArray; track $index) {
-            <option value="{{z.zoneName}}">
-                {{z.zoneName}},
-                {{z.cityDTO.cityName}},
-                {{z.cityDTO.provinceDTO.provinceName}},
-                {{z.cityDTO.provinceDTO.countryDTO.countryName}}
-            </option>
-            }
-
-        </select>
-        @if (group.get('zone')?.hasError('required') && group.get('zone')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
-
-    </div>
-    }
-
+  } @else {
     <div class="form-group">
-        <button type="button" class="toggle-button" (click)="addZone = !addZone">
-            {{ addZone ? 'Elegir zona existente' : 'Agregar nueva zona' }}
-        </button>
+      <label>Ubicación <span class="required">*</span></label>
+      <select formControlName="selectedZone" [compareWith]="compareZones">
+        <option [ngValue]="null">Seleccionar ubicación...</option>
+        @for (z of zoneArray; track z.zoneName) {
+          <option [ngValue]="z">{{ z.zoneName }}, {{ z.cityDTO.cityName }}</option>
+        }
+      </select>
+      @if (form.get('selectedZone')?.hasError('required') && form.get('selectedZone')?.touched) {
+        <p class="p-error">Debes seleccionar una zona</p>
+      }
     </div>
+  }
+
+  <div class="form-group mt-2">
+    <button type="button" class="toggle-button" (click)="toggleMode()">
+      {{ addZone ? '← Elegir zona existente' : '+ Agregar nueva zona manualmente' }}
+    </button>
+  </div>
 </div>

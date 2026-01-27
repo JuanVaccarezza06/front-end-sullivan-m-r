@@ -1,7 +1,11 @@
 <div class="images-section">
     <h3 class="images-title">Imágenes</h3>
 
-    <div class="drop-zone" (click)="fileInput.click()" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
+    <div class="drop-zone" 
+         (click)="fileInput.click()" 
+         (dragover)="onDragOver($event)" 
+         (drop)="onDrop($event)">
+        
         <div class="upload-icon">
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -11,35 +15,51 @@
         </div>
         <p class="upload-text">Seleccionar imágenes</p>
         <p class="upload-subtext">o arrastra y suelta aquí</p>
-        <input type="file" #fileInput (change)="onFileSelected($event)" multiple accept="image/*"
-            style="display: none;">
+        <input type="file" #fileInput (change)="onFileSelected($event)" multiple accept="image/*" style="display: none;">
     </div>
 
     <div class="preview-container">
-        @if (imagePreviews.length > 0) {
-        <div class="preview-header">
-            <div class="preview-title">
-                Vista previa
-                <span class="images-count">{{ imagePreviews.length }}</span>
+        @if (images.length > 0) {
+            
+            <div class="preview-header">
+                <div class="preview-title">
+                    Galería
+                    <span class="images-count">{{ images.length }}</span>
+                </div>
+                <button class="clear-all-button" (click)="clearAllImages()" type="button">
+                    🗑️ Borrar todo
+                </button>
             </div>
-            <button class="clear-all-button" (click)="clearAllImages()" type="button">
-                🗑️ Eliminar todas
-            </button>
-        </div>
 
-        <div class="images-grid">
-            @for (image of imagePreviews; track image.previewUrl) {
-            <div class="image-card">
-                <img [src]="image.previewUrl" [alt]="image.file?.name" class="preview-image">
-                <div class="image-overlay">
-                    <button class="remove-btn" (click)="removeImage($index)" type="button" title="Eliminar">×</button>
-                </div>
-                <div class="image-info">
-                    <span class="image-name">{{ image.file?.name }}</span>
-                </div>
+            <div class="images-grid" cdkDropList cdkDropListOrientation="mixed" (cdkDropListDropped)="drop($event)">
+                
+                @for (img of images; track img.url; let i = $index) {
+                    <div class="image-card" cdkDrag>
+                        
+                        <img [src]="img.url" [alt]="img.file?.name" class="preview-image">
+                        
+                        <div class="image-overlay">
+                            <button type="button" 
+                                    class="star-btn" 
+                                    [class.active]="img.isPrimary" 
+                                    (click)="setPrimary(i, $event)"
+                                    title="Elegir como portada">
+                                {{ img.isPrimary ? '★ Portada' : '☆' }}
+                            </button>
+                            
+                            <button class="remove-btn" (click)="removeImage(i)" type="button" title="Eliminar">
+                                ×
+                            </button>
+                        </div>
+
+                        @if(img.isPrimary) {
+                            <div class="primary-badge">PORTADA</div>
+                        }
+                    </div>
+                }
             </div>
-            }
-        </div>
+            
+            <p class="help-text">💡 Arrastra las imágenes para cambiar el orden</p>
         }
     </div>
 </div>

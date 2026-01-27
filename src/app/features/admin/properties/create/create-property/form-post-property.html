@@ -1,150 +1,132 @@
-<!-- FORM -->
 <div class="form-container">
-    <div class="form-header">
-        <div class="form-title">
-            <h1>{{!isUpdate ? 'Añadir Nueva Propiedad' : 'Actualizar una propiedad'}}</h1>
-            <p class="form-subtitle">Complete los detalles de la nueva propiedad</p>
+  <div class="form-header">
+    <div class="form-title">
+      <h1>{{ isUpdate ? 'Editar Propiedad' : 'Nueva Propiedad' }}</h1>
+      <p class="form-subtitle">Completa la información para publicar tu inmueble</p>
+    </div>
+    <button type="button" class="cancel-btn" (click)="onCancel()">Cancelar</button>
+    <div
+      style="
+        background: #f0f9ff;
+        border: 1px solid #bae6fd;
+        padding: 10px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      "
+    >
+      <span style="color: #0369a1; font-size: 0.85rem; font-weight: 500"
+        >🛠️ Modo Developer: Herramientas de prueba</span
+      >
+      <button type="button" (click)="fillFormForTesting()" class="btn-seed">
+        🚀 Llenar formulario (Mock Data)
+      </button>
+    </div>
+  </div>
+
+  <form [formGroup]="form" (submit)="onSubmit()">
+    <div class="form-section">
+      <h3 class="section-title">Información Básica</h3>
+      <div class="form-group">
+        <label>Título del aviso <span class="required">*</span></label>
+        <input
+          type="text"
+          formControlName="title"
+          placeholder="Ej: Hermoso departamento en el centro..."
+        />
+        @if (form.get('title')?.hasError('required') && form.get('title')?.touched) {
+          <p class="p-error">Requerido</p>
+        }
+      </div>
+
+      <div class="form-group">
+        <label>Descripción <span class="required">*</span></label>
+        <textarea formControlName="description" rows="5"></textarea>
+        @if (form.get('description')?.hasError('required') && form.get('description')?.touched) {
+          <p class="p-error">Requerido</p>
+        }
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Precio (USD) <span class="required">*</span></label>
+          <input type="number" formControlName="price" />
         </div>
-        <button class="cancel-btn" >✕ Cancelar</button>
+        <div class="form-group">
+          <label>Tipo de Propiedad <span class="required">*</span></label>
+          <select formControlName="propertyTypeName">
+            <option value="">Seleccionar...</option>
+            @for (pt of propertyTypesArray; track pt.typeName) {
+              <option [value]="pt.typeName">{{ pt.typeName }}</option>
+            }
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Tipo de Operación <span class="required">*</span></label>
+          <select formControlName="operationTypeName">
+            <option value="">Seleccionar...</option>
+            @for (ot of operationsTypesArray; track ot.operationName) {
+              <option [value]="ot.operationName">{{ ot.operationName }}</option>
+            }
+          </select>
+        </div>
+      </div>
     </div>
 
-    <form id="propertyForm" [formGroup]="form" (submit)="startProcess()">
-        <!-- INFORMACIÓN BÁSICA -->
-        <section class="form-section">
-            <h2 class="section-title">Información Básica</h2>
-            <div class="form-grid">
-
-                <div class="form-group">
-                    <label>Título de la Propiedad <span class="required">*</span></label>
-                    <input type="text" formControlName="title">
-                    @if (form.get('title')?.hasError('required') && form.get('title')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
-                    @else if (form.get('title')?.hasError('minlength') && form.get('title')?.touched ) { <p class="p-error">Este campo tiene un minimo de 10 caracteres</p> }
-                    @else if (form.get('title')?.hasError('maxlength') && form.get('title')?.touched ) { <p class="p-error">Este campo tiene un maximo de 50 caracteres</p> }
-                    @else if (form.get('title')?.hasError('pattern') && form.get('title')?.touched ) { <p class="p-error">El titulo debe tener por lo menos 3 palabras</p> }
-                </div>
-
-                <div class="form-group">
-                    <label>Precio <span class="required">*</span></label>
-                    <input type="text" formControlName="price" placeholder="€450,000 o €2,500/mes">
-                    @if (form.get('price')?.hasError('required') && form.get('price')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
-                    @else if (form.get('price')?.hasError('min') && form.get('price')?.touched ) { <p class="p-error">Este campo tiene un valor minimo de 1</p> }
-                    @else if (form.get('price')?.hasError('max') && form.get('price')?.touched ) { <p class="p-error">Este campo tiene un valor de 1000000000</p> }
-                </div>
-
-                <div class="form-group">
-                    <label>Anio de construccion <span class="required">*</span></label>
-                    <input type="number" formControlName="yearConstruction">
-                    @if (form.get('yearConstruction')?.hasError('required') && form.get('yearConstruction')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
-                    @else if (form.get('yearConstruction')?.hasError('min') && form.get('yearConstruction')?.touched ) { <p class="p-error">Este campo tiene un valor minimo de 1</p> }
-                    @else if (form.get('yearConstruction')?.hasError('max') && form.get('yearConstruction')?.touched ) { <p class="p-error">Este campo tiene un valor de 1000000000</p> }
-                </div>
-
-                <div class="form-group">
-                    <label>Ambientes <span class="required">*</span></label>
-                    <input type="number" formControlName="rooms">
-                    @if (form.get('rooms')?.hasError('required') && form.get('rooms')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
-                    @else if (form.get('rooms')?.hasError('min') && form.get('rooms')?.touched ) { <p class="p-error">Este campo tiene un valor minimo de 1</p> }
-                    @else if (form.get('rooms')?.hasError('max') && form.get('rooms')?.touched ) { <p class="p-error">Este campo tiene un valor de 1000000000</p> }
-                </div>
-
-                <div class="form-group">
-                    <label>Habitaciones <span class="required">*</span></label>
-                    <input type="number" formControlName="bedrooms">
-                    @if (form.get('bedrooms')?.hasError('required') && form.get('bedrooms')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
-                    @else if (form.get('bedrooms')?.hasError('min') && form.get('bedrooms')?.touched ) { <p class="p-error">Este campo tiene un valor minimo de 1</p> }
-                    @else if (form.get('bedrooms')?.hasError('max') && form.get('bedrooms')?.touched ) { <p class="p-error">Este campo tiene un valor de 1000000000</p> }
-                </div>
-
-                <div class="form-group">
-                    <label>Baños <span class="required">*</span></label>
-                    <input type="number" formControlName="bathrooms">
-                    @if (form.get('bathrooms')?.hasError('required') && form.get('bathrooms')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
-                    @else if (form.get('bathrooms')?.hasError('min') && form.get('bathrooms')?.touched ) { <p class="p-error">Este campo tiene un valor minimo de 1</p> }
-                    @else if (form.get('bathrooms')?.hasError('max') && form.get('bathrooms')?.touched ) { <p class="p-error">Este campo tiene un valor de 1000000000</p> }
-                </div>
-
-                <div class="form-group">
-                    <label>Área total (m²) <span class="required">*</span></label>
-                    <input type="number" formControlName="totalArea">
-                    @if (form.get('totalArea')?.hasError('required') && form.get('totalArea')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
-                    @else if (form.get('totalArea')?.hasError('min') && form.get('totalArea')?.touched ) { <p class="p-error">Este campo tiene un valor minimo de 1</p> }
-                    @else if (form.get('totalArea')?.hasError('max') && form.get('totalArea')?.touched ) { <p class="p-error">Este campo tiene un valor de 1000000000</p> }
-                </div>
-
-                <div class="form-group">
-                    <label>Área de construccion (m²) <span class="required">*</span></label>
-                    <input type="number" formControlName="areaStructure">
-                    @if (form.get('areaStructure')?.hasError('required') && form.get('areaStructure')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
-                    @else if (form.get('areaStructure')?.hasError('min') && form.get('areaStructure')?.touched ) { <p class="p-error">Este campo tiene un valor minimo de 1</p> }
-                    @else if (form.get('areaStructure')?.hasError('max') && form.get('areaStructure')?.touched ) { <p class="p-error">Este campo tiene un valor de 1000000000</p> }
-                </div>
-
-                <!-- ACA ESTA EL ZONE -->
-                <!-- From the father we say to zone form: 
-                Still looking this variable, when it change, will be my signal -->
-                <app-form-zone [group]="form" [startSignal]="startSignal"
-                    (finishEvent)="onOneChildFinished()"></app-form-zone>
-
-                <!-- ACA ESTA EL ADDRESS -->
-                <app-form-address [group]="form"></app-form-address>
-
-                <!-- ACA ESTA EL OWNER -->
-                <app-form-owner [group]="form"></app-form-owner>
-
-                <div class="form-group">
-                    <label>Tipo de operacion <span class="required">*</span></label>
-                    <select formControlName="operationTypes">
-                        <option value="">Seleccionar...</option>
-                        @for (i of operationsTypesArray; track $index) {
-                        <option value="{{i.operationName}}">{{i.operationName}}</option>
-                        }
-                    </select>
-                    @if (form.get('operationTypes')?.hasError('required') && form.get('operationTypes')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
-                </div>
-
-
-                <div class="form-group">
-                    <label>Tipo de propiedad <span class="required">*</span></label>
-                    <select formControlName="propertyTypes">
-                        <option value="">Seleccionar...</option>
-                        @for (i of propertyTypesArray; track $index) {
-                        <option value="{{i.typeName}}">{{i.typeName}}</option>
-                        }
-                    </select>
-                    @if (form.get('propertyTypes')?.hasError('required') && form.get('propertyTypes')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
-                </div>
-
-                <div class="form-group full-width">
-                    <label>Descripción <span class="required">*</span></label>
-                    <textarea formControlName="description" required></textarea>
-                    @if (form.get('description')?.hasError('required') && form.get('description')?.touched ) { <p class="p-error">Este campo es obligatorio</p> }
-                    @else if (form.get('description')?.hasError('minlength') && form.get('description')?.touched ) { <p class="p-error">Este campo tiene un minimo de 30 caracteres</p> }
-                    @else if (form.get('description')?.hasError('maxlength') && form.get('description')?.touched ) { <p class="p-error">Este campo tiene un maximo de 300 caracteres</p> }
-                </div>
-
-            </div>
-        </section>
-
-        <!-- El contenedor es el elemento que lleva 'display: grid' -->
-
-
-        <section id="components-container">
-
-            <!-- CARACTERISTICAS (Amenity Component) -->
-            <app-input-amenities id="component-input-amenities" [group]="form" [startSignal]="startSignal"
-                [isUpdate]="isUpdate" (finishEvent)="onOneChildFinished()"></app-input-amenities>
-
-            <!-- IMÁGENES (Images Component) -->
-            <app-input-images id="component-input-images" [group]="form" [startSignal]="startSignal"
-                [isUpdate]="isUpdate" (finishEvent)="onOneChildFinished()"></app-input-images>
-
-        </section>
-
-        <!-- FOOTER -->
-        <div class="form-footer">
-            <button type="button" class="btn btn-secondary">Cancelar</button>
-            <button type="button" class="btn btn-secondary" (click)="cargarValores()">Cargar valores</button>
-            <button type="submit" class="btn btn-primary" id="submitBtn" [disabled]="form.invalid" >Guardar Propiedad </button>
+    <div class="form-section">
+      <h3 class="section-title">Características</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Ambientes</label><input type="number" formControlName="rooms" />
         </div>
-    </form>
+        <div class="form-group">
+          <label>Dormitorios</label><input type="number" formControlName="bedrooms" />
+        </div>
+        <div class="form-group">
+          <label>Baños</label><input type="number" formControlName="bathrooms" />
+        </div>
+        <div class="form-group">
+          <label>Año Const.</label><input type="number" formControlName="yearConstruction" />
+        </div>
+        <div class="form-group">
+          <label>M² Cubiertos</label><input type="number" formControlName="areaStructure" />
+        </div>
+        <div class="form-group">
+          <label>M² Totales</label><input type="number" formControlName="totalArea" />
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3 class="section-title">Ubicación</h3>
+      <app-form-zone formControlName="zoneDTO"></app-form-zone>
+
+      <div style="margin-top: 1.5rem">
+        <app-form-address formControlName="addressDTO"></app-form-address>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3 class="section-title">Datos del Propietario</h3>
+      <app-form-owner formControlName="ownerDTO"></app-form-owner>
+    </div>
+
+    <div id="components-container">
+      <div id="component-input-amenities">
+        <app-input-amenities formControlName="amenitiesList"></app-input-amenities>
+      </div>
+
+      <div id="component-input-images">
+        <app-input-images formControlName="imageDTOList"></app-input-images>
+      </div>
+    </div>
+
+    <div class="form-footer">
+      <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
+        {{ isUpdate ? 'Actualizar Propiedad' : 'Publicar Propiedad' }}
+      </button>
+    </div>
+  </form>
 </div>
