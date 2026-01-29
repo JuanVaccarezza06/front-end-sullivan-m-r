@@ -76,7 +76,7 @@
       @for (p of propertiesfeature; track p.id) {
       <div class="card" (click)="viewDetail(p)">
         <div class="image">
-          <img class="property-img" src="{{p.mainImage}}" alt="property">
+          <img class="property-img" src="{{p.mainImageUrl}}" alt="property">
           <span class="badge">{{p.operationTypeDTO.operationName}}</span>
         </div>
 

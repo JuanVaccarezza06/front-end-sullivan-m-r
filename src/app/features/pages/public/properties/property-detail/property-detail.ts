@@ -39,6 +39,10 @@ export class PropertyDetail implements OnInit {
   // 3. Variable auxiliar para guardar qué propiedad se clickeó
   infoWindowData: Property | null = null;
 
+  infoWindowImage: string = '';
+  activeImageUrl: string = '';
+  showNavigation: boolean = false;
+
   // Pattern Regex (Igual que en Contact.ts)
   private namePattern = /^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]+$/;
   private phonePattern = /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/im;
@@ -58,6 +62,8 @@ export class PropertyDetail implements OnInit {
     // 2. Nos SUSCRIBIMOS a los cambios de la URL.
     // Esto soluciona el problema de que no recargaba al hacer clic en el mapa.
     this.route.paramMap.subscribe((params) => {
+      console.log('log');
+
       const idString = params.get('id');
 
       if (idString) {
@@ -85,6 +91,8 @@ export class PropertyDetail implements OnInit {
   }
 
   formInitializer() {
+    console.log('log');
+
     this.form = this.fb.group({
       // CAMBIO: Dividido en firstName y surname con validadores de Contact.ts
       firstName: [
@@ -121,6 +129,8 @@ export class PropertyDetail implements OnInit {
 
   // Extraje la llamada a la API a un método pequeño para mantener limpio el ngOnInit
   loadPropertyFromApi(id: number) {
+    console.log('log');
+
     this.propertyService.getById(id).subscribe({
       next: (prop) => {
         this.initProperty(prop);
@@ -133,20 +143,26 @@ export class PropertyDetail implements OnInit {
   initProperty(prop: Property) {
     this.propertySelected = prop;
 
-    // A. LÓGICA DEL CARRUSEL (ESTO NO LO TOCAMOS, ESTÁ BIEN)
+    // A. LÓGICA DEL CARRUSEL
     if (this.propertySelected.imageDTOList && this.propertySelected.imageDTOList.length > 0) {
       this.propertySelected.imageDTOList.sort((a, b) => a.position - b.position);
+
       const primaryIndex = this.propertySelected.imageDTOList.findIndex((img) => img.isPrimary);
       this.currentImageIndex = primaryIndex !== -1 ? primaryIndex : 0;
+
+      // 2. CALCULAMOS SI DEBE HABER NAVEGACIÓN (Una sola vez)
+      this.showNavigation = this.propertySelected.imageDTOList.length > 1;
     } else {
       this.currentImageIndex = 0;
+      // Si no hay imágenes, no hay navegación
+      this.showNavigation = false;
     }
 
-    // B. LÓGICA DEL MAPA (AQUÍ ESTABA EL ERROR)
-    // >>> RECUPERAMOS ESTA LÍNEA QUE SE HABÍA BORRADO <<<
-    this.center = { lat: this.propertySelected.latitude, lng: this.propertySelected.longitude };
+    // Actualizamos la imagen inicial
+    this.updateGalleryImage();
 
-    // Cerramos infoWindow si estaba abierta (buena práctica del código viejo)
+    // B. LÓGICA DEL MAPA
+    this.center = { lat: this.propertySelected.latitude, lng: this.propertySelected.longitude };
     if (this.infoWindow) this.infoWindow.close();
 
     // C. CARGA DE VECINOS
@@ -164,6 +180,17 @@ export class PropertyDetail implements OnInit {
     this.propertyService.registerView(prop.id).subscribe({
       next: () => console.log('View registered'),
     });
+  }
+
+  // 3. NUEVO MÉTODO PRIVADO (Reemplaza al getter)
+  // Centralizamos la lógica de "qué imagen mostrar" aquí.
+  updateGalleryImage() {
+    const images = this.propertySelected?.imageDTOList;
+    if (!images || images.length === 0) {
+      this.activeImageUrl = this.imageNotFound || 'assets/images/placeholder-property.jpg';
+    } else {
+      this.activeImageUrl = images[this.currentImageIndex].url;
+    }
   }
 
   // 3. MÉTODOS DE NAVEGACIÓN (Para el HTML)
@@ -190,24 +217,32 @@ export class PropertyDetail implements OnInit {
     return primary ? primary.url : p.imageDTOList[0].url;
   }
 
-  // Devuelve true si hay más de 1 imagen (para mostrar flechas)
-  get showNavigation(): boolean {
-    return this.propertySelected?.imageDTOList?.length > 1;
-  }
-
+  // 5. ACTUALIZAMOS LOS BOTONES NEXT / PREV
   nextImage(event?: Event) {
+    console.log('log');
+
     if (event) event.stopPropagation();
     const length = this.propertySelected.imageDTOList.length;
     this.currentImageIndex = (this.currentImageIndex + 1) % length;
+
+    // Al cambiar el índice, actualizamos la variable
+    this.updateGalleryImage();
   }
 
   prevImage(event?: Event) {
+    console.log('log');
+
     if (event) event.stopPropagation();
     const length = this.propertySelected.imageDTOList.length;
     this.currentImageIndex = (this.currentImageIndex - 1 + length) % length;
+
+    // Al cambiar el índice, actualizamos la variable
+    this.updateGalleryImage();
   }
 
   cargarMapaSeguro() {
+    console.log('log');
+
     if (document.getElementById('google-map-script')) return;
     const script = document.createElement('script');
     script.id = 'google-map-script';
@@ -217,12 +252,22 @@ export class PropertyDetail implements OnInit {
     document.body.appendChild(script);
   }
 
+  // 2. MODIFICAMOS ESTE MÉTODO (El evento click del marcador)
   openInfoWindow(marker: MapAdvancedMarker, property: Property) {
+    console.log('log');
+
     this.infoWindowData = property;
+
+    // OPTIMIZACIÓN: Calculamos la imagen UNA VEZ y guardamos el string.
+    // Así el HTML solo lee la variable y no ejecuta lógica.
+    this.infoWindowImage = this.getCoverImage(property);
+
     this.infoWindow.open(marker);
   }
 
   onSumbit() {
+    console.log('log');
+
     // CAMBIO: Validación inicial igual que en Contact.ts
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -260,6 +305,8 @@ export class PropertyDetail implements OnInit {
   }
 
   choiceMainImage(p: Property): string {
+    console.log('log');
+
     const images = p.imageDTOList;
 
     // 1. Caso: No hay imágenes

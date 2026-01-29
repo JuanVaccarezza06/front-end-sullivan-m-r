@@ -31,5 +31,7 @@ export default interface Property{
   latitude: number;
   longitude: number;
 
+  mainImageUrl: string;
+
   ownerDTO: Owner;
 }

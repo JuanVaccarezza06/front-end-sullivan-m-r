@@ -17,15 +17,19 @@ export class PropertyService {
 
   readonly TOKEN_KEY = 'token';
 
+  readonly not_found = "public/not-found-image.png"
+
   readonly size = 8;
 
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  constructor(
+    private http: HttpClient
+  ) {}
 
   // En tu servicio
   getAll(page: number): Observable<HatoasPageResponse<Property>> {
     // La llamada sigue igual, pero el tipo de retorno cambia
     return this.http.get<HatoasPageResponse<Property>>(
-      `${this.API_URL}/find-all?page=${page}&size=${this.size}`
+      `${this.API_URL}/find-all?page=${page}&size=${this.size}`,
     );
   }
 
@@ -55,18 +59,30 @@ export class PropertyService {
     return this.http.get<Property[]>(`${this.API_URL}/${number}/nearby?km=30`);
   }
 
-  // applyFilter(filter: PropertiesFilter, page: number) {
-  //   return this.http.post<HatoasPageResponse<Property>>(
-  //     `${this.API_URL}/filter?page=${page}&size=${this.size}`,
-  //     filter
-  //   );
-  // }
+  processPropertyImages(properties: Property[]): Property[] {
+    if (!properties) return [];
+
+    return properties.map((property) => {
+      // Tu lógica de oro va aquí
+      const mainImage = property.imageDTOList.find((img: any) => img.isPrimary);
+
+      const coverUrl = mainImage
+        ? mainImage.url
+        : property.imageDTOList[0]?.url || this.not_found;
+
+      // Devolvemos el objeto con la nueva propiedad añadida
+      return {
+        ...property,
+        mainImageUrl: coverUrl,
+      };
+    });
+  }
 
   applyFilter(filter: PropertiesFilter, page: number): Observable<HatoasPageResponse<Property>> {
     // <--- CAMBIO 1: El tipo de retorno
     return this.http.post<HatoasPageResponse<Property>>( // <--- CAMBIO 2: El tipo del post
       `${this.API_URL}/filter?page=${page}&size=${this.size}`,
-      filter
+      filter,
     );
   }
 

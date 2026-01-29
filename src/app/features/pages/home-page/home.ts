@@ -36,7 +36,6 @@ export class Home implements OnInit {
   constructor(
     private service: PropertyService,
     private zoneService: ZoneService,
-    private imgService: ImgBbService,
     private router: Router,
     private fb: FormBuilder,
   ) {}
@@ -54,7 +53,6 @@ export class Home implements OnInit {
     this.loadAvailablePropertyTypes();
     this.loadFeaturedProperties();
 
-    this.imageNotFound = this.imgService.getNotFound(); // Load the not found image
   }
 
   isFromAuthPage(message?: string) {
@@ -179,6 +177,26 @@ export class Home implements OnInit {
         }
       },
       error: (e) => console.log(e),
+    });
+  }
+
+  findMainImageFromFeaturedProperty() {
+    if (!this.propertiesfeature) return;
+
+    this.propertiesfeature.forEach((property) => {
+      // 1. Buscamos la imagen que tenga isPrimary en true
+      const mainImage = property.imageDTOList.find((img) => img.isPrimary);
+
+      // 2. Asignamos la URL encontrada al nuevo atributo.
+      // Si no encuentra una primary, usa la primera de la lista [0] como respaldo.
+      if (mainImage) {
+        property['mainImageUrl'] = mainImage.url; // Ojo: cambia '.url' por como se llame tu propiedad de imagen en el DTO
+      } else if (property.imageDTOList.length > 0) {
+        property['mainImageUrl'] = property.imageDTOList[0].url;
+      } else {
+        // 3. (Opcional) Una imagen por defecto si no viene ninguna foto
+        property['mainImageUrl'] = this.imageNotFound;
+      }
     });
   }
 }

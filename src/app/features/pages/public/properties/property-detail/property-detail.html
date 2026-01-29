@@ -31,7 +31,7 @@
 
           <figure class="media-container">
             <img
-              [src]="currentImageUrl"
+              [src]="activeImageUrl"
               [alt]="propertySelected.title"
               class="hero-image fade-in-animation"
             />
@@ -153,11 +153,7 @@
                 <map-info-window>
                   @if (infoWindowData) {
                     <div class="info-card">
-                      <img
-                        [src]="getCoverImage(infoWindowData)"
-                        class="info-card__image"
-                        alt="Foto propiedad"
-                      />
+                      <img [src]="infoWindowImage" class="info-card__image" alt="Foto propiedad" />
 
                       <div class="info-card__header">
                         <h3 class="info-card__price">USD {{ infoWindowData.price }}</h3>
@@ -173,6 +169,7 @@
 
                       <a
                         [routerLink]="['/properties', infoWindowData.id]"
+                        [state]="{ propertyData: infoWindowData }"
                         class="info-card__link"
                       >
                         Ver detalle →
