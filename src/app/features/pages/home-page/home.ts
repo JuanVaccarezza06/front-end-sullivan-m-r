@@ -52,7 +52,6 @@ export class Home implements OnInit {
     this.loadAvailablesOperationTypes();
     this.loadAvailablePropertyTypes();
     this.loadFeaturedProperties();
-
   }
 
   isFromAuthPage(message?: string) {
@@ -69,28 +68,10 @@ export class Home implements OnInit {
     this.service.getFeaturedProperties().subscribe({
       next: (data) => {
         this.propertiesfeature = data;
-        this.propertiesfeature.forEach((value) => this.choiceMainImage(value));
+        this.propertiesfeature = this.service.processPropertyImages(data);
       },
       error: (e) => console.log(e),
     });
-  }
-
-  choiceMainImage(p: Property): string {
-    const images = p.imageDTOList;
-
-    // 1. Caso: No hay imágenes
-    if (!images || images.length === 0) {
-      return this.imageNotFound;
-    }
-
-    // 2. Caso: Buscar la imagen marcada como primaria (isPrimary: true)
-    const primaryImg = images.find((img) => img.isPrimary);
-    if (primaryImg) {
-      return primaryImg.url;
-    }
-
-    // 3. Caso: No hay ninguna marcada como primaria, usamos la primera (fallback)
-    return images[0].url;
   }
 
   viewDetail(propertyToSee: Property) {

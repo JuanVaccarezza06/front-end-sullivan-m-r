@@ -182,15 +182,32 @@ export class PropertyDetail implements OnInit {
     });
   }
 
-  // 3. NUEVO MÉTODO PRIVADO (Reemplaza al getter)
-  // Centralizamos la lógica de "qué imagen mostrar" aquí.
-  updateGalleryImage() {
+  private updateGalleryImage() {
     const images = this.propertySelected?.imageDTOList;
+
+    // 1. Validación básica
     if (!images || images.length === 0) {
       this.activeImageUrl = this.imageNotFound || 'assets/images/placeholder-property.jpg';
-    } else {
-      this.activeImageUrl = images[this.currentImageIndex].url;
+      return;
     }
+
+    // 2. Asignamos la imagen actual
+    this.activeImageUrl = images[this.currentImageIndex].url;
+
+    // 3. PRECARGA INTELIGENTE (Solo vecinos)
+    // Calculamos el índice del siguiente y del anterior
+    const nextIndex = (this.currentImageIndex + 1) % images.length;
+    const prevIndex = (this.currentImageIndex - 1 + images.length) % images.length;
+
+    // Precargamos SOLO esas dos imágenes
+    this.preloadSingleImage(images[nextIndex].url);
+    this.preloadSingleImage(images[prevIndex].url);
+  }
+
+  // Pequeño helper para descargar una sola url
+  private preloadSingleImage(url: string) {
+    const img = new Image();
+    img.src = url;
   }
 
   // 3. MÉTODOS DE NAVEGACIÓN (Para el HTML)
@@ -252,17 +269,27 @@ export class PropertyDetail implements OnInit {
     document.body.appendChild(script);
   }
 
-  // 2. MODIFICAMOS ESTE MÉTODO (El evento click del marcador)
   openInfoWindow(marker: MapAdvancedMarker, property: Property) {
-    console.log('log');
+    // 1. Primero cerramos cualquier ventana abierta (opcional, pero recomendado)
+    if (this.infoWindow) {
+      this.infoWindow.close();
+    }
 
-    this.infoWindowData = property;
+    // 2. IMPORTANTE: Reseteamos la data a null momentáneamente.
+    // Esto hace que el @if (infoWindowData) del HTML elimine el DOM viejo.
+    this.infoWindowData = null;
 
-    // OPTIMIZACIÓN: Calculamos la imagen UNA VEZ y guardamos el string.
-    // Así el HTML solo lee la variable y no ejecuta lógica.
-    this.infoWindowImage = this.getCoverImage(property);
+    // 3. Usamos un timeout mínimo (0ms) para permitir que Angular detecte el cambio
+    // y destruya el HTML anterior antes de crear el nuevo.
+    setTimeout(() => {
+      this.infoWindowData = property;
+      this.infoWindowImage = this.getCoverImage(property);
 
-    this.infoWindow.open(marker);
+      // Abrimos la ventana ahora que la data es nueva y el DOM se regenerará
+      if (this.infoWindow) {
+        this.infoWindow.open(marker);
+      }
+    }, 0);
   }
 
   onSumbit() {

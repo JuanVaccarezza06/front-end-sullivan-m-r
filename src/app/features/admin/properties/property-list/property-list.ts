@@ -20,41 +20,23 @@ export class PropertyList implements OnInit {
 
   constructor(
     private propertyService: PropertyService,
-    private imgbbService: ImgBbService,
     private router: Router,
   ) {}
 
   ngOnInit(): void {
     this.loadProperties();
-    this.imageNotFound = this.imgbbService.getNotFound();
   }
 
   loadProperties() {
     this.propertyService.getAll(this.pageSelected).subscribe({
       next: (data) => {
+        this.properties = data._embedded ? data._embedded['propertyDTOList'] : [];
+        if(!this.properties) console.error("Properties array empty.")
         this.numberOfPropertiesLoadInArray = this.properties.length;
-        this.properties.forEach((value) => this.choiceMainImage(value));
+        this.properties = this.propertyService.processPropertyImages(this.properties)
       },
       error: (e) => console.log(e),
     });
-  }
-
-  choiceMainImage(p: Property): string {
-    const images = p.imageDTOList;
-
-    // 1. Caso: No hay imágenes
-    if (!images || images.length === 0) {
-      return this.imageNotFound;
-    }
-
-    // 2. Caso: Buscar la imagen marcada como primaria (isPrimary: true)
-    const primaryImg = images.find((img) => img.isPrimary);
-    if (primaryImg) {
-      return primaryImg.url;
-    }
-
-    // 3. Caso: No hay ninguna marcada como primaria, usamos la primera (fallback)
-    return images[0].url;
   }
 
   goToEdit(propertyToEdit: Property) {

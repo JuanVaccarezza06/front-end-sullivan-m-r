@@ -661,12 +661,33 @@
   pointer-events: none; /* Para que no moleste el clic */
 }
 
-/* --- Animación sutil al cambiar foto --- */
+/* --- Animación sutil al cambiar foto ---
 .fade-in-animation {
   animation: fadeIn 0.3s ease-in-out;
-}
+} */
 
 @keyframes fadeIn {
   from { opacity: 0.8; }
   to { opacity: 1; }
+}
+
+.info-card__image {
+  width: 100%;
+  height: 150px; /* O el alto que estés usando actualmente */
+  object-fit: cover;
+  /* ESTO ES LO NUEVO: */
+  background-color: #e0e0e0; /* Un gris suave de fondo */
+  
+  /* Opcional: Un efecto de "skeleton loading" animado */
+  animation: pulse 1.5s infinite ease-in-out; 
+  
+  /* Opcional: Para que no se rompa el diseño si la imagen falla */
+  display: block; 
+}
+
+/* Animación sutil de carga (opcional) */
+@keyframes pulse {
+  0% { background-color: #e0e0e0; }
+  50% { background-color: #f5f5f5; }
+  100% { background-color: #e0e0e0; }
 }

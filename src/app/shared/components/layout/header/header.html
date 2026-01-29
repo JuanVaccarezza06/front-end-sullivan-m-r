@@ -71,15 +71,14 @@
               }
 
               <a
-                [routerLink]="['/admin/users/profile']"
-                (click)="closeMenu()"
+                (click)="goToProfile()"
                 class="cursor-pointer flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 transition-colors"
               >
                 <i class="pi pi-user"></i> Mi Perfil
               </a>
 
               <a
-                (click)="closeMenu()"
+                (click)="goToEditCredentials()"
                 class="cursor-pointer flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 transition-colors"
               >
                 <i class="pi pi-cog"></i> Editar Credenciales

@@ -2,6 +2,9 @@ import { Component, inject } from '@angular/core';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/auth-service/auth-service';
 import { filter } from 'rxjs';
+import { UserService } from '../../../../core/services/user-service/user-service';
+import User from '../../../../core/models/actors/User';
+import UserFull from '../../../../core/models/actors/UserFull';
 
 @Component({
   selector: 'app-header',
@@ -10,60 +13,94 @@ import { filter } from 'rxjs';
   styleUrl: './header.css',
 })
 export class Header {
-  // Inyección moderna (opcional, pero recomendada)
   private authService = inject(AuthService);
   private router = inject(Router);
+  // Inyectamos el servicio de usuario (asegúrate de que esté importado correctamente)
+  private userService = inject(UserService); 
 
   isMenuOpen: boolean = false;
 
-  // Datos por defecto (vacíos para no mostrar info falsa antes de cargar)
+  // Variables visuales inmediatas (del token)
   userName: string = '';
   userEmail: string = '';
   userInitials: string = '';
 
+  // NUEVA VARIABLE: Aquí guardaremos el usuario completo traído del backend
+  private currentUser: UserFull | null = null; 
+
   ngOnInit(): void {
-    // Intentamos cargar los datos apenas inicia el componente
     this.loadUserFromToken();
   }
 
   constructor() {
-    // ESTA ES LA SOLUCIÓN:
-    // Escuchamos cada vez que termina una navegación.
-    // Si el usuario pasa del Login al Home, esto se dispara y recarga los datos.
     this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
       this.loadUserFromToken();
     });
   }
 
-  /**
-   * Extrae los datos del token JWT almacenado
-   */
   loadUserFromToken() {
     if (this.isLogged()) {
       const payload = this.authService.getTokenPayload();
 
       if (payload) {
-        // 1. Obtener nombre/usuario.
-        // Normalmente el 'sub' es el username/email.
-        // Si tu backend manda un campo 'name' extra, usa: payload.name || payload.sub
+        // 1. Datos visuales rápidos desde el token (para que no se vea vacío)
         this.userName = payload.sub || 'Usuario';
-        this.userEmail = payload.sub || '';
-
-        // 2. Calcular iniciales
+        this.userEmail = payload.sub || ''; // O el campo que uses para email
         this.userInitials = this.calculateInitials(this.userName);
+
+        // 2. ESTRATEGIA OPTIMIZADA: Pedir el usuario completo al backend AHORA
+        // Asumo que tu servicio tiene un método 'getUserByUsername' o similar.
+        // Ajusta el nombre del método según tu UserService.
+        this.userService.getUserFullByUsername(this.userName).subscribe({
+          next: (user: UserFull) => {
+            // Guardamos el usuario completo en nuestra variable privada
+            this.currentUser = user;
+            
+            // Opcional: Actualizar datos visuales con la info real de la DB (más precisa que el token)
+            if(user.email) this.userEmail = user.email;
+          },
+          error: (err) => {
+            console.error('Error al cargar datos completos del usuario', err);
+          }
+        });
       }
+    }
+  }
+
+  // --- NUEVOS MÉTODOS DE NAVEGACIÓN ---
+  // Estos métodos reemplazan el routerLink directo para poder pasar el estado
+
+  goToEditCredentials() {
+    this.closeMenu();
+    // Verificamos si ya tenemos el usuario cargado
+    if (this.currentUser) {
+      this.router.navigate(['/admin/users/edit', this.currentUser.id], { 
+        state: { userToUpdate: this.currentUser } // Pasamos el objeto que ya tenemos en memoria
+      });
+    } else {
+      // Fallback: Si por alguna razón falló la carga, redirigimos normal 
+      // y que el componente de destino se encargue de buscarlo si le falta.
+      this.router.navigate(['/admin/users/profile']);
+    }
+  }
+
+  goToProfile() {
+    this.closeMenu();
+    if (this.currentUser) {
+      this.router.navigate(['/admin/users/profile'], { 
+        state: { user: this.currentUser } 
+      });
+    } else {
+      this.router.navigate(['/admin/users/profile']);
     }
   }
 
   calculateInitials(name: string): string {
     if (!name) return '';
     const parts = name.trim().split(' ');
-
     if (parts.length === 1) {
-      // Si es solo "Juan", devuelve "JU"
       return parts[0].substring(0, 2).toUpperCase();
     } else {
-      // Si es "Juan Martinez", devuelve "JM"
       return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
     }
   }
@@ -87,12 +124,10 @@ export class Header {
   logOut() {
     this.closeMenu();
     this.authService.logout();
-
-    // Limpiamos las variables visuales
     this.userName = '';
     this.userEmail = '';
     this.userInitials = '';
-
+    this.currentUser = null; // Limpiamos el usuario guardado
     this.router.navigate([''], { state: { message: 'Cierre de sesion exitoso' } });
   }
 }
