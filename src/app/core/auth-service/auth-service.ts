@@ -6,6 +6,7 @@ import CredentialRegister from '../models/auth/CredentialRegister';
 import TokenResponseDTO from '../models/auth/TokenResponseDTO';
 import CredentialLogIn from '../models/auth/CredentialLogIn';
 import JwtPayload from '../models/auth/JwtPayload';
+import { Router, RouterLink } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +16,10 @@ export class AuthService {
   readonly url: string = 'http://localhost:8080/auth';
   readonly TOKEN_KEY = 'token';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private router : Router
+  ) {}
 
   register(credential: CredentialRegister): Observable<TokenResponseDTO> {
     return this.http.post<TokenResponseDTO>(`${this.url}/register`, credential);
@@ -35,6 +39,7 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);
+    this.router.navigate([''])
   }
 
   // --- NUEVO MÉTODO: Devuelve todo el objeto JSON del token ---

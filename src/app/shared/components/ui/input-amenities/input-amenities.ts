@@ -6,6 +6,7 @@ import {
   NG_VALUE_ACCESSOR,
   ControlValueAccessor,
   FormControl,
+  Validators,
 } from '@angular/forms';
 
 @Component({
@@ -28,7 +29,11 @@ export class InputAmenities implements OnInit, OnDestroy, ControlValueAccessor {
 
   // Inputs internos
   amenityControlNew = new FormControl('');
-  amenityControlExisting = new FormControl('');
+  amenityControlExisting = new FormControl('', [
+    Validators.maxLength(30),
+    // NUEVO REGEX: Admite letras, números, espacios y acentos del español
+    Validators.pattern('^[a-zA-Z0-9 áéíóúÁÉÍÓÚñÑüÜ]+$'),
+  ]);
 
   // Callbacks de CVA
   onChange: any = () => {};

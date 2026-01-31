@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import OperationType from '../../../../../core/models/OperationType';
@@ -7,290 +7,360 @@ import PropertyType from '../../../../../core/models/PropertyType';
 import { PropertyService } from '../../../../../core/services/property-service/property-service';
 import { InputAmenities } from '../../../../../shared/components/ui/input-amenities/input-amenities';
 import { InputImages } from '../../../../../shared/components/ui/input-images/input-images';
-import { FormAddress } from '../components/form-address/form-address';
-import { FormOwner } from '../components/form-owner/form-owner';
-import { FormZone } from '../components/form-zone/form-zone';
+import ZoneDTO from '../../../../../core/models/Zone';
+import { ZoneService } from '../../../../../core/services/zone-service/zone-service';
+import { ImgBbService } from '../../../../../core/services/imgbb-service/img-bb-service';
+import { catchError, finalize, forkJoin, map, Observable, of, switchMap } from 'rxjs';
+import { ImageItem } from '../../../../../core/models/ImageItem';
 
 @Component({
   selector: 'app-form-property',
-  imports: [ReactiveFormsModule, InputAmenities, InputImages, FormZone, FormAddress, FormOwner],
+  imports: [ReactiveFormsModule, InputAmenities, InputImages],
   templateUrl: './form-post-property.html',
   styleUrl: './form-post-property.css',
 })
 export class FormPostProperty implements OnInit {
+  // Inyeccion de dependencias moderna
+  private fb = inject(FormBuilder);
+  private propertyService = inject(PropertyService);
+  private zoneService = inject(ZoneService);
+  private router = inject(Router);
+  private imgBbService = inject(ImgBbService); // <--- INYECTAR
+
+  // Signals para Estado Reactivo (Angular 20 Best Practices)
+  isUpdate = signal<boolean>(false);
+  isNewZoneMode = signal<boolean>(false); // false = Seleccionar, true = Crear
+  isUploading = signal<boolean>(false); // <--- NUEVA SIGNAL PARA LOADING UI
+
+  // Datos para Selects
+  operationTypes = signal<OperationType[]>([]);
+  propertyTypes = signal<PropertyType[]>([]);
+  zones = signal<ZoneDTO[]>([]);
+
+  // Referencia para Update
+  private propertyToEdit: Property | null = null;
+
+  // El Gran Formulario Unificado
   form!: FormGroup;
 
-  // Estado
-  isUpdate: boolean = false;
-  propertyUpdate!: Property;
-
-  // Listas para selects
-  operationsTypesArray: OperationType[] = [];
-  propertyTypesArray: PropertyType[] = [];
-
-  constructor(
-    private fb: FormBuilder,
-    private service: PropertyService,
-    private router: Router,
-  ) {}
+  constructor() {
+    this.initForm();
+  }
 
   ngOnInit(): void {
-    // 1. Inicializar estructura del formulario
-    this.initForm();
+    this.loadCatalogs();
+    this.checkEditMode();
+  }
 
-    // 2. Cargar datos auxiliares (Selects)
-    this.loadAvailablesOperationTypes();
-    this.loadPropertyTypes();
+  // --- 1. Inicialización y Estructura Unificada ---
+  private initForm() {
+    this.form = this.fb.group({
+      // 1. Información Básica
+      id: [null],
+      title: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(50)]],
+      description: ['', [Validators.required, Validators.minLength(30), Validators.maxLength(300)]],
+      price: [null, [Validators.required, Validators.min(1)]],
+      propertyTypeName: ['', Validators.required],
+      operationTypeName: ['', Validators.required],
 
-    // 3. Verificar si estamos en modo EDICIÓN
-    const state = this.router.lastSuccessfulNavigation?.extras?.state as { info?: Property };
-    if (state?.info) {
-      this.propertyUpdate = state.info;
-      this.isUpdate = true;
-      this.patchValuesForEdit(); // Método dedicado a poblar el form
+      // 2. Características Físicas
+      yearConstruction: [
+        null,
+        [Validators.required, Validators.min(1800), Validators.max(new Date().getFullYear())],
+      ],
+      areaStructure: [null, [Validators.required, Validators.min(1)]],
+      totalArea: [null, [Validators.required, Validators.min(1)]],
+      rooms: [null, [Validators.required, Validators.min(1)]],
+      bathrooms: [null, [Validators.required, Validators.min(1)]],
+      bedrooms: [null, [Validators.required, Validators.min(1)]],
+
+      // 3. Ubicación: Zona (Lógica Dual)
+      zoneSelection: [null, Validators.required], // Select existente
+      zoneNew: this.fb.group({
+        // Crear nueva
+        zoneName: [{ value: '', disabled: true }, [Validators.required, Validators.minLength(2)]],
+        cityName: [{ value: '', disabled: true }, Validators.required],
+        provinceName: [{ value: '', disabled: true }, Validators.required],
+        countryName: [{ value: '', disabled: true }, Validators.required],
+      }),
+
+      // 4. Ubicación: Dirección
+      address: this.fb.group({
+        mainStreet: ['', [Validators.required, Validators.minLength(2)]],
+        secondaryStreet: ['', Validators.required],
+        numbering: [null, [Validators.required, Validators.min(1)]],
+      }),
+
+      // 5. Propietario
+      owner: this.fb.group({
+        firstName: ['', [Validators.required, Validators.minLength(3)]],
+        surname: ['', [Validators.required, Validators.minLength(3)]],
+        email: ['', [Validators.required, Validators.email]],
+        numberPhone: ['', Validators.required],
+      }),
+
+      // 6. Extras (Componentes externos)
+      amenitiesList: [[]],
+      imageDTOList: [[]],
+    });
+  }
+
+  // --- 2. Lógica de Negocio: Zona ---
+  toggleZoneMode() {
+    // Invertimos el modo
+    const isNew = !this.isNewZoneMode();
+    this.isNewZoneMode.set(isNew);
+
+    const zoneSelect = this.form.get('zoneSelection');
+    const zoneNewGroup = this.form.get('zoneNew');
+
+    if (isNew) {
+      // Modo CREAR: Habilitamos inputs manuales, Deshabilitamos select
+      zoneSelect?.disable();
+      zoneSelect?.setValue(null);
+      zoneNewGroup?.enable();
+    } else {
+      // Modo SELECCIONAR: Habilitamos select, Deshabilitamos inputs manuales
+      zoneSelect?.enable();
+      zoneNewGroup?.disable();
+      zoneNewGroup?.reset();
     }
   }
 
-  // --- 1. Inicialización "Clean Code" ---
-  initForm() {
-    this.form = this.fb.group({
-      // -- Datos Primitivos --
-      id: [null], // Solo para update
-
-      title: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(10),
-          Validators.maxLength(50),
-          Validators.pattern(/^\S+\s+\S+\s+\S+.*$/), // Mínimo 3 palabras
-        ],
-      ],
-
-      description: ['', [Validators.required, Validators.minLength(30), Validators.maxLength(300)]],
-
-      price: [
-        '',
-        [
-          Validators.required,
-          Validators.min(1), // Corregido de 0 a 1 lógico
-          Validators.max(1000000000),
-        ],
-      ],
-
-      // Selects simples
-      propertyTypeName: ['', [Validators.required]],
-      operationTypeName: ['', [Validators.required]],
-
-      // Datos Numéricos de Estructura
-      yearConstruction: [
-        '',
-        [Validators.required, Validators.min(1800), Validators.max(new Date().getFullYear())],
-      ],
-      areaStructure: ['', [Validators.required, Validators.min(1)]],
-      totalArea: ['', [Validators.required, Validators.min(1)]],
-      rooms: ['', [Validators.required, Validators.min(1)]],
-      bathrooms: ['', [Validators.required, Validators.min(1)]],
-      bedrooms: ['', [Validators.required, Validators.min(1)]],
-
-      // -- SUB-COMPONENTES (La magia del CVA) --
-      // Estos campos esperan OBJETOS completos, no strings sueltos.
-      // Si el hijo es inválido, estos campos serán inválidos.
-
-      zoneDTO: [null, Validators.required],
-      addressDTO: [null, Validators.required],
-      ownerDTO: [null, Validators.required],
-
-      amenitiesList: [[]], // Array de amenities
-      imageDTOList: [[]], // Array de imágenes con lógica de portada/orden
-    });
+  // --- 3. Carga de Datos y Edición ---
+  private loadCatalogs() {
+    this.propertyService
+      .getAvailablesOperationTypes()
+      .subscribe((data) => this.operationTypes.set(data));
+    this.propertyService
+      .getAvailablePropertyTypes()
+      .subscribe((data) => this.propertyTypes.set(data));
+    this.zoneService.getAll().subscribe((data) => this.zones.set(data));
   }
 
-  // --- 2. Carga de Selects ---
-  loadAvailablesOperationTypes() {
-    this.service.getAvailablesOperationTypes().subscribe({
-      next: (data) => (this.operationsTypesArray = data),
-      error: (e) => console.error('Error loading operations', e),
-    });
+  private checkEditMode() {
+    const state = this.router.lastSuccessfulNavigation?.extras?.state as { info?: Property };
+    if (state?.info) {
+      this.isUpdate.set(true);
+      this.propertyToEdit = state.info;
+      this.patchForm(state.info);
+    }
   }
 
-  loadPropertyTypes() {
-    this.service.getAvailablePropertyTypes().subscribe({
-      next: (data) => (this.propertyTypesArray = data),
-      error: (e) => console.error('Error loading property types', e),
-    });
-  }
-
-  fillFormForTesting() {
+  private patchForm(prop: Property) {
+    // Mapeo inverso: De DTO complejo a Formulario plano
     this.form.patchValue({
-      title: 'Hermoso Departamento con Vista al Mar',
-      description:
-        'Increíble propiedad ubicada en la mejor zona de la ciudad. Cuenta con acabados de lujo, excelente iluminación natural y seguridad 24/7. Cerca de centros comerciales y parques.',
-      price: 155000,
-      propertyTypeName: 'Departamento', // Asegúrate que coincida con un valor de tu array
-      operationTypeName: 'Venta', // Asegúrate que coincida con un valor de tu array
-      yearConstruction: 2022,
-      areaStructure: 85,
-      totalArea: 95,
-      rooms: 3,
-      bathrooms: 2,
-      bedrooms: 2,
-
-      // Datos para app-form-zone (CVA)
-      zoneDTO: {
-        zoneName: 'Playa Grande',
-        cityDTO: {
-          cityName: 'Mar del Plata',
-          provinceDTO: {
-            provinceName: 'Buenos Aires',
-            countryDTO: { countryName: 'Argentina' },
-          },
-        },
-      },
-
-      // Datos para app-form-address (CVA)
-      addressDTO: {
-        mainStreet: 'Boulevard Marítimo',
-        secondaryStreet: 'General Roca',
-        numbering: 2540,
-      },
-
-      // Datos para app-form-owner (CVA)
-      ownerDTO: {
-        firstName: 'Juan',
-        surname: 'Pérez',
-        email: 'juan.perez@test.com',
-        numberPhone: 2235123456,
-      },
-
-      // Lista de Amenities (CVA)
-      amenitiesList: [
-        { amenityName: 'Piscina', isFeatured: true },
-        { amenityName: 'Gimnasio', isFeatured: false },
-        { amenityName: 'Cochera', isFeatured: true },
-      ],
-
-      // Lista de Imágenes (CVA) - Usamos una URL real de placeholder
-      imageDTOList: [
-        {
-          url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80',
-          isPrimary: true,
-          position: 0,
-          name: 'foto_living_mock.jpg', // <--- ¡FALTABA ESTO!
-        },
-        {
-          url: 'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=800&q=80',
-          isPrimary: false,
-          position: 0,
-          name: 'foto_cocina_mock.jpg' // <--- ¡FALTABA ESTO!
-        },
-      ],
+      id: prop.id,
+      title: prop.title,
+      description: prop.description,
+      price: prop.price,
+      propertyTypeName: prop.propertyTypeDTO.typeName,
+      operationTypeName: prop.operationTypeDTO.operationName,
+      yearConstruction: prop.yearConstruction,
+      areaStructure: prop.areaStructure,
+      totalArea: prop.totalArea,
+      rooms: prop.rooms,
+      bathrooms: prop.bathrooms,
+      bedrooms: prop.bedrooms,
+      // Objetos anidados directos
+      address: prop.addressDTO,
+      owner: prop.ownerDTO,
+      amenitiesList: prop.amenitiesList,
+      imageDTOList: prop.imageDTOList,
+      // Zona (Siempre asumimos que al editar viene una zona existente)
+      zoneSelection: prop.zoneDTO,
     });
-
-    console.log('✅ Formulario cargado con datos de prueba.');
-
-    // LOG DE DEPURACIÓN SENIOR:
-    Object.keys(this.form.controls).forEach((key) => {
-      const controlErrors = this.form.get(key)?.errors;
-      if (controlErrors != null) {
-        console.error(`❌ Campo inválido: ${key}`, controlErrors);
-      }
-    });
-
-    // Si el error está dentro de un CVA, revisa si el objeto que pasaste es null
-    console.log('Estado del Formulario:', this.form.status); // Debería decir 'VALID'
+    // Asegurar estado inicial de zona
+    this.isNewZoneMode.set(false);
+    this.form.get('zoneNew')?.disable();
   }
 
-  // --- 3. Lógica de Submit Simplificada ---
+  // --- 4. Submit ---
+  // --- EL NUEVO ONSUBMIT ---
   onSubmit() {
     if (this.form.invalid) {
-      console.warn('Formulario inválido. Revisar campos marcados.');
-      this.form.markAllAsTouched(); // Esto pinta de rojo TODOS los inputs, incluidos los hijos
+      this.form.markAllAsTouched();
       return;
     }
 
-    // Preparar el objeto para el Backend
-    // Mapeamos los valores planos del form a la estructura DTO compleja
-    const formValue = this.form.value;
+    // 1. Bloqueamos UI
+    this.isUploading.set(true);
 
-    const finalDTO: any = {
-      id: this.isUpdate ? this.propertyUpdate.id : null,
+    // 2. Obtenemos las imágenes "crudas" del formulario (mezcla de Files y URLs)
+    const rawImages: ImageItem[] = this.form.get('imageDTOList')?.value || [];
 
-      // Datos directos
-      title: formValue.title,
-      description: formValue.description,
-      price: formValue.price,
-      yearConstruction: formValue.yearConstruction,
-      areaStructure: formValue.areaStructure,
-      totalArea: formValue.totalArea,
-      rooms: formValue.rooms,
-      bathrooms: formValue.bathrooms,
-      bedrooms: formValue.bedrooms,
-      publicationDate: this.isUpdate ? this.propertyUpdate.publicationDate : new Date(), // Fecha actual si es nuevo
+    // 3. Preparamos array de Observables para subir las fotos en paralelo
+    const uploadTasks: Observable<any>[] = rawImages.map((img) => {
+      // CASO A: Imagen ya existente (Edición) -> No tiene objeto File
+      if (!img.file) {
+        return of({
+          url: img.url,
+          name: img.name,
+          isPrimary: img.isPrimary,
+          position: img.position,
+        });
+      }
 
-      // Objetos anidados (Selects convertidos a DTO)
-      propertyTypeDTO: { typeName: formValue.propertyTypeName },
-      operationTypeDTO: { operationName: formValue.operationTypeName },
+      // CASO B: Imagen Nueva -> Tiene File -> Subir a ImgBB
+      return this.imgBbService.uploadImage(img.file).pipe(
+        map((response) => {
+          // Mapeamos la respuesta de ImgBB al formato que quiere tu backend Java
+          return {
+            url: response.data.url, // La URL pública que devuelve ImgBB
+            name: img.name,
+            isPrimary: img.isPrimary,
+            position: img.position,
+          };
+        }),
+        catchError((err) => {
+          console.error(`Error subiendo imagen ${img.name}`, err);
+          // Si falla una, lanzamos error para detener el proceso (o podrías ignorarla)
+          throw err;
+        }),
+      );
+    });
 
-      // Sub-componentes (Ya vienen como objetos gracias a CVA)
-      zoneDTO: formValue.zoneDTO,
-      addressDTO: formValue.addressDTO,
-      ownerDTO: formValue.ownerDTO,
+    // 4. Ejecutamos todas las subidas en paralelo (forkJoin)
+    forkJoin(uploadTasks)
+      .pipe(
+        // Cuando TODAS terminan, entramos aquí con el array de DTOs limpios
+        switchMap((cleanImagesDTO) => {
+          // 5. Construimos el Payload Final
+          // Pasamos cleanImagesDTO, que ya son solo URLs y metadatos
+          const payload = this.buildPayload(cleanImagesDTO);
 
-      // Listas
-      amenitiesList: formValue.amenitiesList,
-      imageDTOList: formValue.imageDTOList,
+          console.log('Payload listo para Backend:', payload);
+
+          // 6. Enviamos a Spring Boot
+          return this.isUpdate()
+            ? this.propertyService.put(payload)
+            : this.propertyService.post(payload);
+        }),
+        // Finalize se ejecuta siempre (éxito o error) para desbloquear el botón
+        finalize(() => this.isUploading.set(false)),
+      )
+      .subscribe({
+        next: () => {
+          this.router.navigate(['admin/property-list']);
+        },
+        error: (err) => {
+          console.error('Error en el proceso de guardado:', err);
+          alert('Hubo un error subiendo las imágenes o guardando la propiedad. Intenta de nuevo.');
+        },
+      });
+  }
+
+  // Modifiqué tu buildPayload para recibir las imágenes procesadas
+  private buildPayload(processedImages: any[]): any {
+    const v = this.form.getRawValue();
+
+    // ... (Tu lógica de ZonaDTO igual que antes) ...
+    let finalZoneDTO;
+    if (this.isNewZoneMode()) {
+      // ... misma lógica ...
+      finalZoneDTO = {
+        zoneName: v.zoneNew.zoneName,
+        cityDTO: {
+          cityName: v.zoneNew.cityName,
+          provinceDTO: {
+            provinceName: v.zoneNew.provinceName,
+            countryDTO: { countryName: v.zoneNew.countryName },
+          },
+        },
+        isFeatured: false,
+      };
+    } else {
+      finalZoneDTO = v.zoneSelection;
+    }
+
+    return {
+      id: this.isUpdate() ? this.propertyToEdit?.id : null,
+      title: v.title,
+      description: v.description,
+      price: v.price,
+      // ... resto de campos simples ...
+      yearConstruction: v.yearConstruction,
+      areaStructure: v.areaStructure,
+      totalArea: v.totalArea,
+      rooms: v.rooms,
+      bathrooms: v.bathrooms,
+      bedrooms: v.bedrooms,
+      publicationDate: this.isUpdate() ? this.propertyToEdit?.publicationDate : new Date(),
+
+      propertyTypeDTO: { typeName: v.propertyTypeName },
+      operationTypeDTO: { operationName: v.operationTypeName },
+
+      zoneDTO: finalZoneDTO,
+      addressDTO: v.address,
+      ownerDTO: v.owner,
+      amenitiesList: v.amenitiesList,
+
+      // AQUÍ ESTÁ LA CLAVE: Usamos las imágenes procesadas, NO las del form
+      imageDTOList: processedImages,
+    };
+  }
+
+  onCancel() {
+    this.router.navigate(['admin/property-list']);
+  }
+
+  // Helper para templates
+  hasError(path: string, error: string = 'required'): boolean {
+    const control = this.form.get(path);
+    return !!(control?.hasError(error) && control?.touched);
+  }
+
+  fillFormForTesting() {
+    // 1. Preparamos el entorno: Activamos el modo "Crear Nueva Zona"
+    // Esto es necesario para habilitar los campos de 'zoneNew' y deshabilitar el select
+    if (!this.isNewZoneMode()) {
+      this.toggleZoneMode();
+    }
+
+    // 2. Datos de prueba (Mock Data)
+    const mockData = {
+      title: 'Departamento de Lujo frente al Mar',
+      description:
+        'Espectacular unidad con vista panorámica, amenities de primera categoría y seguridad 24hs. Ideal para inversión o vivienda permanente.',
+      price: 250000,
+      propertyTypeName: 'Departamento', // Asegúrate que coincida con tus Selects
+      operationTypeName: 'Venta', // Asegúrate que coincida con tus Selects
+
+      yearConstruction: 2023,
+      areaStructure: 120,
+      totalArea: 140,
+      rooms: 4,
+      bathrooms: 2,
+      bedrooms: 3,
+
+      // GRUPO ANIDADO: Zona (Modo Manual)
+      zoneNew: {
+        zoneName: 'Puerto Madero',
+        cityName: 'Buenos Aires',
+        provinceName: 'Buenos Aires',
+        countryName: 'Argentina',
+      },
+
+      // GRUPO ANIDADO: Dirección (Antes era addressDTO)
+      address: {
+        mainStreet: 'Juana Manso',
+        secondaryStreet: 'Azucena Villaflor',
+        numbering: 1550,
+      },
+
+      // GRUPO ANIDADO: Propietario (Antes era ownerDTO)
+      owner: {
+        firstName: 'Ricardo',
+        surname: 'Fort',
+        email: 'ricky@chocolate.com',
+        numberPhone: '1155558888',
+      },
     };
 
-    console.log('🚀 Payload listo para enviar:', finalDTO);
+    // 3. Impactamos los datos en el formulario
+    this.form.patchValue(mockData);
 
-    // Llamada al servicio
-    const request = this.isUpdate ? this.service.put(finalDTO) : this.service.post(finalDTO);
-
-    request?.subscribe({
-      next: (response) => {
-        console.log('Éxito:', response);
-        this.router.navigate(['admin/property-list']);
-      },
-      error: (err) => console.error('Error al guardar:', err),
-    });
-  }
-
-  // --- 4. Edición (Patch Value) ---
-  patchValuesForEdit() {
-    if (!this.propertyUpdate) return;
-
-    // Aquí "aplanamos" lo necesario y pasamos los objetos complejos tal cual
-    this.form.patchValue({
-      id: this.propertyUpdate.id,
-      title: this.propertyUpdate.title,
-      description: this.propertyUpdate.description,
-      price: this.propertyUpdate.price,
-
-      yearConstruction: this.propertyUpdate.yearConstruction,
-      areaStructure: this.propertyUpdate.areaStructure,
-      totalArea: this.propertyUpdate.totalArea,
-      rooms: this.propertyUpdate.rooms,
-      bathrooms: this.propertyUpdate.bathrooms,
-      bedrooms: this.propertyUpdate.bedrooms,
-
-      // Selects: Extraemos el string del DTO
-      propertyTypeName: this.propertyUpdate.propertyTypeDTO?.typeName,
-      operationTypeName: this.propertyUpdate.operationTypeDTO?.operationName,
-
-      // Componentes Complejos: Pasamos el DTO entero
-      // Los componentes hijos CVA sabrán leer este objeto en su método `writeValue`
-      zoneDTO: this.propertyUpdate.zoneDTO,
-      addressDTO: this.propertyUpdate.addressDTO,
-      ownerDTO: this.propertyUpdate.ownerDTO,
-
-      amenitiesList: this.propertyUpdate.amenitiesList,
-      imageDTOList: this.propertyUpdate.imageDTOList,
-    });
-  }
-
-  // Botón de Cancelar
-  onCancel() {
-    this.router.navigate(['admin/property-list']); // O volver atrás
+    console.log('🧪 Datos de prueba cargados exitosamente');
+    console.log('Estado del Formulario:', this.form.valid ? '✅ VÁLIDO' : '❌ INVÁLIDO');
   }
 }

@@ -1,17 +1,28 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { RouterOutlet } from '@angular/router';
-import { Navbar } from '../components/navbar/navbar';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { AuthService } from '../../../core/auth-service/auth-service';
 
 @Component({
   selector: 'app-admin',
-  imports: [ReactiveFormsModule, RouterOutlet, Navbar],
+  imports: [ReactiveFormsModule, RouterOutlet,RouterLink],
   templateUrl: './admin.html',
   styleUrl: './admin.css'
 })
 export class Admin {
+  // Inyección del router para lógica de activado en SVGs
+  router = inject(Router);
+  private authService = inject(AuthService);
+  
+  // Estado para los acordeones del sidebar
+  menuAbierto: string = '';
 
-  userDelete() {
-    console.log("Se eliminaria un user...")
+  toggleSubmenu(nombreMenu: string) {
+    this.menuAbierto = (this.menuAbierto === nombreMenu) ? '' : nombreMenu;
+  }
+
+  logOut(){
+    this.authService.logout()
+    
   }
 }

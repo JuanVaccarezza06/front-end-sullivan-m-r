@@ -1,9 +1,106 @@
-<div class="layout">
+<div class="layout font-poppins">
     
-    <!-- SIDEBAR -->
-    <app-navbar></app-navbar>
+    <aside class="sidebar bg-white shadow-xl flex flex-col justify-between border-r border-slate-200 transition-all duration-300">
+        
+        <div class="flex-1 overflow-y-auto custom-scrollbar">
+            
+            <div class="px-8 py-10">
+                <h1 class="text-slate-600 font-semibold text-lg tracking-wide border-l-4 border-[#10a37f] pl-4">
+                    Administración
+                </h1>
+            </div>
 
-    <!-- MAIN CONTENT -->
+            <nav class="px-4 space-y-2">
+                
+                <a routerLink="/admin/dashboard" routerLinkActive="bg-emerald-50 text-[#10a37f]" 
+                   class="group flex items-center px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-all cursor-pointer">
+                    <svg viewBox="0 0 576 512" fill="currentColor" class="w-5 h-5 mr-4 transition-colors group-hover:text-slate-700" 
+                         [class.text-[#10a37f]]="router.isActive('/admin/dashboard', false)">
+                         <path d="M575.8 255.5c0 18-15 32.1-32 32.1h-32l.7 160.2c0 2.7-.2 5.4-.5 8.1V472c0 22.1-17.9 40-40 40H456c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1H416 392c-22.1 0-40-17.9-40-40V448 384c0-17.7-14.3-32-32-32H256c-17.7 0-32 14.3-32 32v64 24c0 22.1-17.9 40-40 40H160 128.1c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2H104c-22.1 0-40-17.9-40-40V360c0-.9 0-1.9 .1-2.8V287.6H32c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 13-8 19-8h.7c3.4 0 6.9 .5 9.6 1.4c2.6-.9 6.1-1.4 9.6-1.4h.7c6 0 12 1 19 8L565.8 231.5c8 7 10 15 10 24z" />
+                    </svg>
+                    <span class="font-medium text-sm">Dashboard</span>
+                </a>
+
+                <div>
+                    <button (click)="toggleSubmenu('propiedades')" 
+                            [class.bg-emerald-50]="menuAbierto === 'propiedades'"
+                            [class.text-[#10a37f]]="menuAbierto === 'propiedades'"
+                            class="w-full group flex items-center justify-between px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-all">
+                        <div class="flex items-center">
+                            <svg viewBox="0 0 384 512" fill="currentColor" class="w-5 h-5 mr-4 transition-colors" [class.text-[#10a37f]]="menuAbierto === 'propiedades'">
+                                <path d="M192 0c-41.8 0-77.4 26.7-90.5 64H64C28.7 64 0 92.7 0 128V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V128c0-35.3-28.7-64-64-64H282.5C269.4 26.7 233.8 0 192 0zm0 64a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM112 192H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16z" />
+                            </svg>
+                            <span class="font-medium text-sm">Propiedades</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-xs transition-transform duration-300" [class.rotate-90]="menuAbierto === 'propiedades'"></i>
+                    </button>
+
+                    <div class="overflow-hidden transition-all duration-300 ease-in-out" 
+                         [class.max-h-0]="menuAbierto !== 'propiedades'" 
+                         [class.max-h-40]="menuAbierto === 'propiedades'">
+                        <div class="pl-12 pr-4 py-2 space-y-1">
+                            <a routerLink="/admin/properties/list" routerLinkActive="text-[#10a37f] bg-emerald-50" class="block px-4 py-2 text-sm text-slate-400 hover:text-[#10a37f] hover:bg-emerald-50 rounded-lg transition-colors">Todas</a>
+                            <a routerLink="/admin/properties/create" routerLinkActive="text-[#10a37f] bg-emerald-50" class="block px-4 py-2 text-sm text-slate-400 hover:text-[#10a37f] hover:bg-emerald-50 rounded-lg transition-colors">Añadir nueva</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <button (click)="toggleSubmenu('comunicaciones')" 
+                            [class.bg-emerald-50]="menuAbierto === 'comunicaciones'"
+                            [class.text-[#10a37f]]="menuAbierto === 'comunicaciones'"
+                            class="w-full group flex items-center justify-between px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-all">
+                        <div class="flex items-center">
+                            <svg viewBox="0 0 512 512" fill="currentColor" class="w-5 h-5 mr-4 transition-colors" [class.text-[#10a37f]]="menuAbierto === 'comunicaciones'">
+                                <path d="M512 240c0 114.9-114.6 208-256 208c-37.1 0-72.3-6.4-104.1-17.9c-11.9 8.7-31.3 20.6-54.3 30.6C73.6 471.1 44.7 480 16 480c-6.5 0-12.3-3.9-14.8-9.9c-2.5-6-1.1-12.8 3.4-17.4c0 0 .3-.3 .9-1c2.4-2.7 19-21.8 19-63.5c-19.2-29.2-30.5-63.7-30.5-100.2C4.8 174.1 119.4 81 260.8 81s251.2 93.1 251.2 159z" />
+                            </svg>
+                            <span class="font-medium text-sm">Comunicaciones</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-xs transition-transform duration-300" [class.rotate-90]="menuAbierto === 'comunicaciones'"></i>
+                    </button>
+
+                    <div class="overflow-hidden transition-all duration-300 ease-in-out" 
+                         [class.max-h-0]="menuAbierto !== 'comunicaciones'" 
+                         [class.max-h-40]="menuAbierto === 'comunicaciones'">
+                        <div class="pl-12 pr-4 py-2 space-y-1">
+                            <a routerLink="/admin/consults" routerLinkActive="text-[#10a37f] bg-emerald-50" class="block px-4 py-2 text-sm text-slate-400 hover:text-[#10a37f] hover:bg-emerald-50 rounded-lg transition-colors">Consultas</a>
+                            <a routerLink="/admin/consults" class="block px-4 py-2 text-sm text-slate-400 hover:text-[#10a37f] hover:bg-emerald-50 rounded-lg transition-colors opacity-50 cursor-not-allowed" title="Próximamente">Mensajes</a>
+                        </div>
+                    </div>
+                </div>
+
+                <a routerLink="/admin/users/list" routerLinkActive="bg-emerald-50 text-[#10a37f]" 
+                   class="group flex items-center px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-all cursor-pointer">
+                    <svg viewBox="0 0 640 512" fill="currentColor" class="w-5 h-5 mr-4 transition-colors group-hover:text-slate-700" 
+                         [class.text-[#10a37f]]="router.isActive('/admin/users/list', false)">
+                        <path d="M144 0a80 80 0 1 1 0 160A80 80 0 1 1 144 0zM512 0a80 80 0 1 1 0 160A80 80 0 1 1 512 0zM0 298.7C0 239.8 47.8 192 106.7 192h42.7c15.9 0 31 3.5 44.6 9.7c-1.3 7.2-1.9 14.7-1.9 22.3c0 38.2 16.8 72.5 43.3 96c-.2 0-.4 0-.7 0H21.3C9.6 320 0 310.4 0 298.7zM405.3 320c-.2 0-.4 0-.7 0c26.6-23.5 43.3-57.8 43.3-96c0-7.6-.6-15-1.9-22.3c13.6-6.3 28.7-9.7 44.6-9.7h42.7C592.2 192 640 239.8 640 298.7c0 11.8-9.6 21.3-21.3 21.3H405.3zM224 224a96 96 0 1 1 192 0 96 96 0 1 1 -192 0zM128 485.3C128 411.7 187.7 352 261.3 352H378.7C452.3 352 512 411.7 512 485.3c0 14.7-11.9 26.7-26.7 26.7H154.7c-14.7 0-26.7-11.9-26.7-26.7z" />
+                    </svg>
+                    <span class="font-medium text-sm">Usuarios</span>
+                </a>
+
+            </nav>
+        </div>
+
+        <div class="p-4 border-t border-slate-100 bg-slate-50/50">
+            <div class="flex items-center gap-3">
+                <a routerLink="/admin/users/profile" routerLinkActive="bg-white shadow-sm ring-1 ring-slate-200" class="flex-1 flex items-center gap-3 p-2 rounded-lg hover:bg-white hover:shadow-sm transition-all group cursor-pointer">
+                    <img src="https://ui-avatars.com/api/?name=Admin+User&background=10a37f&color=fff&size=128" 
+                         alt="User" class="w-9 h-9 rounded-full ring-2 ring-white object-cover shadow-sm">
+                    <div class="flex flex-col">
+                        <span class="text-sm font-bold text-slate-700 group-hover:text-[#10a37f] transition-colors">Administrador</span>
+                        <span class="text-xs text-slate-400">Ver perfil</span>
+                    </div>
+                </a>
+                
+                <button (click)="logOut()" class="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all" title="Cerrar sesión">
+                    <svg viewBox="0 0 512 512" fill="currentColor" class="w-5 h-5">
+                        <path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </aside>
+
     <main class="main-content">
         <router-outlet></router-outlet>
     </main>

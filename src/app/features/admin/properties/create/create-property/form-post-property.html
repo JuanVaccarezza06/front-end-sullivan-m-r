@@ -1,131 +1,286 @@
-<div class="form-container">
-  <div class="form-header">
-    <div class="form-title">
-      <h1>{{ isUpdate ? 'Editar Propiedad' : 'Nueva Propiedad' }}</h1>
-      <p class="form-subtitle">Completa la información para publicar tu inmueble</p>
-    </div>
-    <button type="button" class="cancel-btn" (click)="onCancel()">Cancelar</button>
-    <div
-      style="
-        background: #f0f9ff;
-        border: 1px solid #bae6fd;
-        padding: 10px;
-        margin-bottom: 20px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      "
-    >
-      <span style="color: #0369a1; font-size: 0.85rem; font-weight: 500"
-        >🛠️ Modo Developer: Herramientas de prueba</span
+<div class="max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-sm">
+  <div class="flex justify-between items-center mb-8 border-b pb-4">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-800">
+        {{ isUpdate() ? 'Editar Propiedad' : 'Nueva Propiedad' }}
+      </h1>
+      <p class="text-gray-500 mt-1">Completa la información para publicar tu inmueble</p>
+      <button
+        type="button"
+        (click)="fillFormForTesting()"
+        class="mb-4 px-4 py-2 bg-purple-100 text-purple-700 rounded-lg border border-purple-200 text-sm font-bold hover:bg-purple-200 transition-colors"
       >
-      <button type="button" (click)="fillFormForTesting()" class="btn-seed">
-        🚀 Llenar formulario (Mock Data)
+        🧪 Llenar con Datos Mock
       </button>
     </div>
+    <button
+      type="button"
+      (click)="onCancel()"
+      class="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+    >
+      Cancelar
+    </button>
   </div>
 
-  <form [formGroup]="form" (submit)="onSubmit()">
-    <div class="form-section">
-      <h3 class="section-title">Información Básica</h3>
-      <div class="form-group">
-        <label>Título del aviso <span class="required">*</span></label>
-        <input
-          type="text"
-          formControlName="title"
-          placeholder="Ej: Hermoso departamento en el centro..."
-        />
-        @if (form.get('title')?.hasError('required') && form.get('title')?.touched) {
-          <p class="p-error">Requerido</p>
+  <form [formGroup]="form" (submit)="onSubmit()" class="space-y-8">
+    <section>
+      <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+        <span class="bg-blue-100 text-blue-600 p-1 rounded">1</span> Información Básica
+      </h3>
+
+      <div class="grid grid-cols-1 gap-6">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Título del aviso *</label>
+          <input
+            type="text"
+            formControlName="title"
+            class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+            [class.border-red-500]="hasError('title')"
+          />
+          @if (hasError('title')) {
+            <p class="text-red-500 text-xs mt-1">Título requerido (min 10 chars)</p>
+          }
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Descripción *</label>
+          <textarea
+            formControlName="description"
+            rows="4"
+            class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+          ></textarea>
+          @if (hasError('description')) {
+            <p class="text-red-500 text-xs mt-1">Descripción requerida</p>
+          }
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Precio (USD) *</label>
+            <input
+              type="number"
+              formControlName="price"
+              class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Tipo Propiedad *</label>
+            <select
+              formControlName="propertyTypeName"
+              class="w-full px-4 py-2 border rounded-lg bg-white"
+            >
+              <option value="">Seleccionar...</option>
+              @for (pt of propertyTypes(); track pt.typeName) {
+                <option [value]="pt.typeName">{{ pt.typeName }}</option>
+              }
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Operación *</label>
+            <select
+              formControlName="operationTypeName"
+              class="w-full px-4 py-2 border rounded-lg bg-white"
+            >
+              <option value="">Seleccionar...</option>
+              @for (ot of operationTypes(); track ot.operationName) {
+                <option [value]="ot.operationName">{{ ot.operationName }}</option>
+              }
+            </select>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t pt-6">
+      <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+        <span class="bg-blue-100 text-blue-600 p-1 rounded">2</span> Características
+      </h3>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+        <div>
+          <label class="text-sm font-medium">Ambientes</label
+          ><input type="number" formControlName="rooms" class="w-full border rounded p-2" />
+        </div>
+        <div>
+          <label class="text-sm font-medium">Dormitorios</label
+          ><input type="number" formControlName="bedrooms" class="w-full border rounded p-2" />
+        </div>
+        <div>
+          <label class="text-sm font-medium">Baños</label
+          ><input type="number" formControlName="bathrooms" class="w-full border rounded p-2" />
+        </div>
+        <div>
+          <label class="text-sm font-medium">Año Const.</label
+          ><input
+            type="number"
+            formControlName="yearConstruction"
+            class="w-full border rounded p-2"
+          />
+        </div>
+        <div>
+          <label class="text-sm font-medium">M² Cubiertos</label
+          ><input type="number" formControlName="areaStructure" class="w-full border rounded p-2" />
+        </div>
+        <div>
+          <label class="text-sm font-medium">M² Totales</label
+          ><input type="number" formControlName="totalArea" class="w-full border rounded p-2" />
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t pt-6">
+      <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+        <span class="bg-blue-100 text-blue-600 p-1 rounded">3</span> Ubicación
+      </h3>
+
+      <div class="bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200">
+        <div class="flex justify-between mb-4">
+          <label class="font-medium text-gray-700">Zona / Barrio</label>
+          <button
+            type="button"
+            (click)="toggleZoneMode()"
+            class="text-sm text-blue-600 hover:underline font-medium"
+          >
+            {{ isNewZoneMode() ? '← Elegir existente' : '+ Agregar nueva zona manualmente' }}
+          </button>
+        </div>
+
+        @if (!isNewZoneMode()) {
+          <select
+            formControlName="zoneSelection"
+            class="w-full px-4 py-2 border rounded-lg bg-white"
+          >
+            <option [ngValue]="null">Seleccionar zona...</option>
+            @for (z of zones(); track $index) {
+              <option [ngValue]="z">{{ z.zoneName }}, {{ z.cityDTO.cityName }}</option>
+            }
+          </select>
+        } @else {
+          <div
+            formGroupName="zoneNew"
+            class="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fade-in"
+          >
+            <input
+              type="text"
+              formControlName="zoneName"
+              placeholder="Nombre Zona"
+              class="border rounded p-2"
+            />
+            <input
+              type="text"
+              formControlName="cityName"
+              placeholder="Ciudad"
+              class="border rounded p-2"
+            />
+            <input
+              type="text"
+              formControlName="provinceName"
+              placeholder="Provincia"
+              class="border rounded p-2"
+            />
+            <input
+              type="text"
+              formControlName="countryName"
+              placeholder="País"
+              class="border rounded p-2"
+            />
+          </div>
         }
       </div>
 
-      <div class="form-group">
-        <label>Descripción <span class="required">*</span></label>
-        <textarea formControlName="description" rows="5"></textarea>
-        @if (form.get('description')?.hasError('required') && form.get('description')?.touched) {
-          <p class="p-error">Requerido</p>
-        }
-      </div>
-
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Precio (USD) <span class="required">*</span></label>
-          <input type="number" formControlName="price" />
+      <div formGroupName="address" class="grid grid-cols-1 md:grid-cols-12 gap-4">
+        <div class="md:col-span-6">
+          <label class="text-sm font-medium">Calle Principal *</label>
+          <input type="text" formControlName="mainStreet" class="w-full border rounded p-2" />
         </div>
-        <div class="form-group">
-          <label>Tipo de Propiedad <span class="required">*</span></label>
-          <select formControlName="propertyTypeName">
-            <option value="">Seleccionar...</option>
-            @for (pt of propertyTypesArray; track pt.typeName) {
-              <option [value]="pt.typeName">{{ pt.typeName }}</option>
-            }
-          </select>
+        <div class="md:col-span-4">
+          <label class="text-sm font-medium">Calle Secundaria *</label>
+          <input type="text" formControlName="secondaryStreet" class="w-full border rounded p-2" />
         </div>
-        <div class="form-group">
-          <label>Tipo de Operación <span class="required">*</span></label>
-          <select formControlName="operationTypeName">
-            <option value="">Seleccionar...</option>
-            @for (ot of operationsTypesArray; track ot.operationName) {
-              <option [value]="ot.operationName">{{ ot.operationName }}</option>
-            }
-          </select>
+        <div class="md:col-span-2">
+          <label class="text-sm font-medium">Altura *</label>
+          <input type="number" formControlName="numbering" class="w-full border rounded p-2" />
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="form-section">
-      <h3 class="section-title">Características</h3>
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Ambientes</label><input type="number" formControlName="rooms" />
+    <section class="border-t pt-6">
+      <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+        <span class="bg-blue-100 text-blue-600 p-1 rounded">4</span> Datos Propietario
+      </h3>
+      <div formGroupName="owner" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label class="text-sm font-medium">Nombre *</label>
+          <input type="text" formControlName="firstName" class="w-full border rounded p-2" />
         </div>
-        <div class="form-group">
-          <label>Dormitorios</label><input type="number" formControlName="bedrooms" />
+        <div>
+          <label class="text-sm font-medium">Apellido *</label>
+          <input type="text" formControlName="surname" class="w-full border rounded p-2" />
         </div>
-        <div class="form-group">
-          <label>Baños</label><input type="number" formControlName="bathrooms" />
+        <div>
+          <label class="text-sm font-medium">Email *</label>
+          <input type="email" formControlName="email" class="w-full border rounded p-2" />
+          @if (hasError('owner.email', 'email')) {
+            <span class="text-red-500 text-xs">Email inválido</span>
+          }
         </div>
-        <div class="form-group">
-          <label>Año Const.</label><input type="number" formControlName="yearConstruction" />
-        </div>
-        <div class="form-group">
-          <label>M² Cubiertos</label><input type="number" formControlName="areaStructure" />
-        </div>
-        <div class="form-group">
-          <label>M² Totales</label><input type="number" formControlName="totalArea" />
+        <div>
+          <label class="text-sm font-medium">Teléfono *</label>
+          <input type="tel" formControlName="numberPhone" class="w-full border rounded p-2" />
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="form-section">
-      <h3 class="section-title">Ubicación</h3>
-      <app-form-zone formControlName="zoneDTO"></app-form-zone>
-
-      <div style="margin-top: 1.5rem">
-        <app-form-address formControlName="addressDTO"></app-form-address>
-      </div>
-    </div>
-
-    <div class="form-section">
-      <h3 class="section-title">Datos del Propietario</h3>
-      <app-form-owner formControlName="ownerDTO"></app-form-owner>
-    </div>
-
-    <div id="components-container">
-      <div id="component-input-amenities">
+    <section class="border-t pt-6 space-y-6">
+      <div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">Amenities</h3>
         <app-input-amenities formControlName="amenitiesList"></app-input-amenities>
       </div>
-
-      <div id="component-input-images">
+      <div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">Galería de Imágenes</h3>
         <app-input-images formControlName="imageDTOList"></app-input-images>
       </div>
-    </div>
+    </section>
 
-    <div class="form-footer">
-      <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
-        {{ isUpdate ? 'Actualizar Propiedad' : 'Publicar Propiedad' }}
+    <div class="sticky bottom-0 bg-white border-t p-4 mt-8 flex justify-end gap-4 shadow-lg z-10">
+      <button
+        type="button"
+        (click)="onCancel()"
+        class="px-6 py-2 text-gray-600 font-medium hover:bg-gray-100 rounded-lg"
+        [disabled]="isUploading()"
+      >
+        Cancelar
+      </button>
+
+      <button
+        type="submit"
+        [disabled]="form.invalid || isUploading()"
+        class="px-8 py-2 bg-blue-600 text-white font-bold rounded-lg shadow hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
+      >
+        @if (isUploading()) {
+          <svg
+            class="animate-spin h-5 w-5 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          Subiendo imágenes...
+        } @else {
+          {{ isUpdate() ? 'Actualizar Propiedad' : '🚀 Publicar Propiedad' }}
+        }
       </button>
     </div>
   </form>

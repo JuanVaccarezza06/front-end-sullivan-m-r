@@ -1,13 +1,12 @@
-<div class="p-6 max-w-78xl mx-auto space-y-6 min-h-screen">
-  <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+<div class="p-4 md:p-6 max-w-[1600px] mx-auto space-y-6 min-h-screen">
+  
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 sm:gap-0">
     <div>
-      <h1 class="text-3xl font-bold text-slate-900">Dashboard</h1>
-      <p class="text-slate-500 mt-1">Resumen general de tu inmobiliaria</p>
+      <h1 class="text-2xl md:text-3xl font-bold text-slate-900">Dashboard</h1>
+      <p class="text-slate-500 mt-1 text-sm md:text-base">Resumen general de tu inmobiliaria</p>
     </div>
-    <div class="mt-4 md:mt-0">
-      <span
-        class="px-3 py-1 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-600 shadow-sm"
-      >
+    <div>
+      <span class="px-3 py-1 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-600 shadow-sm flex items-center">
         <i class="pi pi-calendar mr-2"></i> Últimos 30 días
       </span>
     </div>
@@ -20,30 +19,22 @@
     </div>
   } @else {
     <div class="animate-fade-in">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
         @for (metric of metrics(); track metric.title) {
-          <div
-            class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 transition-all hover:shadow-md"
-          >
+          <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100 transition-all hover:shadow-md">
             <div class="flex justify-between items-start">
               <div>
                 <p class="text-sm font-medium text-slate-500 mb-1">{{ metric.title }}</p>
                 <h3 class="text-2xl font-bold text-slate-900">{{ metric.value }}</h3>
               </div>
-
               <div [class]="getBgClass(metric.key) + ' p-3 rounded-lg'">
                 <i [class]="getIconClass(metric.key)"></i>
               </div>
             </div>
-
             <div class="mt-4 flex items-center text-sm">
-              <span
-                [class]="
-                  getTrendColorClass(metric.trendDirection) + ' font-medium flex items-center'
-                "
-              >
+              <span [class]="getTrendColorClass(metric.trendDirection) + ' font-medium flex items-center'">
                 <i class="pi mr-1" [class]="getTrendIconClass(metric.trendDirection)"></i>
-
                 {{ metric.trend }}
               </span>
               <span class="text-slate-400 ml-2">vs mes anterior</span>
@@ -53,19 +44,15 @@
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div
-          class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden flex flex-col"
-        >
-          <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+        
+        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden flex flex-col">
+          <div class="p-5 border-b border-slate-100 flex justify-between items-center">
             <h3 class="font-semibold text-slate-900">Propiedades Más Vistas</h3>
             <button class="text-blue-600 text-sm hover:underline">Ver todas</button>
           </div>
 
-          <div class="overflow-x-auto overflow-y-auto h-[320px]">
-            <table class="w-full text-sm text-left relative">
-              <thead
-                class="text-xs text-slate-500 uppercase bg-slate-50 sticky top-0 z-10 shadow-sm"
-              >
+          <div class="overflow-x-auto w-full md:h-[320px]">
+            <table class="w-full text-sm text-left relative min-w-[600px]"> <thead class="text-xs text-slate-500 uppercase bg-slate-50 sticky top-0 z-10 shadow-sm">
                 <tr>
                   <th class="px-6 py-3 bg-slate-50">Propiedad</th>
                   <th class="px-6 py-3 bg-slate-50">Estado</th>
@@ -73,23 +60,17 @@
                   <th class="px-6 py-3 text-right bg-slate-50">Vistas</th>
                 </tr>
               </thead>
-
               <tbody>
                 @for (prop of topProperties(); track prop.id) {
                   <tr class="border-b border-slate-50 hover:bg-slate-50/50">
-                    <td class="px-6 py-4 font-medium text-slate-900 truncate max-w-xs">
+                    <td class="px-6 py-4 font-medium text-slate-900 truncate max-w-[150px]">
                       {{ prop.name }}
                     </td>
                     <td class="px-6 py-4">
-                      <span
-                        [class]="
-                          prop.type === 'Venta'
-                            ? 'bg-emerald-100 text-emerald-700'
-                            : 'bg-indigo-100 text-indigo-700'
-                        "
-                        class="px-2 py-1 rounded-full text-xs font-semibold"
-                        >{{ prop.type }}</span
-                      >
+                      <span [class]="prop.type === 'Venta' ? 'bg-emerald-100 text-emerald-700' : 'bg-indigo-100 text-indigo-700'"
+                        class="px-2 py-1 rounded-full text-xs font-semibold">
+                        {{ prop.type }}
+                      </span>
                     </td>
                     <td class="px-6 py-4 text-slate-600">
                       {{ prop.price | currency: 'USD' : 'symbol' : '1.0-0' }}
@@ -97,9 +78,7 @@
                     <td class="px-6 py-4 text-right font-bold text-slate-800">{{ prop.views }}</td>
                   </tr>
                 } @empty {
-                  <tr>
-                    <td colspan="4" class="px-6 py-8 text-center text-slate-500">Sin datos.</td>
-                  </tr>
+                  <tr><td colspan="4" class="px-6 py-8 text-center text-slate-500">Sin datos.</td></tr>
                 }
               </tbody>
             </table>
@@ -107,30 +86,22 @@
         </div>
 
         <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-          <div class="p-6 border-b border-slate-100">
+          <div class="p-5 border-b border-slate-100">
             <h3 class="font-semibold text-slate-900">Consultas Recientes</h3>
           </div>
-          <div class="divide-y divide-slate-100">
+          <div class="divide-y divide-slate-100 max-h-[320px] overflow-y-auto">
             @for (inq of inquiries(); track inq.id) {
               <div class="p-4 hover:bg-slate-50 transition-colors">
                 <div class="flex items-center space-x-3">
-                  <div
-                    class="flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center font-bold text-sm shadow-sm"
-                    [class]="getAvatarColor(inq.userName)"
-                  >
+                  <div class="flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center font-bold text-sm shadow-sm"
+                    [class]="getAvatarColor(inq.userName)">
                     {{ inq.userName.charAt(0).toUpperCase() }}
                   </div>
                   <div class="flex-1 min-w-0">
-                    <p class="text-sm font-medium text-slate-900 truncate">
-                      {{ inq.userName }}
-                    </p>
-                    <p class="text-xs text-slate-500 truncate">
-                      {{ inq.propertyName }}
-                    </p>
+                    <p class="text-sm font-medium text-slate-900 truncate">{{ inq.userName }}</p>
+                    <p class="text-xs text-slate-500 truncate">{{ inq.propertyName }}</p>
                   </div>
-                  <div class="text-xs text-slate-400 whitespace-nowrap">
-                    {{ inq.date | date: 'dd/MM' }}
-                  </div>
+                  <div class="text-xs text-slate-400 whitespace-nowrap">{{ inq.date | date: 'dd/MM' }}</div>
                 </div>
               </div>
             } @empty {
