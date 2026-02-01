@@ -16,10 +16,10 @@ import { ImageItem } from '../../../../../core/models/ImageItem';
 @Component({
   selector: 'app-form-property',
   imports: [ReactiveFormsModule, InputAmenities, InputImages],
-  templateUrl: './form-post-property.html',
-  styleUrl: './form-post-property.css',
+  templateUrl: './form-property.html',
+  styleUrl: './form-property.css',
 })
-export class FormPostProperty implements OnInit {
+export class FormProperty implements OnInit {
   // Inyeccion de dependencias moderna
   private fb = inject(FormBuilder);
   private propertyService = inject(PropertyService);
@@ -168,11 +168,13 @@ export class FormPostProperty implements OnInit {
       amenitiesList: prop.amenitiesList,
       imageDTOList: prop.imageDTOList,
       // Zona (Siempre asumimos que al editar viene una zona existente)
-      zoneSelection: prop.zoneDTO,
+      zoneSelection: prop.zoneDTO?.zoneName || '',
     });
     // Asegurar estado inicial de zona
     this.isNewZoneMode.set(false);
     this.form.get('zoneNew')?.disable();
+
+    setTimeout(() => this.debugValidation(), 500);
   }
 
   // --- 4. Submit ---
@@ -270,7 +272,15 @@ export class FormPostProperty implements OnInit {
         isFeatured: false,
       };
     } else {
-      finalZoneDTO = v.zoneSelection;
+      // LÓGICA DE SELECCIÓN (CAMBIO AQUÍ)
+      // 1. Obtenemos el string seleccionado del form (ej. "Manhattan")
+      const selectedName = v.zoneSelection;
+
+      // 2. Buscamos el objeto completo en tu señal de zonas
+      const selectedZoneObj = this.zones().find((z) => z.zoneName === selectedName);
+
+      // 3. Asignamos ese objeto. Si no lo encuentra (caso raro), mandamos null.
+      finalZoneDTO = selectedZoneObj || null;
     }
 
     return {
@@ -285,7 +295,7 @@ export class FormPostProperty implements OnInit {
       rooms: v.rooms,
       bathrooms: v.bathrooms,
       bedrooms: v.bedrooms,
-      publicationDate: this.isUpdate() ? this.propertyToEdit?.publicationDate : new Date(),
+      publicationDate: this.isUpdate() ? this.propertyToEdit?.publicationDate : null,
 
       propertyTypeDTO: { typeName: v.propertyTypeName },
       operationTypeDTO: { operationName: v.operationTypeName },
@@ -294,6 +304,9 @@ export class FormPostProperty implements OnInit {
       addressDTO: v.address,
       ownerDTO: v.owner,
       amenitiesList: v.amenitiesList,
+
+      latitude: this.isUpdate() ? this.propertyToEdit?.latitude : null,
+      longitude: this.isUpdate() ? this.propertyToEdit?.longitude : null,
 
       // AQUÍ ESTÁ LA CLAVE: Usamos las imágenes procesadas, NO las del form
       imageDTOList: processedImages,
@@ -362,5 +375,23 @@ export class FormPostProperty implements OnInit {
 
     console.log('🧪 Datos de prueba cargados exitosamente');
     console.log('Estado del Formulario:', this.form.valid ? '✅ VÁLIDO' : '❌ INVÁLIDO');
+  }
+
+  debugValidation() {
+    console.group('🕵️‍♂️ Auditoría del Formulario');
+    console.log('Form Válido:', this.form.valid);
+    console.log('Form Status:', this.form.status);
+
+    Object.keys(this.form.controls).forEach((key) => {
+      const control = this.form.get(key);
+      if (control && control.invalid) {
+        const value = control.value;
+        const errors = control.errors;
+        console.error(`❌ Campo INVÁLIDO: [${key}]`);
+        console.table(errors); // Muestra el error exacto (ej: minlength, required, minImages)
+        console.log('Valor actual:', value);
+      }
+    });
+    console.groupEnd();
   }
 }

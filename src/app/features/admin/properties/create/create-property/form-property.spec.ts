@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FormProperty } from './form-post-property';
+import { FormProperty } from './form-property';
 
 describe('FormProperty', () => {
   let component: FormProperty;

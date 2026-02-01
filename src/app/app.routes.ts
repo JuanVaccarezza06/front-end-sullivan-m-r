@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { adminGuardGuard } from './core/guards/admin-guard/admin-guard-guard';
-import { FormPostProperty } from './features/admin/properties/create/create-property/form-post-property';
+import { FormProperty } from './features/admin/properties/create/create-property/form-property';
 import { UserInfo } from './features/admin/user-info/user-info';
 import { LogIn } from './features/pages/auth-pages/log-in/log-in';
 import { Register } from './features/pages/auth-pages/register/register';
@@ -64,8 +64,8 @@ export const routes: Routes = [
         path: 'properties',
         children: [
           { path: 'list', component: PropertyList }, // ruta: /admin/properties/list
-          { path: 'create', component: FormPostProperty }, // ruta: /admin/properties/create
-          { path: 'edit/:id', component: FormPostProperty }, // ruta: /admin/properties/edit/55
+          { path: 'create', component: FormProperty }, // ruta: /admin/properties/create
+          { path: 'edit/:id', component: FormProperty }, // ruta: /admin/properties/edit/55
         ],
       },
 

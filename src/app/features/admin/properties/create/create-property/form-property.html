@@ -149,9 +149,9 @@
             formControlName="zoneSelection"
             class="w-full px-4 py-2 border rounded-lg bg-white"
           >
-            <option [ngValue]="null">Seleccionar zona...</option>
-            @for (z of zones(); track $index) {
-              <option [ngValue]="z">{{ z.zoneName }}, {{ z.cityDTO.cityName }}</option>
+            <option value="">Seleccionar zona...</option>
+            @for (z of zones(); track z.zoneName) {
+              <option [value]="z.zoneName">{{ z.zoneName }}, {{ z.cityDTO.cityName }}</option>
             }
           </select>
         } @else {
@@ -237,7 +237,25 @@
       </div>
       <div>
         <h3 class="text-xl font-semibold text-gray-800 mb-4">Galería de Imágenes</h3>
+
         <app-input-images formControlName="imageDTOList"></app-input-images>
+
+        @if (form.get('imageDTOList')?.hasError('minImages')) {
+          <p
+            class="text-red-600 font-bold text-sm mt-2 flex items-center gap-2 bg-red-50 p-2 rounded border border-red-200"
+          >
+            ¡El mínimo son 3 imágenes! (Tienes
+            {{ form.get('imageDTOList')?.errors?.['minImages'].actual }})
+          </p>
+        }
+
+        @if (form.get('imageDTOList')?.hasError('noPrimary')) {
+          <p
+            class="text-red-600 font-bold text-sm mt-2 flex items-center gap-2 bg-red-50 p-2 rounded border border-red-200"
+          >
+            ⭐ Falta elegir la portada. Haz clic en la estrella de una foto.
+          </p>
+        }
       </div>
     </section>
 

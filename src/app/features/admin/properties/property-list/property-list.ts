@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import Property from '../../../../core/models/properties/Property';
 import { ImgBbService } from '../../../../core/services/imgbb-service/img-bb-service';
 import { PropertyService } from '../../../../core/services/property-service/property-service';
+import { P } from '@angular/cdk/keycodes';
 
 @Component({
   selector: 'app-property-list',
@@ -40,14 +41,14 @@ export class PropertyList implements OnInit {
   }
 
   goToEdit(propertyToEdit: Property) {
-    return this.router.navigate(['admin/form-update'], {
+    return this.router.navigate(['admin/properties/edit',propertyToEdit.id], {
       state: { info: propertyToEdit },
     });
   }
 
   goToDetail(propertyToSee: Property) {
-    return this.router.navigate(['property-detail'], {
-      state: { propertyData: propertyToSee },
+    return this.router.navigate(['properties',propertyToSee.id], {
+      state: { info: propertyToSee },
     });
   }
 
