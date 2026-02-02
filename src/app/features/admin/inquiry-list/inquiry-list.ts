@@ -10,6 +10,8 @@ import {
 import { InquiryModel } from '../../../core/models/InquiryModel';
 import { InquiryService } from '../../../core/services/inquiry-service/inquiry-service';
 import { HatoasPageResponse } from '../../../core/models/HatoasPageResponse';
+import Property from '../../../core/models/properties/Property';
+import { ImgBbService } from '../../../core/services/imgbb-service/img-bb-service';
 
 @Component({
   selector: 'app-inquiry-list',
@@ -20,9 +22,12 @@ import { HatoasPageResponse } from '../../../core/models/HatoasPageResponse';
 })
 export class InquiryList implements OnInit {
   private inquiryService = inject(InquiryService);
+  private imgService = inject(ImgBbService);
 
   // --- SEÑALES ---
   inquiries = signal<InquiryModel[]>([]);
+
+  imageNotFound: string = ""
 
   // Paginación
   currentPage = signal<number>(0);
@@ -58,6 +63,7 @@ export class InquiryList implements OnInit {
 
   ngOnInit(): void {
     this.fetchInquiries();
+    this.imageNotFound = this.imgService.getNotFound();
   }
 
   // --- LÓGICA DE DATOS ---
@@ -114,6 +120,26 @@ export class InquiryList implements OnInit {
       default:
         return 'bg-gray-100 text-gray-800 border-gray-200';
     }
+  }
+
+  // ESTE ES EL MÉTODO QUE USARÁ EL HTML DIRECTAMENTE
+  getCoverImage(p: Property): string {
+    const images = p.imageDTOList;
+
+    // 1. Si no hay imágenes, devolvemos el placeholder
+    if (!images || images.length === 0) {
+      return this.imageNotFound;
+    }
+
+    // 2. Ordenamos visualmente por 'position' para asegurar consistencia (opcional pero recomendado)
+    // Nota: slice() crea una copia para no mutar el array original en cada render
+    const sortedImages = images.slice().sort((a, b) => a.position - b.position);
+
+    // 3. Buscamos la que tenga isPrimary: true
+    const primaryImg = sortedImages.find((img) => img.isPrimary);
+
+    // 4. Si existe primary, devolvemos esa. Si no, la primera de la lista (posición 0)
+    return primaryImg ? primaryImg.url : sortedImages[0].url;
   }
 
   viewInquiryDetails(inquiry: InquiryModel) {

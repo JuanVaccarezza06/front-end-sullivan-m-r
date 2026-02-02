@@ -293,7 +293,6 @@ export class PropertyDetail implements OnInit {
   }
 
   onSumbit() {
-    console.log('log');
 
     // CAMBIO: Validación inicial igual que en Contact.ts
     if (this.form.invalid) {
@@ -332,8 +331,6 @@ export class PropertyDetail implements OnInit {
   }
 
   choiceMainImage(p: Property): string {
-    console.log('log');
-
     const images = p.imageDTOList;
 
     // 1. Caso: No hay imágenes

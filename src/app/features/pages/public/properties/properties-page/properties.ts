@@ -408,44 +408,6 @@ export class Properties implements OnInit {
     this.executeFilterCall(this.filterResult);
   }
 
-  // executeFilterCall(filterResult: PropertiesFilter) {
-  //   // 4. UI State Updates
-  //   this.resetPageInfo();
-  //   this.isFilter = true;
-  //   this.filterResult = filterResult;
-
-  //   console.log('Filter payload to send:', this.filterResult);
-
-  //   // 5. API Call
-  //   this.propertyService.applyFilter(this.filterResult, this.pageSelected).subscribe({
-  //     next: (data) => {
-  //       // CASE: Results found
-  //       if (data.content && data.content.length > 0) {
-  //         this.updatePageInfo(data.totalPages - 1, data.number, data.content);
-  //         this.properties.forEach((value) => this.choiceMainImage(value));
-
-  //         this.filterFailed = false; // Important: Ensure error state is cleared
-  //         console.log('Properties loaded successfully from filter');
-  //       }
-  //       // CASE: No results found (FIX ADDED HERE)
-  //       else {
-  //         console.log('Filter returned no results.');
-  //         this.properties = []; // Clear the list
-  //         this.filterFailed = true; // Trigger the "No properties found" UI
-  //         this.numberOfPropertiesLoadInArray = 0;
-  //         this.childComponent.showError('El item no tiene usos.');
-  //       }
-  //     },
-  //     error: (e) => {
-  //       console.error('Error applying filter:', e);
-  //       // Optional: Handle visual error feedback here
-  //       this.filterFailed = true;
-  //     },
-  //   });
-  // }
-
-  // properties.ts
-
   executeFilterCall(filterResult: PropertiesFilter) {
     // 1. Actualizamos estado visual
     this.resetPageInfo();
@@ -548,6 +510,7 @@ export class Properties implements OnInit {
 
   // ESTE ES EL MÉTODO QUE USARÁ EL HTML DIRECTAMENTE
   getCoverImage(p: Property): string {
+  
     const images = p.imageDTOList;
 
     // 1. Si no hay imágenes, devolvemos el placeholder

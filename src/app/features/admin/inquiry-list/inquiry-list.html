@@ -67,7 +67,7 @@
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center">
                   <div class="flex-shrink-0 h-10 w-12 bg-gray-200 rounded overflow-hidden">
-                    <img class="h-10 w-12 object-cover" [src]="inquiry.propertyDTO.mainImageUrl" alt="Propiedad">
+                    <img class="h-10 w-12 object-cover" [src]="getCoverImage(inquiry.propertyDTO)" alt="Propiedad">
                   </div>
                   <div class="ml-4">
                     <div class="text-sm font-medium text-gray-900 truncate max-w-[200px]" [title]="inquiry.propertyDTO.title">
