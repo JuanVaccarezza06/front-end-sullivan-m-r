@@ -6,6 +6,7 @@ export interface InquiryModel {
   state: {
     stateName: string
   };
+  createAt: string
   user: User;
   propertyDTO: Property;
 }

@@ -4,7 +4,6 @@ import { FormProperty } from './features/admin/properties/create/create-property
 import { UserInfo } from './features/admin/user-info/user-info';
 import { LogIn } from './features/pages/auth-pages/log-in/log-in';
 import { Register } from './features/pages/auth-pages/register/register';
-import { Consults } from './features/admin/consults/consults';
 import { Home } from './features/pages/home-page/home';
 import { Contact } from './features/pages/contact-page/contact';
 import { AboutUs } from './features/pages/about-us-page/about-us';
@@ -16,6 +15,7 @@ import { UserUpdate } from './features/pages/auth-pages/user-update/user-update'
 import { UserProfile } from './features/pages/auth-pages/user-menu/user-profile/user-profile';
 import { Properties } from './features/pages/public/properties/properties-page/properties';
 import { PropertyDetail } from './features/pages/public/properties/property-detail/property-detail';
+import { InquiryList } from './features/admin/inquiry-list/inquiry-list';
 
 export const routes: Routes = [
   // ==========================================
@@ -57,7 +57,7 @@ export const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
 
       { path: 'dashboard', component: DashboardPage },
-      { path: 'consults', component: Consults },
+      { path: 'consults', component: InquiryList },
 
       // Sub-Feature: Gestión de Propiedades
       {
