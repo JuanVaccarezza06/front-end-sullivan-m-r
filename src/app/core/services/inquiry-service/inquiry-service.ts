@@ -1,8 +1,9 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { InquiryModel } from '../../models/InquiryModel';
 import { Observable } from 'rxjs';
 import { HatoasPageResponse } from '../../models/HatoasPageResponse';
+import State from '../../models/State';
 
 @Injectable({
   providedIn: 'root',
@@ -23,4 +24,25 @@ export class InquiryService {
       `${this.API_URL}/find-all?page=${page}&size=${this.size}`,
     );
   }
+
+  search(query: string, state: string, page: number): Observable<HatoasPageResponse<InquiryModel>> {
+    // Usamos HttpParams para armar la query string limpia (?query=...&state=...&page=...)
+    let params = new HttpParams()
+      .set('query', query)
+      .set('page', page.toString())
+      .set('size', '10');
+
+    if (state && state !== 'ALL') {
+      params = params.set('state', state);
+    }
+
+    return this.http.get<HatoasPageResponse<InquiryModel>>(`${this.API_URL}/search`, { params });
+  }
+
+  updateState(id: number, state: State): Observable<InquiryModel> {
+    return this.http.put<InquiryModel>(
+      `${this.API_URL}/put-state/${id}`,state
+    );
+  }
+
 }

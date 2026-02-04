@@ -292,41 +292,59 @@ export class PropertyDetail implements OnInit {
     }, 0);
   }
 
-  onSumbit() {
+onSubmit() { 
 
-    // CAMBIO: Validación inicial igual que en Contact.ts
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
-    // Extracción y sanitización de valores
     const rawFirstName = this.form.get('firstName')?.value.trim();
     const rawSurname = this.form.get('surname')?.value.trim();
     const rawEmail = this.form.get('email')?.value.trim().toLowerCase();
     const rawPhone = this.form.get('numberPhone')?.value.trim();
     const rawDesc = this.form.get('description')?.value.trim();
 
-    // Construcción del DTO
-    let result = {
+    // CONSTRUCCIÓN DEL DTO
+    // No uses 'as InquiryModel' todavía para ver si TS se queja
+    const result: InquiryModel = {
+      // 1. ID y FECHA:
+      // Como es un POST (Creación), el ID y createAt los genera el Backend.
+      // Puedes mandarlos null o undefined (ajusta tu interfaz si es estricta)
+      id: 0, // O null, el backend lo ignorará
+      createAt: '', // El backend pone la fecha actual (@PrePersist)
+
       description: rawDesc,
-      state: this.form.value.state,
+      
+      // 2. CORRECCIÓN CRÍTICA DEL ESTADO:
+      // No leemos del form. Creamos el objeto State explícito.
+      state: { 
+        stateName: 'PENDIENTE' 
+      },
+
       user: {
-        firstName: rawFirstName, // Asignación directa
-        surname: rawSurname, // Asignación directa
+        firstName: rawFirstName,
+        surname: rawSurname,
         email: rawEmail,
         numberPhone: rawPhone,
       },
+      
       propertyDTO: this.propertySelected,
-    } as InquiryModel;
+    };
+
+    console.log('Enviando Payload:', result); // Debugging Senior
 
     this.inquiryService.post(result).subscribe({
       next: (data) => {
-        console.log(data);
-        // Opcional: Resetear formulario o mostrar éxito
-        this.form.reset({ state: 'PENDIENTE' });
+        console.log('Éxito:', data);
+        // Resetear el form y dejar el estado (interno del form) listo por si acaso
+        this.form.reset(); 
+        // Aquí podrías mostrar una alerta de éxito (SweetAlert2 o Toastr)
       },
-      error: (e) => console.log(e),
+      error: (e) => {
+        console.error('Error al enviar consulta:', e);
+        // Manejar el error visualmente
+      },
     });
   }
 
