@@ -16,6 +16,7 @@ import { UserProfile } from './features/pages/auth-pages/user-menu/user-profile/
 import { Properties } from './features/pages/public/properties/properties-page/properties';
 import { PropertyDetail } from './features/pages/public/properties/property-detail/property-detail';
 import { InquiryList } from './features/admin/inquiry-list/inquiry-list';
+import { GeneralInquiryList } from './features/admin/general-inquiry-list/general-inquiry-list';
 
 export const routes: Routes = [
   // ==========================================
@@ -58,6 +59,7 @@ export const routes: Routes = [
 
       { path: 'dashboard', component: DashboardPage },
       { path: 'consults', component: InquiryList },
+      { path: 'contacts', component: GeneralInquiryList },
 
       // Sub-Feature: Gestión de Propiedades
       {

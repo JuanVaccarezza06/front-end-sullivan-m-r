@@ -7,6 +7,7 @@ import { AuthService } from '../../../core/auth-service/auth-service';
 import { ContactService } from '../../../core/services/contact-service/contact-service';
 import { UserService } from '../../../core/services/user-service/user-service';
 import MotiveDTO from '../../../core/models/MotiveDTO';
+import { GeneralInquiryService } from '../../../core/services/general-inquiry-service/general-inquiry-service';
 
 // Models & Services
 
@@ -27,7 +28,7 @@ export class Contact implements OnInit {
   private fb = inject(FormBuilder);
   private motiveService = inject(MotiveService);
   private authService = inject(AuthService);
-  private contactService = inject(ContactService);
+  private generalInquiryService = inject(GeneralInquiryService);
   private userService = inject(UserService);
   private route = inject(ActivatedRoute);
 
@@ -142,8 +143,11 @@ export class Contact implements OnInit {
 
     // Construct DTO
     const generalInquiry = {
+      id: 0,
       description: rawDesc,
-      stateDTO: 'PENDIENTE',
+      stateDTO: {
+        stateName: 'PENDIENTE' 
+      },
       userDTO: {
         firstName: rawFirstName,
         surname: rawSurname,
@@ -152,10 +156,11 @@ export class Contact implements OnInit {
       },
       motiveDTO: {
         motiveName: motive
-      }
+      },
+      createAt : ""
     };
 
-    this.contactService.post(generalInquiry).subscribe({
+    this.generalInquiryService.post(generalInquiry).subscribe({
       next: (data) => console.log(data),
       error: (e) => console.log(e)
     })
