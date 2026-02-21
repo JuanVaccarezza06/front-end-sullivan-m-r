@@ -8,6 +8,7 @@ import PropertyPost from '../../models/properties/PropertyPost';
 import { HatoasPageResponse } from '../../models/HatoasPageResponse';
 import OperationType from '../../models/OperationType';
 import PropertyType from '../../models/PropertyType';
+import Currency from '../../models/Currency';
 
 @Injectable({
   providedIn: 'root',
@@ -55,6 +56,10 @@ export class PropertyService {
 
   getAround(number: number) {
     return this.http.get<Property[]>(`${this.API_URL}/${number}/nearby?km=30`);
+  }
+
+  getCurrencies() {
+    return this.http.get<Currency[]>(`${this.API_URL}/get/currencies`);
   }
 
   processPropertyImages(properties: Property[]): Property[];

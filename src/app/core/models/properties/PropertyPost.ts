@@ -1,34 +1,36 @@
-import Owner from "../actors/Owner"
-import Amenity from "../Amenity"
-import Address from "../geography/Address"
-import ZoneDTO from "../geography/Zone"
-import { ImageItem } from "../ImageItem"
-import OperationType from "../OperationType"
-import PropertyType from "../PropertyType"
+import Owner from '../actors/Owner';
+import Amenity from '../Amenity';
+import Currency from '../Currency';
+import Address from '../geography/Address';
+import ZoneDTO from '../geography/Zone';
+import { ImageItem } from '../ImageItem';
+import OperationType from '../OperationType';
+import PropertyType from '../PropertyType';
 
 export default interface PropertyPost {
+  id: number | null;
+  title: string;
+  description: string;
+  price: number;
+  publicationDate: string;
+  yearConstruction: number;
+  areaStructure: number;
+  totalArea: number;
+  rooms: number;
+  bathrooms: number;
+  bedrooms: number;
 
-    id : number | null
-    title: string
-    description: string
-    price: number
-    publicationDate: string
-    yearConstruction: number
-    areaStructure: number
-    totalArea: number
-    rooms: number
-    bathrooms: number
-    bedrooms: number
+  propertyTypeDTO: PropertyType;
+  operationTypeDTO: OperationType;
 
-    propertyTypeDTO: PropertyType
-    operationTypeDTO: OperationType
+  currency: Currency;
 
-    zoneDTO: ZoneDTO
+  zoneDTO: ZoneDTO;
 
-    addressDTO: Address
+  addressDTO: Address;
 
-    ownerDTO: Owner
+  ownerDTO: Owner;
 
-    amenitiesList: Amenity[]
-    imageDTOList: ImageItem[]
+  amenitiesList: Amenity[];
+  imageDTOList: ImageItem[];
 }

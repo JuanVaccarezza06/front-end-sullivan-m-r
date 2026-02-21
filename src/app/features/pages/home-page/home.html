@@ -92,7 +92,7 @@
             <p>{{ p.description }}</p>
 
             <div class="footer">
-              <div class="price">${{ p.price | number: '1.0-0' }}</div>
+              <div class="price">{{ p.price | number: '1.0-0' }} {{ p.currency.isoCode }}</div>
               <div class="features">
                 <div class="feature">
                   <svg width="20" height="20" fill="#0d9e6d" viewBox="0 0 20 20">

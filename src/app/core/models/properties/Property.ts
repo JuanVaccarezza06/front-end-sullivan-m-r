@@ -5,6 +5,7 @@ import PropertyType from "../PropertyType";
 import ZoneDTO from "../geography/Zone";
 import Amenity from "../Amenity";
 import { ImageItem } from "../ImageItem";
+import Currency from "../Currency";
 
 export default interface Property{
   id: number;
@@ -27,6 +28,8 @@ export default interface Property{
   rooms: number;
   bathrooms: number;
   bedrooms: number;
+
+  currency : Currency
 
   latitude: number;
   longitude: number;

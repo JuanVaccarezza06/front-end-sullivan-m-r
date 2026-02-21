@@ -12,6 +12,7 @@ import { ZoneService } from '../../../../../core/services/zone-service/zone-serv
 import { ImgBbService } from '../../../../../core/services/imgbb-service/img-bb-service';
 import { catchError, finalize, forkJoin, map, Observable, of, switchMap } from 'rxjs';
 import { ImageItem } from '../../../../../core/models/ImageItem';
+import Currency from '../../../../../core/models/Currency';
 
 @Component({
   selector: 'app-form-property',
@@ -31,6 +32,7 @@ export class FormProperty implements OnInit {
   isUpdate = signal<boolean>(false);
   isNewZoneMode = signal<boolean>(false); // false = Seleccionar, true = Crear
   isUploading = signal<boolean>(false); // <--- NUEVA SIGNAL PARA LOADING UI
+  currencies = signal<Currency[]>([]);
 
   // Datos para Selects
   operationTypes = signal<OperationType[]>([]);
@@ -60,6 +62,7 @@ export class FormProperty implements OnInit {
       title: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(50)]],
       description: ['', [Validators.required, Validators.minLength(30), Validators.maxLength(2000)]],
       price: [null, [Validators.required, Validators.min(1)]],
+      currencyIsoCode: ['', Validators.required], // <-- NUEVO CONTROL
       propertyTypeName: ['', Validators.required],
       operationTypeName: ['', Validators.required],
 
@@ -136,6 +139,7 @@ export class FormProperty implements OnInit {
       .getAvailablePropertyTypes()
       .subscribe((data) => this.propertyTypes.set(data));
     this.zoneService.getAll().subscribe((data) => this.zones.set(data));
+    this.propertyService.getCurrencies().subscribe((data) => this.currencies.set(data));
   }
 
   private checkEditMode() {
@@ -154,6 +158,7 @@ export class FormProperty implements OnInit {
       title: prop.title,
       description: prop.description,
       price: prop.price,
+      currencyIsoCode: prop.currency?.isoCode || '', // <-- MAPEAR LA MONEDA AL EDITAR
       propertyTypeName: prop.propertyTypeDTO.typeName,
       operationTypeName: prop.operationTypeDTO.operationName,
       yearConstruction: prop.yearConstruction,
@@ -288,7 +293,7 @@ export class FormProperty implements OnInit {
       title: v.title,
       description: v.description,
       price: v.price,
-      // ... resto de campos simples ...
+      currencyDTO: { isoCode: v.currencyIsoCode },
       yearConstruction: v.yearConstruction,
       areaStructure: v.areaStructure,
       totalArea: v.totalArea,
