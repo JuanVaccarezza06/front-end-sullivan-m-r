@@ -26,7 +26,7 @@
               {{ propertySelected.addressDTO.numbering }}
             </div>
 
-            <div class="property-price">€{{ propertySelected.price }}</div>
+            <div class="property-price">${{ propertySelected.price | number: '1.0-0' }}</div>
           </header>
 
           <figure class="media-container">

@@ -23,10 +23,11 @@ import { ImgBbService } from '../../../../../core/services/imgbb-service/img-bb-
 import { PropertyService } from '../../../../../core/services/property-service/property-service';
 import { ZoneService } from '../../../../../core/services/zone-service/zone-service';
 import { AdapterItem } from '../../../../../shared/components/ui/adapter-item/adapter-item';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-properties',
-  imports: [ReactiveFormsModule, AdapterItem],
+  imports: [ReactiveFormsModule, AdapterItem, DecimalPipe],
   templateUrl: './properties.html',
   styleUrl: './properties.css',
 })

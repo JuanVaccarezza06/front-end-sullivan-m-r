@@ -1,36 +1,35 @@
-/* RESET FOR MARGIN AND PADDING */
+/* =========================================
+   1. GLOBAL & RESET
+   ========================================= */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  /* Prevents padding from widening boxes */
 }
 
 html,
 body {
   width: 100%;
 }
-/* Main contenetor */
+
 .home {
   min-width: 100%;
   min-height: 100%;
   overflow-x: hidden;
   background: #ffffff;
 }
-
-/* ========== HERO SECTION ========== */
+/* =========================================
+   2. HERO SECTION
+   ========================================= */
 .hero {
   position: relative;
   height: 50vh;
   max-height: 40rem;
   min-height: 500px;
-
-  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
-    url('/FONDO_CHAT.png');
+  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/FONDO_CHAT.png');
   background-size: auto 100%;
   background-position: center;
   background-repeat: repeat-x;
-
   display: flex;
   align-items: center;
   justify-content: center;
@@ -39,31 +38,6 @@ body {
   text-align: center;
 }
 
-/* ========== Sucess message ========== */
-
-.message-box {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
-  padding: 2rem 3rem;
-  border-radius: 0.50rem;
-  box-shadow: 0 1rem 2rem rgba(16, 185, 129, 0.4);
-  z-index: 10;
-  animation: fadeInPop 0.6s ease-out;
-  border: 3px solid rgba(255, 255, 255, 0.3);
-}
-
-.message-log {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin: 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* ========== HERO CONTENT ========== */
 .hero-content {
   max-width: 50rem;
   z-index: 1;
@@ -91,6 +65,11 @@ body {
   flex-wrap: wrap;
 }
 
+/* =========================================
+   3. UI COMPONENTS (BUTTONS & ALERTS)
+   ========================================= */
+
+/* --- Buttons --- */
 .btn-primary,
 .btn-secondary {
   padding: 1rem 2rem;
@@ -125,7 +104,32 @@ body {
   transform: translateY(-2px);
 }
 
-/* ========== SEARCH SECTION ========== */
+/* --- Success Message (Toast) --- */
+.message-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  padding: 2rem 3rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1rem 2rem rgba(16, 185, 129, 0.4);
+  z-index: 10;
+  animation: fadeInPop 0.6s ease-out;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+.message-log {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* =========================================
+   4. SEARCH SECTION
+   ========================================= */
 .search-section {
   background: white;
   padding: 3rem 2rem;
@@ -150,6 +154,15 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1.5rem;
   align-items: end;
+}
+
+fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+  min-inline-size: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .form-group {
@@ -200,30 +213,22 @@ body {
   box-shadow: 0 0.5rem 1rem rgba(13, 158, 109, 0.3);
 }
 
-
-fieldset {
-  border: none;
-  margin: 0;
-  padding: 0;
-  min-inline-size: auto;
-  display: flex;
-  flex-direction: column;
-}
-
 .btn-search:disabled {
   background: #9ca3af;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
 }
+
 .btn-search:disabled:hover {
   background: #9ca3af;
   transform: none;
   box-shadow: none;
 }
 
-/* ========== FEATURED SECTION ========== */
-
+/* =========================================
+   5. FEATURED PROPERTIES GRID
+   ========================================= */
 .section-header {
   display: flex;
   justify-content: center;
@@ -242,7 +247,6 @@ fieldset {
   margin-right: 2rem;
 }
 
-
 .view-all {
   color: #0d9e6d;
   text-decoration: none;
@@ -256,19 +260,15 @@ fieldset {
   transform: translateX(5px);
 }
 
-/* ========== PROPERTIES GRID ========== */
 .properties-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
   gap: 4rem;
-
   width: 100%;
   max-width: 90rem;
   margin: 0 auto;
   padding: 0 1rem;
-
   margin-bottom: 5rem;
-
 }
 
 .featured-section {
@@ -276,25 +276,21 @@ fieldset {
   max-width: 100%;
 }
 
-.property-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
-
+/* =========================================
+   6. CARDS (PROPIEDADES)
+   ========================================= */
 .card {
-
   width: 100%;
   min-width: 0;
-  min-width: none;
   background: white;
   border-radius: 1rem;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   cursor: pointer;
-
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .card:hover {
@@ -302,12 +298,20 @@ fieldset {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
+/* Image Area */
 .card .image {
   position: relative;
   height: 17rem;
   background: linear-gradient(135deg, #0d9e6d 0%, #059669 100%);
   background-size: cover;
   background-position: center;
+}
+
+.property-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 .badge {
@@ -322,17 +326,21 @@ fieldset {
   font-weight: 600;
 }
 
+/* Content Area */
 .card .content {
   padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
-h2 {
+.card .content h2 {
   font-size: 1.3rem;
   color: #1f2937;
   margin-bottom: 0.8rem;
 }
 
-.location {
+.card .content .location {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -341,20 +349,31 @@ h2 {
   font-size: 0.9rem;
 }
 
+/* Busca esta parte en tu CSS */
 .card .content p {
   color: #6b7280;
   font-size: 0.95rem;
   line-height: 1.5;
   margin-bottom: 1.5rem;
 
+  /* --- CORRECCIÓN AQUÍ --- */
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* <--- ESTA ES LA CLAVE PARA LOS PUNTOS (...) */
+  line-clamp: 3; /* Puedes dejar esta por compatibilidad futura */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 4.5rem;
 }
 
+/* Footer Area */
 .footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding-top: 1rem;
   border-top: 1px solid #e5e7eb;
+  margin-top: auto;
 }
 
 .price {
@@ -376,39 +395,38 @@ h2 {
   font-size: 0.9rem;
 }
 
+/* =========================================
+   7. MEDIA QUERIES (RESPONSIVE)
+   ========================================= */
 
-/* MEDIAS QUERYS */
-
+/* Large Screens */
 @media (max-width: 1500px) {
   .properties-grid {
     grid-template-columns: repeat(2, 1fr);
     padding: 0 5rem;
     gap: 5rem;
-
     box-sizing: border-box;
     width: 100%;
   }
 }
 
-/* =========================================
-   MEDIA QUERY 900PX (TABLETS Y PHONES)
-   ========================================= */
+/* Tablets & Phones (900px) */
 @media (max-width: 900px) {
-
+  /* Search Responsive */
   .search-section {
     width: 92%;
-    max-width: 500px; 
+    max-width: 500px;
     margin-left: auto;
     margin-right: auto;
     padding: 2rem 1.5rem;
-    height: auto; 
+    height: auto;
   }
 
   .search-form {
     display: flex;
-    flex-direction: column; 
-    gap: 1.2rem;            
-    align-items: stretch;   
+    flex-direction: column;
+    gap: 1.2rem;
+    align-items: stretch;
   }
 
   .search-form .form-group {
@@ -418,21 +436,23 @@ h2 {
   .btn-search {
     width: 100%;
     margin-top: 0.5rem;
-    padding: 1rem; 
+    padding: 1rem;
   }
 
+  /* Grid & Cards Responsive */
   .properties-grid {
     grid-template-columns: 1fr;
-    padding: 0 1.5rem; 
+    padding: 0 1.5rem;
     gap: 3rem;
   }
-  
+
   .card {
     width: 100%;
-    max-width: 500px; 
-    margin: 0 auto;   
+    max-width: 500px;
+    margin: 0 auto;
   }
 
+  /* Hero & Text Responsive */
   .hero-content h1 {
     font-size: 1.8rem;
     padding: 0 0.5rem;

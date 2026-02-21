@@ -7,12 +7,12 @@ import OperationType from '../../../core/models/OperationType';
 import ZoneDTO from '../../../core/models/Zone';
 import { PropertyService } from '../../../core/services/property-service/property-service';
 import { ZoneService } from '../../../core/services/zone-service/zone-service';
-import { ImgBbService } from '../../../core/services/imgbb-service/img-bb-service';
 import PropertiesFilter from '../../../core/models/PropertiesFilter';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, ReactiveFormsModule],
+  imports: [RouterLink, ReactiveFormsModule,DecimalPipe],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })

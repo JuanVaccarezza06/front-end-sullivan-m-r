@@ -58,7 +58,7 @@ export class FormProperty implements OnInit {
       // 1. Información Básica
       id: [null],
       title: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(50)]],
-      description: ['', [Validators.required, Validators.minLength(30), Validators.maxLength(300)]],
+      description: ['', [Validators.required, Validators.minLength(30), Validators.maxLength(2000)]],
       price: [null, [Validators.required, Validators.min(1)]],
       propertyTypeName: ['', Validators.required],
       operationTypeName: ['', Validators.required],

@@ -1,193 +1,222 @@
 <!-- Header property generic -->
 
 @if (!adminMode) {
-<section class="propiedades-header">
-  <div class="propiedades-content">
-    <h1 class="propiedades-titulo">Nuestras Propiedades</h1>
-    <p class="propiedades-descripcion">Descubre nuestra selección de propiedades con auténtico carácter irlandés. Cada
-      hogar ha sido cuidadosamente seleccionado para ofrecerte lo mejor en confort, diseño y ubicación.</p>
-  </div>
-</section>
+  <section class="propiedades-header">
+    <div class="propiedades-content">
+      <h1 class="propiedades-titulo">Nuestras Propiedades</h1>
+      <p class="propiedades-descripcion">
+        Descubre nuestra selección de propiedades con auténtico carácter irlandés. Cada hogar ha
+        sido cuidadosamente seleccionado para ofrecerte lo mejor en confort, diseño y ubicación.
+      </p>
+    </div>
+  </section>
 }
 
 <!-- Main Content -->
 
 <div class="container">
-
   @if (!adminMode) {
+    <main class="content">
+      <!-- This if checks if the page is in edit/config mode -->
 
-  <main class="content"> <!-- This if checks if the page is in edit/config mode -->
-
-    @if (!filterFailed) {
-    <!-- Header from properties section -->
-    <div class="content-header">
-      <div class="filter-info">
-        @if (isFilter) {
-        <div class="header-properties">
-          <p>Propiedades que cumplen con el filtro aplicado recientemente</p>
-          <button class="btn-link" (click)="clearFilter()">Limpiar filtro</button>
-        </div>
-        }
-        @else { <p>Se estan mostrando {{numberOfPropertiesLoadInArray}} propiedades</p> }
-      </div>
-
-      <!-- Pagination section into header properties-->
-      <div class="pagination pagination--minimal">
-        <button class="pagination__button" id="prevBtn2" (click)="changePage(false)">
-          ‹
-        </button>
-        <span class="pagination__info">
-          Página <span>{{pageSelected}}</span> de <span>{{lastPage}}</span>
-        </span>
-        <button class="pagination__button" id="nextBtn2" (click)="changePage(true)">
-          ›
-        </button>
-      </div>
-
-    </div>
-    }
-    <!-- Properties section -->
-    <div class="grid">
       @if (!filterFailed) {
-
-      @for (p of properties; track p.id) {
-      <!-- Cards -->
-      <article class="card" (click)="detail(p)">
-
-        <div class="card-image"> <!-- Image box -->
-          <img [src]="getCoverImage(p)" alt="Propiedad en venta">
-          <span class="badge">{{p.operationTypeDTO.operationName}}</span>
-        </div>
-
-        <div class="card-body"> <!-- Body card -->
-          <h2>{{p.title}}</h2> <!-- Title -->
-          <div class="location"> <!-- Zone box -->
-            <svg width="16" height="16" fill="#0d9e6d" viewBox="0 0 20 20">
-              <path fill-rule="evenodd"
-                d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" />
-            </svg>
-            <span>{{p.zoneDTO.zoneName}}</span>
+        <!-- Header from properties section -->
+        <div class="content-header">
+          <div class="filter-info">
+            @if (isFilter) {
+              <div class="header-properties">
+                <p>Propiedades que cumplen con el filtro aplicado recientemente</p>
+                <button class="btn-link" (click)="clearFilter()">Limpiar filtro</button>
+              </div>
+            } @else {
+              <p>Se estan mostrando {{ numberOfPropertiesLoadInArray }} propiedades</p>
+            }
           </div>
 
-          <p>{{p.description}}</p> <!-- Description -->
-
-          <div class="card-footer"> <!-- Footer card -->
-
-            <div class="price">${{p.price}}</div> <!-- Price -->
-
-            <div class="features"> <!-- Feature box -->
-              <div class="feature"> <!-- Rooms box -->
-                <svg width="20" height="20" fill="#0d9e6d" viewBox="0 0 20 20">
-                  <path
-                    d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
-                </svg>
-                <span>{{p.rooms}}</span>
+          <!-- Pagination section into header properties-->
+          <div class="pagination pagination--minimal">
+            <button class="pagination__button" id="prevBtn2" (click)="changePage(false)">‹</button>
+            <span class="pagination__info">
+              Página <span>{{ pageSelected }}</span> de <span>{{ lastPage }}</span>
+            </span>
+            <button class="pagination__button" id="nextBtn2" (click)="changePage(true)">›</button>
+          </div>
+        </div>
+      }
+      <!-- Properties section -->
+      <div class="grid">
+        @if (!filterFailed) {
+          @for (p of properties; track p.id) {
+            <div class="card" (click)="detail(p)">
+              <div class="image">
+                <img class="property-img" [src]="getCoverImage(p)" alt="Propiedad Sullivan Mor" />
+                <span class="badge">{{ p.operationTypeDTO.operationName }}</span>
               </div>
 
-              <div class="feature"> <!-- Bathroom box -->
-                <svg width="20" height="20" fill="#0d9e6d" viewBox="0 0 20 20">
-                  <path
-                    d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
-                </svg>
-                <span>{{p.bathrooms}}</span>
-              </div>
+              <div class="content">
+                <h2>{{ p.title }}</h2>
 
+                <div class="location">
+                  <svg width="16" height="16" fill="#0d9e6d" viewBox="0 0 20 20">
+                    <path
+                      fill-rule="evenodd"
+                      d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                    />
+                  </svg>
+                  <span>{{ p.zoneDTO.zoneName }}</span>
+                </div>
+
+                <p>{{ p.description }}</p>
+
+                <div class="footer">
+                  <div class="price">${{ p.price | number: '1.0-0' }}</div>
+
+                  <div class="features">
+                    <div class="feature">
+                      <svg width="20" height="20" fill="#0d9e6d" viewBox="0 0 20 20">
+                        <path
+                          d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
+                        />
+                      </svg>
+                      <span>{{ p.rooms }}</span>
+                    </div>
+
+                    <div class="feature">
+                      <svg width="20" height="20" fill="#0d9e6d" viewBox="0 0 20 20">
+                        <path
+                          d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"
+                        />
+                      </svg>
+                      <span>{{ p.bathrooms }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
+          }
+        } @else {
+          <!-- If the filter is empty, will show this -->
+          <div class="empty-state">
+            <!-- Empty box container -->
+            <div class="empty-icon-container">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="search-icon-anim"
+              >
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <!-- This if checks if the page is in edit/config mode -->
+            </div>
+
+            <h3>No encontramos propiedades</h3>
+            <p>Intenta ajustar los filtros o reinicia la búsqueda para ver más opciones.</p>
+
+            <button class="btn-reload" (click)="clearFilter()">
+              <!-- Button for come back to properties -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M23 4v6h-6"></path>
+                <path d="M1 20v-6h6"></path>
+                <path
+                  d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"
+                ></path>
+              </svg>
+              Ver todas las propiedades
+            </button>
           </div>
-        </div>
-      </article>
-      }
-      }@else { <!-- If the filter is empty, will show this -->
-      <div class="empty-state"> <!-- Empty box container -->
-        <div class="empty-icon-container">
-          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
-            class="search-icon-anim">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg> <!-- This if checks if the page is in edit/config mode -->
-        </div>
-
-        <h3>No encontramos propiedades</h3>
-        <p>Intenta ajustar los filtros o reinicia la búsqueda para ver más opciones.</p>
-
-        <button class="btn-reload" (click)="clearFilter()"> <!-- Button for come back to properties -->
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M23 4v6h-6"></path>
-            <path d="M1 20v-6h6"></path>
-            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-          </svg>
-          Ver todas las propiedades
-        </button>
+        }
       </div>
-      }
-
+    </main>
+  } @else {
+    <!-- ======== HERE STARTS THE AMENITY CONFIG HTML ======== -->
+    <div class="admin-panel">
+      <!-- Contenetor box -->
+      <app-adapter-item
+        (itemsUpdated)="updateDone($event)"
+        (itHadNotChanges)="turnOffAdminMode()"
+        (filterRequested)="filterFromOnSeeItem($event)"
+      >
+      </app-adapter-item>
     </div>
-
-  </main>
-  }@else {
-
-
-  <!-- ======== HERE STARTS THE AMENITY CONFIG HTML ======== -->
-  <div class="admin-panel"> <!-- Contenetor box -->
-    <app-adapter-item (itemsUpdated)="updateDone($event)" (itHadNotChanges)="turnOffAdminMode()"
-      (filterRequested)="filterFromOnSeeItem($event)">
-    </app-adapter-item>
-  </div>
-
   }
 
   <!-- ======== SIDEBAR ======== -->
 
-  <aside class="sidebar"> <!-- Aside conteiner -->
-    <div class="sidebar-header"> <!-- Aside header -->
+  <aside class="sidebar">
+    <!-- Aside conteiner -->
+    <div class="sidebar-header">
+      <!-- Aside header -->
       <h2>Filtros</h2>
       <div>
         <!-- Clean filter button -->
-        <button class="btn-link" [disabled]="adminMode" [disabled]="!isFilter" (click)="clearFilter()">
+        <button
+          class="btn-link"
+          [disabled]="adminMode"
+          [disabled]="!isFilter"
+          (click)="clearFilter()"
+        >
           Limpiar filtro
         </button>
       </div>
     </div>
 
     <form class="filter-form" [formGroup]="form">
-
-      <fieldset> <!-- Type operation fieldset -->
+      <fieldset>
+        <!-- Type operation fieldset -->
         <legend>Tipo de operación</legend>
         <div class="form-group">
           <select id="operation-type" formControlName="operationTypes">
             <option value="" disabled selected>Seleccionar operación</option>
             @for (operation of operationTypesArray; track $index) {
-            <option [ngValue]="operation.operationName">{{operation.operationName}}</option>
+              <option [ngValue]="operation.operationName">{{ operation.operationName }}</option>
             }
           </select>
         </div>
       </fieldset>
 
-      <fieldset> <!-- Type property fieldset -->
+      <fieldset>
+        <!-- Type property fieldset -->
         <legend>Tipo de Propiedad</legend>
         <div class="form-group">
           <select id="property-type" formControlName="propertyTypes">
             <option value="" disabled selected>Seleccionar tipo</option>
             @for (type of propertyTypesArray; track $index) {
-            <option>{{type.typeName}}</option>
+              <option>{{ type.typeName }}</option>
             }
           </select>
         </div>
       </fieldset>
 
-      <fieldset> <!-- Zone fieldset -->
+      <fieldset>
+        <!-- Zone fieldset -->
         <legend>Zona</legend>
         <div class="form-group">
           <select id="zone" formControlName="zone">
             <option value="" disabled selected>Seleccionar zona</option>
             @for (z of zoneArrayFeatured; track $index) {
-            <option [ngValue]="z">
-              {{z.zoneName}}, {{z.cityDTO.cityName}},
-              {{z.cityDTO.provinceDTO.provinceName}},
-              {{z.cityDTO.provinceDTO.countryDTO.countryName}}
-            </option>
+              <option [ngValue]="z">
+                {{ z.zoneName }}, {{ z.cityDTO.cityName }},
+                {{ z.cityDTO.provinceDTO.provinceName }},
+                {{ z.cityDTO.provinceDTO.countryDTO.countryName }}
+              </option>
             }
           </select>
         </div>
@@ -199,66 +228,102 @@
         <div class="price-grid">
           <div class="form-group">
             <label for="minPrice">Mínimo</label>
-            <input type="number" id="minPrice" formControlName="minPrice" placeholder="Desde" min="0"
-              class="form-control">
+            <input
+              type="number"
+              id="minPrice"
+              formControlName="minPrice"
+              placeholder="Desde"
+              min="0"
+              class="form-control"
+            />
           </div>
 
           <div class="form-group">
             <label for="maxPrice">Máximo</label>
-            <input type="number" id="maxPrice" formControlName="maxPrice" placeholder="Hasta" min="0"
-              class="form-control">
+            <input
+              type="number"
+              id="maxPrice"
+              formControlName="maxPrice"
+              placeholder="Hasta"
+              min="0"
+              class="form-control"
+            />
           </div>
         </div>
 
-        @if (form.errors?.['rangeError'] && (form.get('minPrice')?.touched || form.get('maxPrice')?.touched)) {
-        <div class="error-message" style="color: red; font-size: 0.8rem; margin-top: 5px;">
-          El precio mínimo no puede ser mayor al máximo.
-        </div>
+        @if (
+          form.errors?.['rangeError'] &&
+          (form.get('minPrice')?.touched || form.get('maxPrice')?.touched)
+        ) {
+          <div class="error-message" style="color: red; font-size: 0.8rem; margin-top: 5px">
+            El precio mínimo no puede ser mayor al máximo.
+          </div>
         }
       </fieldset>
 
-      <fieldset> <!-- Room fieldset -->
+      <fieldset>
+        <!-- Room fieldset -->
         <legend>Ambientes</legend>
         <div class="rooms">
           @for (num of numberRooms; track $index) {
-          <button type="button" [class.active]="numberRoomsSelect === num" (click)="setRoomsValue(num)">
-            {{num}}+
-          </button>
+            <button
+              type="button"
+              [class.active]="numberRoomsSelect === num"
+              (click)="setRoomsValue(num)"
+            >
+              {{ num }}+
+            </button>
           }
         </div>
       </fieldset>
 
-      <fieldset formArrayName="amenities"> <!-- Amenities fieldset -->
+      <fieldset formArrayName="amenities">
+        <!-- Amenities fieldset -->
         <legend>Características</legend>
         <div class="amenities">
           @for (am of amenitiesArrayFeatured; track $index) {
-          <label class="checkbox-label">
-            <input type="checkbox" [formControlName]="$index">
-            <span class="span-name">{{ am.amenityName }}</span>
-          </label>
+            <label class="checkbox-label">
+              <input type="checkbox" [formControlName]="$index" />
+              <span class="span-name">{{ am.amenityName }}</span>
+            </label>
           }
         </div>
       </fieldset>
 
       <div class="button-group">
-        @if(auth.isLoggedIn() && auth.hasRoleAdmin()){
-        @if (!adminMode) { <button type="button" class="btn-submit btn-edit" (click)="adminMode=true">Editar</button>
-        <!-- Button edit page (into if) -->}
-        @else { <button type="button" class="btn-submit btn-edit" (click)="startSave()">Guardar</button> }}
-        <button type="submit" class="btn-submit" (click)="onSubmit()" [disabled]="adminMode"> Aplicar filtros</button>
+        @if (auth.isLoggedIn() && auth.hasRoleAdmin()) {
+          @if (!adminMode) {
+            <button type="button" class="btn-submit btn-edit" (click)="adminMode = true">
+              Editar
+            </button>
+            <!-- Button edit page (into if) -->
+          } @else {
+            <button type="button" class="btn-submit btn-edit" (click)="startSave()">Guardar</button>
+          }
+        }
+        <button type="submit" class="btn-submit" (click)="onSubmit()" [disabled]="adminMode">
+          Aplicar filtros
+        </button>
       </div>
     </form>
   </aside>
-
 </div>
 
-
-<section class="cta-contacto-section"> <!-- Footer from page -->
-  <svg class="star-icon" width="64" heigth="64" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+<section class="cta-contacto-section">
+  <!-- Footer from page -->
+  <svg
+    class="star-icon"
+    width="64"
+    heigth="64"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+  >
     <path fill="white" d="M12 2 Q 15 9 22 12 Q 15 15 12 22 Q 9 15 2 12 Q 9 9 12 2 z" />
   </svg>
   <h2 class="cta-titulo">¿No encuentras lo que buscas?</h2>
-  <p class="cta-descripcion">Contacta con nuestro equipo de expertos y te ayudaremos a encontrar la propiedad perfecta
-    para ti.</p>
+  <p class="cta-descripcion">
+    Contacta con nuestro equipo de expertos y te ayudaremos a encontrar la propiedad perfecta para
+    ti.
+  </p>
   <a href="contact" class="cta-boton">Contactar ahora</a>
 </section>

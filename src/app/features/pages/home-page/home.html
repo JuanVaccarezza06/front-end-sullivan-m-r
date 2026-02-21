@@ -1,17 +1,18 @@
 <main class="home">
-
   <!-- message if it come from login/register -->
   <section class="hero">
     @if (isFromLogin) {
-    <div class="message-box">
-      <h1 class="message-log">{{sucessMessage}}</h1>
-    </div>
+      <div class="message-box">
+        <h1 class="message-log">{{ sucessMessage }}</h1>
+      </div>
     }
 
     <div class="hero-content">
       <h1>Encuentra tu hogar ideal con el encanto irlandés</h1>
-      <p>En Sullivan Propiedades, combinamos la calidez irlandesa con el profesionalismo inmobiliario para ofrecerte las
-        mejores opciones.</p>
+      <p>
+        En Sullivan Propiedades, combinamos la calidez irlandesa con el profesionalismo inmobiliario
+        para ofrecerte las mejores opciones.
+      </p>
       <div class="hero-buttons">
         <button class="btn-primary" routerLink="properties">Ver Propiedades</button>
         <button class="btn-secondary" routerLink="contact">Contactar</button>
@@ -25,13 +26,12 @@
     <!-- Here starts the filter-->
 
     <form class="search-form" [formGroup]="form" (submit)="makeFilter()">
-
       <fieldset class="form-group">
         <label for="operation">Tipo de Operación</label>
         <select id="operation" formControlName="operationTypes">
           <option value="" disabled selected>-- Selecciona un tipo --</option>
-          @for (ot of operationTypeArray; track $index ){
-          <option>{{ot.operationName}}</option>
+          @for (ot of operationTypeArray; track $index) {
+            <option>{{ ot.operationName }}</option>
           }
         </select>
       </fieldset>
@@ -41,7 +41,7 @@
         <select id="property-type" formControlName="propertyTypes">
           <option value="" disabled selected>-- Selecciona un tipo --</option>
           @for (pt of propertyTypesArray; track $index) {
-          <option>{{pt.typeName}}</option>
+            <option>{{ pt.typeName }}</option>
           }
         </select>
       </fieldset>
@@ -51,19 +51,16 @@
         <select id="location" formControlName="zone">
           <option value="" disabled selected>-- Selecciona un tipo --</option>
           @for (z of zoneArrayFeatured; track $index) {
-          <option [ngValue]="z">
-            {{z.zoneName}},
-            {{z.cityDTO.cityName}},
-            {{z.cityDTO.provinceDTO.provinceName}},
-            {{z.cityDTO.provinceDTO.countryDTO.countryName}}
-          </option>
+            <option [ngValue]="z">
+              {{ z.zoneName }}, {{ z.cityDTO.cityName }}, {{ z.cityDTO.provinceDTO.provinceName }},
+              {{ z.cityDTO.provinceDTO.countryDTO.countryName }}
+            </option>
           }
         </select>
       </fieldset>
 
       <button [disabled]="form.invalid" type="submit" class="btn-search">Buscar</button>
     </form>
-
   </section>
 
   <section class="featured-section">
@@ -72,54 +69,52 @@
       <a routerLink="properties" class="view-all">Ver todas →</a>
     </div>
     <div class="properties-grid">
-
       @for (p of propertiesfeature; track p.id) {
-      <div class="card" (click)="viewDetail(p)">
-        <div class="image">
-          <img class="property-img" src="{{p.mainImageUrl}}" alt="property">
-          <span class="badge">{{p.operationTypeDTO.operationName}}</span>
-        </div>
-
-        <div class="content">
-          <h2>{{p.title}}</h2>
-
-          <div class="location">
-            <svg width="16" height="16" fill="#0d9e6d" viewBox="0 0 20 20">
-              <path fill-rule="evenodd"
-                d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" />
-            </svg>
-            <span>{{p.zoneDTO.zoneName}}</span>
+        <div class="card" (click)="viewDetail(p)">
+          <div class="image">
+            <img class="property-img" src="{{ p.mainImageUrl }}" alt="property" />
+            <span class="badge">{{ p.operationTypeDTO.operationName }}</span>
           </div>
 
-          <p>{{p.description}}</p>
+          <div class="content">
+            <h2>{{ p.title }}</h2>
 
-          <div class="footer">
-            <div class="price">${{p.price}}</div>
+            <div class="location">
+              <svg width="16" height="16" fill="#0d9e6d" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                />
+              </svg>
+              <span>{{ p.zoneDTO.zoneName }}</span>
+            </div>
 
-            <div class="features">
+            <p>{{ p.description }}</p>
 
-              <div class="feature">
+            <div class="footer">
+              <div class="price">${{ p.price | number: '1.0-0' }}</div>
+              <div class="features">
+                <div class="feature">
+                  <svg width="20" height="20" fill="#0d9e6d" viewBox="0 0 20 20">
+                    <path
+                      d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
+                    />
+                  </svg>
+                  <span>{{ p.rooms }}</span>
+                </div>
 
-                <svg width="20" height="20" fill="#0d9e6d" viewBox="0 0 20 20">
-                  <path
-                    d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
-                </svg>
-                <span>{{p.rooms}}</span>
-
+                <div class="feature">
+                  <svg width="20" height="20" fill="#0d9e6d" viewBox="0 0 20 20">
+                    <path
+                      d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"
+                    />
+                  </svg>
+                  <span>{{ p.bathrooms }}</span>
+                </div>
               </div>
-
-              <div class="feature">
-                <svg width="20" height="20" fill="#0d9e6d" viewBox="0 0 20 20">
-                  <path
-                    d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
-                </svg>
-                <span>{{p.bathrooms}}</span>
-              </div>
-
             </div>
           </div>
         </div>
-      </div>
       }
     </div>
   </section>

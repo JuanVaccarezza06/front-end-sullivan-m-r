@@ -7,10 +7,11 @@ import { InquiryModel } from '../../../../../core/models/InquiryModel';
 import Property from '../../../../../core/models/properties/Property';
 import { InquiryService } from '../../../../../core/services/inquiry-service/inquiry-service';
 import { PropertyService } from '../../../../../core/services/property-service/property-service';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-property-detail',
-  imports: [RouterLink, ReactiveFormsModule, GoogleMap, MapAdvancedMarker, MapInfoWindow],
+  imports: [RouterLink, ReactiveFormsModule, GoogleMap, MapAdvancedMarker, MapInfoWindow, DecimalPipe],
   templateUrl: './property-detail.html',
   styleUrl: './property-detail.css',
 })
