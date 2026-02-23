@@ -1,9 +1,15 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, LOCALE_ID, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
+
+// 1. Importas las utilidades de localización y el paquete de Argentina
+import { registerLocaleData } from '@angular/common';
+import localeEsAr from '@angular/common/locales/es-AR';
+
+registerLocaleData(localeEsAr, 'es-AR');
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -18,6 +24,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(
       withInterceptors([ authInterceptor ]) 
     ),
+    { provide: LOCALE_ID, useValue: 'es-AR' }
 
   ]
 };

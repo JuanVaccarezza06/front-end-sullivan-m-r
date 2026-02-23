@@ -58,9 +58,7 @@ export class PropertyService {
     return this.http.get<Property[]>(`${this.API_URL}/${number}/nearby?km=30`);
   }
 
-  getCurrencies() {
-    return this.http.get<Currency[]>(`${this.API_URL}/get/currencies`);
-  }
+
 
   processPropertyImages(properties: Property[]): Property[];
   processPropertyImages(properties: Property): Property;

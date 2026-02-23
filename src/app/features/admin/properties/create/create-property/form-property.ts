@@ -13,6 +13,7 @@ import { ImgBbService } from '../../../../../core/services/imgbb-service/img-bb-
 import { catchError, finalize, forkJoin, map, Observable, of, switchMap } from 'rxjs';
 import { ImageItem } from '../../../../../core/models/ImageItem';
 import Currency from '../../../../../core/models/Currency';
+import { CurrencyService } from '../../../../../core/services/currency-service/currency-service';
 
 @Component({
   selector: 'app-form-property',
@@ -24,6 +25,7 @@ export class FormProperty implements OnInit {
   // Inyeccion de dependencias moderna
   private fb = inject(FormBuilder);
   private propertyService = inject(PropertyService);
+  private currencyService = inject(CurrencyService);
   private zoneService = inject(ZoneService);
   private router = inject(Router);
   private imgBbService = inject(ImgBbService); // <--- INYECTAR
@@ -60,7 +62,10 @@ export class FormProperty implements OnInit {
       // 1. Información Básica
       id: [null],
       title: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(50)]],
-      description: ['', [Validators.required, Validators.minLength(30), Validators.maxLength(2000)]],
+      description: [
+        '',
+        [Validators.required, Validators.minLength(30), Validators.maxLength(2000)],
+      ],
       price: [null, [Validators.required, Validators.min(1)]],
       currencyIsoCode: ['', Validators.required], // <-- NUEVO CONTROL
       propertyTypeName: ['', Validators.required],
@@ -139,7 +144,7 @@ export class FormProperty implements OnInit {
       .getAvailablePropertyTypes()
       .subscribe((data) => this.propertyTypes.set(data));
     this.zoneService.getAll().subscribe((data) => this.zones.set(data));
-    this.propertyService.getCurrencies().subscribe((data) => this.currencies.set(data));
+    this.currencyService.getCurrencies().subscribe((data) => this.currencies.set(data));
   }
 
   private checkEditMode() {
@@ -293,7 +298,7 @@ export class FormProperty implements OnInit {
       title: v.title,
       description: v.description,
       price: v.price,
-      currencyDTO: { isoCode: v.currencyIsoCode },
+      currency: { isoCode: v.currencyIsoCode },
       yearConstruction: v.yearConstruction,
       areaStructure: v.areaStructure,
       totalArea: v.totalArea,
@@ -343,6 +348,7 @@ export class FormProperty implements OnInit {
       price: 250000,
       propertyTypeName: 'Departamento', // Asegúrate que coincida con tus Selects
       operationTypeName: 'Venta', // Asegúrate que coincida con tus Selects
+      currencyIsoCode: 'USD',
 
       yearConstruction: 2023,
       areaStructure: 120,
