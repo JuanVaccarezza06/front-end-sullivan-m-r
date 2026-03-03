@@ -1,5 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import Property from '../../../core/models/properties/Property';
 import PropertyType from '../../../core/models/PropertyType';
@@ -10,9 +18,27 @@ import { ZoneService } from '../../../core/services/zone-service/zone-service';
 import PropertiesFilter from '../../../core/models/PropertiesFilter';
 import { DecimalPipe } from '@angular/common';
 
+// 1. Definimos el validador (fuera de la clase del componente)
+export function atLeastOneFilterValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    // control.get() busca los valores actuales en el FormGroup
+    const operation = control.get('operationTypes')?.value;
+    const property = control.get('propertyTypes')?.value;
+    const zone = control.get('zone')?.value;
+
+    // Si los tres están vacíos (falsy), devolvemos el error
+    if (!operation && !property && !zone) {
+      return { atLeastOneRequired: true };
+    }
+
+    // Si al menos uno tiene algo, el formulario es válido
+    return null;
+  };
+}
+
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, ReactiveFormsModule,DecimalPipe],
+  imports: [RouterLink, ReactiveFormsModule, DecimalPipe],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
@@ -81,11 +107,14 @@ export class Home implements OnInit {
   }
 
   formInitializer() {
-    this.form = this.fb.group({
-      operationTypes: ['', [Validators.required]],
-      propertyTypes: ['', [Validators.required]],
-      zone: ['', Validators.required],
-    });
+    this.form = this.fb.group(
+      {
+        operationTypes: [''],
+        propertyTypes: [''],
+        zone: [''],
+      },
+      { validators: atLeastOneFilterValidator() },
+    ); // <-- Aquí aplicamos el validador global
   }
 
   loadAvailablesOperationTypes() {
@@ -117,22 +146,19 @@ export class Home implements OnInit {
   }
 
   makeFilter() {
+    // Obtenemos los valores actuales del formulario
+    const opType = this.form.get('operationTypes')?.value;
+    const propType = this.form.get('propertyTypes')?.value;
+    const selectedZone = this.form.get('zone')?.value;
+
     const filterResult = {
-      operationTypeDTO: { operationName: this.form.get('operationTypes')?.value },
-      propertyTypeDTO: { typeName: this.form.get('propertyTypes')?.value },
-      zoneDTO: {
-        zoneName: this.form.get('zone')?.value.zoneName,
-        cityDTO: {
-          cityName: this.form.get('zone')?.value.cityDTO.cityName,
-          provinceDTO: {
-            provinceName: this.form.get('zone')?.value.cityDTO.provinceDTO.provinceName,
-            countryDTO: {
-              countryName: this.form.get('zone')?.value.cityDTO.provinceDTO.countryDTO.countryName,
-            },
-          },
-        },
-        isFeatured: false,
-      },
+      operationTypeDTO: opType ? { operationName: opType } : null,
+      propertyTypeDTO: propType ? { typeName: propType } : null,
+      
+      // Dado que selectedZone ya es un objeto ZoneDTO completo, lo pasamos directo.
+      // Si necesitas forzar isFeatured en false, puedes usar el spread operator (...):
+      zoneDTO: selectedZone ? { ...selectedZone, isFeatured: false } : null,
+
       minPrice: 0,
       maxPrice: 0,
       rooms: 0,
@@ -141,14 +167,11 @@ export class Home implements OnInit {
 
     this.service.applyFilter(filterResult, 0).subscribe({
       next: (data) => {
-        // 1. Extraemos el contenido de forma segura
         const content = data._embedded ? data._embedded['propertyDTOList'] : [];
 
         if (content.length > 0) {
           console.log('Resultados encontrados:', data);
-
           this.router.navigate(['properties'], {
-            // Enviamos el objeto 'data' COMPLETO (que tiene _embedded y page)
             state: { homeResponse: data },
           });
         } else {
