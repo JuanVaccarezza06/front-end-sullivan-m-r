@@ -11,7 +11,14 @@ import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-property-detail',
-  imports: [RouterLink, ReactiveFormsModule, GoogleMap, MapAdvancedMarker, MapInfoWindow, DecimalPipe],
+  imports: [
+    RouterLink,
+    ReactiveFormsModule,
+    GoogleMap,
+    MapAdvancedMarker,
+    MapInfoWindow,
+    DecimalPipe,
+  ],
   templateUrl: './property-detail.html',
   styleUrl: './property-detail.css',
 })
@@ -33,6 +40,11 @@ export class PropertyDetail implements OnInit {
   zoom = 12;
 
   mapId = environment.mapId;
+
+// 1. REEMPLAZA TUS VARIABLES DE PINES POR ESTAS:
+  isMapReady = false;
+  mainPinContent: HTMLElement | null = null;
+  bluePinsRecord: Record<number, HTMLElement> = {}; // <-- Usamos Record para mejor reactividad
 
   // 2. Referencia a la ventana del HTML para controlarla desde código
   @ViewChild(MapInfoWindow) infoWindow!: MapInfoWindow;
@@ -91,6 +103,52 @@ export class PropertyDetail implements OnInit {
     this.cargarMapaSeguro();
   }
 
+  // 2. ACTUALIZA ESTE MÉTODO:
+  onMapInitialized() {
+    this.isMapReady = true;
+    this.generatePins(); // Intentamos generar pines si los datos ya llegaron
+  }
+
+  // 3. AGREGA ESTE NUEVO MÉTODO MAESTRO:
+ // 1. REEMPLAZA TU generatePins() POR ESTE:
+  generatePins() {
+    // Si el mapa no está cargado o aún no tenemos la propiedad principal, abortamos
+    if (!this.isMapReady || !this.propertySelected) return;
+
+    // BYPASS: Usamos nuestra propia función generadora de HTML nativo
+    if (!this.mainPinContent) {
+      // Pin rojo (o tu color corporativo #108a55) para la propiedad principal
+      this.mainPinContent = this.createCustomHTMLPin('#EA4335'); 
+    }
+
+    if (this.properties && this.properties.length > 0) {
+      const newBluePins: Record<number, HTMLElement> = {};
+      
+      for (const item of this.properties) {
+        // Pin azul para los vecinos
+        newBluePins[item.id] = this.createCustomHTMLPin('#4285F4'); 
+      }
+      
+      // Forzamos la reactividad
+      this.bluePinsRecord = newBluePins;
+    }
+  }
+
+  // 2. AGREGA ESTA NUEVA FUNCIÓN AUXILIAR:
+  private createCustomHTMLPin(color: string): HTMLElement {
+    const div = document.createElement('div');
+    
+    // Dibujamos un SVG idéntico al de Google Maps, pero con nuestro color
+    div.innerHTML = `
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="${color}" stroke="white" stroke-width="1.5" style="filter: drop-shadow(0px 3px 3px rgba(0,0,0,0.3)); cursor: pointer;">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+        <circle cx="12" cy="10" r="3" fill="white"></circle>
+      </svg>
+    `;
+    
+    // Retornamos el elemento SVG listo para inyectarse en el mapa
+    return div.firstElementChild as HTMLElement;
+  }
   formInitializer() {
     console.log('log');
 
@@ -169,8 +227,10 @@ export class PropertyDetail implements OnInit {
     // C. CARGA DE VECINOS
     this.propertyService.getAround(this.propertySelected.id).subscribe({
       next: (data: Property[]) => {
-        // Guardamos la data cruda. El HTML se encargará de buscar la imagen con getCoverImage
         this.properties = data;
+        
+        // ¡NUEVO! Generamos los pines ahora que tenemos la data
+        this.generatePins(); 
       },
       error: (err) => {
         console.error('Error al cargar propiedades cercanas:', err);
@@ -293,8 +353,7 @@ export class PropertyDetail implements OnInit {
     }, 0);
   }
 
-onSubmit() { 
-
+  onSubmit() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -316,11 +375,11 @@ onSubmit() {
       createAt: '', // El backend pone la fecha actual (@PrePersist)
 
       description: rawDesc,
-      
+
       // 2. CORRECCIÓN CRÍTICA DEL ESTADO:
       // No leemos del form. Creamos el objeto State explícito.
-      state: { 
-        stateName: 'PENDIENTE' 
+      state: {
+        stateName: 'PENDIENTE',
       },
 
       user: {
@@ -329,7 +388,7 @@ onSubmit() {
         email: rawEmail,
         numberPhone: rawPhone,
       },
-      
+
       propertyDTO: this.propertySelected,
     };
 
@@ -339,7 +398,7 @@ onSubmit() {
       next: (data) => {
         console.log('Éxito:', data);
         // Resetear el form y dejar el estado (interno del form) listo por si acaso
-        this.form.reset(); 
+        this.form.reset();
         // Aquí podrías mostrar una alerta de éxito (SweetAlert2 o Toastr)
       },
       error: (e) => {

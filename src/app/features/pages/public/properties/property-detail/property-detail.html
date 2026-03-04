@@ -310,12 +310,15 @@
                 [center]="center"
                 [zoom]="zoom"
                 [options]="{ disableDefaultUI: true, zoomControl: true }"
+                (mapInitialized)="onMapInitialized()"
               >
                 @for (item of properties; track item.id) {
                   <map-advanced-marker
                     #marker="mapAdvancedMarker"
                     [position]="{ lat: item.latitude, lng: item.longitude }"
+                    [content]="bluePinsRecord[item.id] || null"
                     (mapClick)="openInfoWindow(marker, item)"
+                    title="Propiedad cercana"
                   />
                 }
 
@@ -325,6 +328,7 @@
                     [position]="center"
                     [zIndex]="100"
                     title="Estás aquí"
+                    [content]="mainPinContent"
                     (mapClick)="openInfoWindow(mainMarker, propertySelected)"
                   />
                 }
