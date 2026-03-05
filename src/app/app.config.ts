@@ -9,6 +9,8 @@ import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { registerLocaleData } from '@angular/common';
 import localeEsAr from '@angular/common/locales/es-AR';
 
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+
 registerLocaleData(localeEsAr, 'es-AR');
 
 export const appConfig: ApplicationConfig = {
@@ -24,6 +26,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(
       withInterceptors([ authInterceptor ]) 
     ),
+    provideAnimationsAsync(),
     { provide: LOCALE_ID, useValue: 'es-AR' }
 
   ]

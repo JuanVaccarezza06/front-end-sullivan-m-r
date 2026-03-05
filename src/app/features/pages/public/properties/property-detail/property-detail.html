@@ -59,26 +59,16 @@
             </div>
           </header>
 
-          <figure class="media-container">
-            <img
-              [src]="activeImageUrl"
-              [alt]="propertySelected.title"
-              class="hero-image fade-in-animation"
-            />
-
-            @if (showNavigation) {
-              <button class="nav-btn prev" (click)="prevImage($event)" title="Imagen anterior">
-                ❮
-              </button>
-
-              <button class="nav-btn next" (click)="nextImage($event)" title="Siguiente imagen">
-                ❯
-              </button>
-
-              <div class="image-counter">
-                {{ currentImageIndex + 1 }} / {{ propertySelected.imageDTOList.length }}
-              </div>
-            }
+          <figure class="media-container gallery-wrapper">
+            <gallery
+              gallerize
+              [items]="galleryItems"
+              [thumbs]="true"
+              thumbPosition="bottom"
+              imageSize="cover"
+              [counter]="true"
+            >
+            </gallery>
           </figure>
 
           <section class="quick-stats">

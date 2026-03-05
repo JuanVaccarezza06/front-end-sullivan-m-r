@@ -9,9 +9,22 @@ import { InquiryService } from '../../../../../core/services/inquiry-service/inq
 import { PropertyService } from '../../../../../core/services/property-service/property-service';
 import { DecimalPipe } from '@angular/common';
 
+// 1. IMPORTAMOS LO NECESARIO DE NG-GALLERY
+import { GalleryModule, GalleryItem, ImageItem, GalleryConfig } from 'ng-gallery';
+import { LightboxModule } from 'ng-gallery/lightbox';
+
 @Component({
   selector: 'app-property-detail',
-  imports: [RouterLink, ReactiveFormsModule, GoogleMap, MapAdvancedMarker, MapInfoWindow, DecimalPipe],
+  imports: [
+    RouterLink,
+    ReactiveFormsModule,
+    GoogleMap,
+    MapAdvancedMarker,
+    MapInfoWindow,
+    DecimalPipe,
+    GalleryModule,
+    LightboxModule,
+  ],
   templateUrl: './property-detail.html',
   styleUrl: './property-detail.css',
 })
@@ -26,8 +39,9 @@ export class PropertyDetail implements OnInit {
 
   imageNotFound!: string;
 
-  // 1. NUEVAS VARIABLES DE ESTADO
-  currentImageIndex: number = 0;
+  galleryItems: GalleryItem[] = [];
+
+
 
   center: google.maps.LatLngLiteral = { lat: -38.00347172577913, lng: -57.54663502109604 };
   zoom = 12;
@@ -41,8 +55,6 @@ export class PropertyDetail implements OnInit {
   infoWindowData: Property | null = null;
 
   infoWindowImage: string = '';
-  activeImageUrl: string = '';
-  showNavigation: boolean = false;
 
   // Pattern Regex (Igual que en Contact.ts)
   private namePattern = /^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]+$/;
@@ -140,36 +152,31 @@ export class PropertyDetail implements OnInit {
     });
   }
 
-  // Método auxiliar para no repetir código
+  // 4. ACTUALIZAMOS EL MÉTODO initProperty
   initProperty(prop: Property) {
     this.propertySelected = prop;
 
-    // A. LÓGICA DEL CARRUSEL
+    // A. LÓGICA DEL CARRUSEL CON NG-GALLERY
     if (this.propertySelected.imageDTOList && this.propertySelected.imageDTOList.length > 0) {
       this.propertySelected.imageDTOList.sort((a, b) => a.position - b.position);
 
-      const primaryIndex = this.propertySelected.imageDTOList.findIndex((img) => img.isPrimary);
-      this.currentImageIndex = primaryIndex !== -1 ? primaryIndex : 0;
-
-      // 2. CALCULAMOS SI DEBE HABER NAVEGACIÓN (Una sola vez)
-      this.showNavigation = this.propertySelected.imageDTOList.length > 1;
+      // Mapeamos tus imágenes al formato que entiende ng-gallery
+      this.galleryItems = this.propertySelected.imageDTOList.map(
+        (img) => new ImageItem({ src: img.url, thumb: img.url }),
+      );
     } else {
-      this.currentImageIndex = 0;
-      // Si no hay imágenes, no hay navegación
-      this.showNavigation = false;
+      // Si no hay fotos, mostramos un placeholder
+      const fallback = this.imageNotFound || 'assets/images/placeholder-property.jpg';
+      this.galleryItems = [new ImageItem({ src: fallback, thumb: fallback })];
     }
 
-    // Actualizamos la imagen inicial
-    this.updateGalleryImage();
-
-    // B. LÓGICA DEL MAPA
+    // B. LÓGICA DEL MAPA (se mantiene igual)
     this.center = { lat: this.propertySelected.latitude, lng: this.propertySelected.longitude };
     if (this.infoWindow) this.infoWindow.close();
 
-    // C. CARGA DE VECINOS
+    // C. CARGA DE VECINOS (se mantiene igual)
     this.propertyService.getAround(this.propertySelected.id).subscribe({
       next: (data: Property[]) => {
-        // Guardamos la data cruda. El HTML se encargará de buscar la imagen con getCoverImage
         this.properties = data;
       },
       error: (err) => {
@@ -183,47 +190,6 @@ export class PropertyDetail implements OnInit {
     });
   }
 
-  private updateGalleryImage() {
-    const images = this.propertySelected?.imageDTOList;
-
-    // 1. Validación básica
-    if (!images || images.length === 0) {
-      this.activeImageUrl = this.imageNotFound || 'assets/images/placeholder-property.jpg';
-      return;
-    }
-
-    // 2. Asignamos la imagen actual
-    this.activeImageUrl = images[this.currentImageIndex].url;
-
-    // 3. PRECARGA INTELIGENTE (Solo vecinos)
-    // Calculamos el índice del siguiente y del anterior
-    const nextIndex = (this.currentImageIndex + 1) % images.length;
-    const prevIndex = (this.currentImageIndex - 1 + images.length) % images.length;
-
-    // Precargamos SOLO esas dos imágenes
-    this.preloadSingleImage(images[nextIndex].url);
-    this.preloadSingleImage(images[prevIndex].url);
-  }
-
-  // Pequeño helper para descargar una sola url
-  private preloadSingleImage(url: string) {
-    const img = new Image();
-    img.src = url;
-  }
-
-  // 3. MÉTODOS DE NAVEGACIÓN (Para el HTML)
-
-  // Devuelve la URL actual o la imagen de error si no hay fotos
-  get currentImageUrl(): string {
-    console.log('current image');
-
-    const images = this.propertySelected?.imageDTOList;
-    if (!images || images.length === 0) {
-      return this.imageNotFound || 'assets/images/placeholder-property.jpg'; // Tu fallback
-    }
-    return images[this.currentImageIndex].url;
-  }
-
   // 2. Para las Propiedades del Mapa (Busca isPrimary dinámicamente)
   getCoverImage(p: Property): string {
     console.log('get cover image');
@@ -235,28 +201,6 @@ export class PropertyDetail implements OnInit {
     return primary ? primary.url : p.imageDTOList[0].url;
   }
 
-  // 5. ACTUALIZAMOS LOS BOTONES NEXT / PREV
-  nextImage(event?: Event) {
-    console.log('log');
-
-    if (event) event.stopPropagation();
-    const length = this.propertySelected.imageDTOList.length;
-    this.currentImageIndex = (this.currentImageIndex + 1) % length;
-
-    // Al cambiar el índice, actualizamos la variable
-    this.updateGalleryImage();
-  }
-
-  prevImage(event?: Event) {
-    console.log('log');
-
-    if (event) event.stopPropagation();
-    const length = this.propertySelected.imageDTOList.length;
-    this.currentImageIndex = (this.currentImageIndex - 1 + length) % length;
-
-    // Al cambiar el índice, actualizamos la variable
-    this.updateGalleryImage();
-  }
 
   cargarMapaSeguro() {
     console.log('log');
@@ -293,8 +237,7 @@ export class PropertyDetail implements OnInit {
     }, 0);
   }
 
-onSubmit() { 
-
+  onSubmit() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -316,11 +259,11 @@ onSubmit() {
       createAt: '', // El backend pone la fecha actual (@PrePersist)
 
       description: rawDesc,
-      
+
       // 2. CORRECCIÓN CRÍTICA DEL ESTADO:
       // No leemos del form. Creamos el objeto State explícito.
-      state: { 
-        stateName: 'PENDIENTE' 
+      state: {
+        stateName: 'PENDIENTE',
       },
 
       user: {
@@ -329,7 +272,7 @@ onSubmit() {
         email: rawEmail,
         numberPhone: rawPhone,
       },
-      
+
       propertyDTO: this.propertySelected,
     };
 
@@ -339,7 +282,7 @@ onSubmit() {
       next: (data) => {
         console.log('Éxito:', data);
         // Resetear el form y dejar el estado (interno del form) listo por si acaso
-        this.form.reset(); 
+        this.form.reset();
         // Aquí podrías mostrar una alerta de éxito (SweetAlert2 o Toastr)
       },
       error: (e) => {

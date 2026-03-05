@@ -35,7 +35,11 @@
   margin: 0 auto;
   padding: var(--spacing-md); /* Padding menor en móbile */
   box-sizing: border-box; /* Vital para que el padding no rompa el ancho */
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    sans-serif;
   color: var(--secondary-color);
   background-color: var(--bg-page);
 }
@@ -74,7 +78,7 @@
 
   .layout-grid {
     /* Activamos 2 columnas: Contenido (grande) | Sidebar (pequeño) */
-    grid-template-columns: 1.8fr 1fr; 
+    grid-template-columns: 1.8fr 1fr;
     gap: var(--spacing-lg);
     align-items: start; /* Importante para el sticky sidebar */
   }
@@ -93,7 +97,7 @@
 
   /* Escalamos títulos para pantallas grandes */
   .property-title {
-    font-size: 3rem; 
+    font-size: 3rem;
   }
 
   .property-price {
@@ -211,7 +215,7 @@
   align-items: center;
   gap: var(--spacing-md);
   /* Asegura que no se rompa el layout interno en pantallas chicas */
-  min-width: 0; 
+  min-width: 0;
 }
 
 .stat-icon {
@@ -283,7 +287,7 @@
 .amenities-grid {
   display: grid;
   /* Auto-fill inteligente para responsive */
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: var(--spacing-sm);
 }
 
@@ -352,7 +356,7 @@
 
 .sticky-wrapper {
   /* En móvil no queremos sticky, solo en desktop */
-  position: static; 
+  position: static;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
@@ -576,7 +580,7 @@
   margin-top: 8px;
   font-size: 13px;
   font-weight: 500;
-  color: #4285F4;
+  color: #4285f4;
   text-decoration: none;
   transition: color 0.2s;
 }
@@ -588,8 +592,8 @@
 
 .map-placeholder {
   width: 100%;
-  height: 100%; 
-  background-color: #f0f0f0; 
+  height: 100%;
+  background-color: #f0f0f0;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -599,7 +603,7 @@
 
 /* Aseguramos que el contenedor sea el marco de referencia */
 .media-container {
-  position: relative; 
+  position: relative;
   width: 100%;
   height: 400px; /* O la altura que ya tengas definida */
   overflow: hidden;
@@ -630,7 +634,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s, transform 0.2s;
+  transition:
+    background-color 0.2s,
+    transform 0.2s;
   z-index: 10;
 }
 
@@ -667,27 +673,61 @@
 } */
 
 @keyframes fadeIn {
-  from { opacity: 0.8; }
-  to { opacity: 1; }
+  from {
+    opacity: 0.8;
+  }
+  to {
+    opacity: 1;
+  }
 }
-
 .info-card__image {
   width: 100%;
   height: 150px; /* O el alto que estés usando actualmente */
   object-fit: cover;
   /* ESTO ES LO NUEVO: */
   background-color: #e0e0e0; /* Un gris suave de fondo */
-  
+
   /* Opcional: Un efecto de "skeleton loading" animado */
-  animation: pulse 1.5s infinite ease-in-out; 
-  
+  animation: pulse 1.5s infinite ease-in-out;
+
   /* Opcional: Para que no se rompa el diseño si la imagen falla */
-  display: block; 
+  display: block;
 }
 
 /* Animación sutil de carga (opcional) */
 @keyframes pulse {
-  0% { background-color: #e0e0e0; }
-  50% { background-color: #f5f5f5; }
-  100% { background-color: #e0e0e0; }
+  0% {
+    background-color: #e0e0e0;
+  }
+  50% {
+    background-color: #f5f5f5;
+  }
+  100% {
+    background-color: #e0e0e0;
+  }
+}
+/* 1. El contenedor que le da el tamaño en tu página */
+.gallery-wrapper {
+  width: 100%;
+  height: 600px; /* Ajusta este número según qué tan alto lo quieras en total */
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05); /* Un toque premium sutil */
+  
+}
+
+/* 2. Configuramos la galería usando SUS PROPIAS variables */
+gallery {
+  display: block;
+  width: 100%;
+  height: 100%;
+  
+  /* --- LA MAGIA ESTÁ ACÁ --- */
+  --gallery-bg: #f8f9fa; /* Color de fondo por si la foto no llena el ancho */
+  --thumb-bg: #ffffff;   /* EL PISO: Color de fondo del carrusel */
+  --thumb-height: 100px; /* Alto del carrusel */
+  --thumb-width: 130px;  /* Ancho de cada miniatura */
+
+  background-color: #ffffff;
+  
 }
