@@ -553,9 +553,7 @@ h2 {
   text-align: center;
   font-size: 1.4rem;
   color: var(--text-dark);
-  font-family:
-    'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana,
-    sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-weight: 400; /* ← de 600 a 300, mucho más fino */
   letter-spacing: 0.04em; /* ← un poco de aire entre letras */
 }
