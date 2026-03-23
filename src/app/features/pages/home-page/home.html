@@ -29,7 +29,7 @@
       <div class="hero-stats">
         <div class="stat-item">
           <div class="stat-number">24/7</div>
-          <div class="stat-label">Atencion</div>
+          <div class="stat-label">Brindamos Atencion</div>
         </div>
         <div class="stat-divider"></div>
         <div class="stat-item">
@@ -89,8 +89,7 @@
 
     <section class="featured-section">
       <div class="section-header">
-        <h2 class="header-featured-section-title">Propiedades Destacadas</h2>
-        <a routerLink="properties" class="view-all">Ver todas →</a>
+        <h2 >Propiedades Destacadas</h2>
       </div>
       <div class="properties-grid">
         @for (p of propertiesfeature; track p.id) {
@@ -101,7 +100,7 @@
             </div>
 
             <div class="content">
-              <h2>{{ p.title }}</h2>
+              <h3>{{ p.title }}</h3>
 
               <div class="location">
                 <svg

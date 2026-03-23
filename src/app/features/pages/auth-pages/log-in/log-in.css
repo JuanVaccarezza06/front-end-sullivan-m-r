@@ -3,7 +3,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #DFF7EB;
+  background: #dff7eb;
   padding: 2rem;
   height: 100%;
   margin-bottom: 10rem;
@@ -16,7 +16,7 @@
   background: #fff;
   padding: 2rem;
   border-radius: 0.6rem;
-  box-shadow: 0 0.2rem 0.6rem rgba(0,0,0,0.08);
+  box-shadow: 0 0.2rem 0.6rem rgba(0, 0, 0, 0.08);
   display: grid;
   gap: 0.8rem;
 }
@@ -81,7 +81,8 @@ fieldset {
 .btn.is-invalid {
   background: gray;
   cursor: not-allowed;
-  filter:}
+  filter: none;
+}
 
 /* mensajes */
 .p-error {
