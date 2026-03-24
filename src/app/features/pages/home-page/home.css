@@ -2,7 +2,7 @@
   --green-primary: #0d9e6d;
   --green-dark: #0b8a5e;
   --green-hero: #0d7a52;
-  --text-dark: #1f2937;
+  --text-dark: #1a1a1a;
   --text-primary: #1b4332;
   --text-muted: #6b7280;
   --border: #e5e7eb;
@@ -337,10 +337,10 @@ h2,
 }
 
 h2 {
-  font-size: 1.4rem;
-  color: var(--text-primary);
-  font-weight: 400;
-  letter-spacing: 0.04em;
+  font-size: 1.6rem;
+  color: var(--text-dark);
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
 .properties-grid {
@@ -394,25 +394,23 @@ h2 {
   border-radius: var(--radius);
   padding: 0.35rem 0.75rem;
   color: white;
+  letter-spacing: 0.06em;
+
   font-size: 0.85rem;
   font-weight: 600;
 }
-
 .card .content {
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
 }
-
 .card .content h3 {
-  font-size: 1.15rem;
+    font-size: 1.25rem;
   color: var(--text-dark);
-  font-weight: 500;
   margin-bottom: 0.75rem;
   line-height: 1.3;
 }
-
 .card .content .location {
   display: flex;
   align-items: center;
@@ -499,7 +497,6 @@ h2 {
     margin-right: auto;
     margin-top: -2rem;
     padding: 2rem 1.5rem;
-    
   }
 
   .search-form {
@@ -534,4 +531,77 @@ h2 {
   .header-featured-section-title {
     font-size: 1.6rem;
   }
+}
+
+
+.cta-section {
+  background-color: #0a7d56;
+  padding: 5rem 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.cta-title {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 400;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+
+.cta-text {
+  margin: 0;
+  max-width: 34rem;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.cta-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: .5rem;
+}
+
+.cta-btn {
+  display: inline-block;
+  padding: .85rem 2rem;
+  border-radius: 6px;
+  font-size: .95rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .2s, color .2s, border-color .2s;
+  white-space: nowrap;
+}
+
+.cta-btn--outline {
+  background: transparent;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+}
+
+.cta-btn--outline:hover {
+  background: rgba(255, 255, 255, 0.10);
+}
+
+.cta-btn--solid {
+  background: transparent;
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.55);
+}
+
+.cta-btn--solid:hover {
+  border-color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 30rem) {
+  .cta-actions { flex-direction: column; align-items: center; }
+  .cta-btn     { width: 100%; max-width: 18rem; text-align: center; }
 }
