@@ -8,11 +8,9 @@
   --border: #e5e7eb;
   --border-hero: #dde8e3;
   --font: 'DM Sans', sans-serif;
+  --radius: 6px;
 }
 
-/* =========================================
-   1. RESET & BASE
-   ========================================= */
 * {
   margin: 0;
   padding: 0;
@@ -32,9 +30,6 @@ body {
   background: #fff;
 }
 
-/* =========================================
-   2. HERO
-   ========================================= */
 .hero {
   display: grid;
   grid-template-columns: 1.2fr 0.8fr;
@@ -60,7 +55,6 @@ body {
   pointer-events: none;
 }
 
-/* Hero — Left */
 .hero-left {
   max-width: 540px;
 }
@@ -85,6 +79,7 @@ body {
   color: var(--text-dark);
   display: block;
 }
+
 .hero-title .line2 {
   color: var(--green-hero);
   display: block;
@@ -96,11 +91,13 @@ body {
   gap: 8px;
   margin: 22px 0 20px;
 }
+
 .hero-divider .bar {
   width: 40px;
   height: 2px;
   background: var(--green-hero);
 }
+
 .hero-divider .dot {
   width: 6px;
   height: 6px;
@@ -122,15 +119,16 @@ body {
   gap: 12px;
   flex-wrap: wrap;
 }
+
 .hero button.btn-primary {
-  background: #1b4332;
+  background: var(--text-primary);
   color: #fff;
   border: none;
   padding: 14px 28px;
   font-family: var(--font);
   font-size: 0.88rem;
   font-weight: 500;
-  border-radius: 6px;
+  border-radius: var(--radius);
   cursor: pointer;
   transition:
     background 0.2s,
@@ -150,7 +148,7 @@ body {
   font-family: var(--font);
   font-size: 0.88rem;
   font-weight: 400;
-  border-radius: 6px;
+  border-radius: var(--radius);
   cursor: pointer;
   transition:
     border-color 0.2s,
@@ -162,7 +160,6 @@ body {
   color: var(--green-hero);
 }
 
-/* Hero — Stats */
 .hero-stats {
   display: flex;
   flex-direction: column;
@@ -200,16 +197,15 @@ body {
   margin: 0 auto;
 }
 
-/* Hero — Toast */
 .message-box {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: linear-gradient(135deg, var(--green-hero) 0%, var(--green-hero) 100%);
   color: #fff;
   padding: 2rem 3rem;
-  border-radius: 0.5rem;
+  border-radius: var(--radius);
   box-shadow: 0 1rem 2rem rgba(16, 185, 129, 0.4);
   border: 3px solid rgba(255, 255, 255, 0.3);
   z-index: 10;
@@ -233,20 +229,20 @@ body {
   }
 }
 
-/* =========================================
-   3. SEARCH
-   ========================================= */
 .search-section {
-  background: #fff;
-  padding: 3rem 2rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  margin: -3rem auto 4rem;
+  background: #f8faf9;
+  padding: 2.5rem 2rem;
+  border: 1px solid var(--border-hero);
   max-width: 75rem;
-  border-radius: 1rem;
+  border-radius: var(--radius);
   position: relative;
   z-index: 2;
-  margin-bottom: 3rem;
-  padding-top: 2.5rem;
+  margin: -3rem auto 3rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.search-section h2 {
+  padding-bottom: 1.5rem;
 }
 
 .search-form {
@@ -279,9 +275,9 @@ fieldset {
 .form-group input {
   padding: 0.8rem 1rem;
   border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
+  border-radius: var(--radius);
   font-family: var(--font);
-  font-size: 1rem;
+  font-size: 0.9rem;
   background: #fff;
   transition:
     border-color 0.2s,
@@ -297,13 +293,13 @@ fieldset {
 
 .btn-search {
   padding: 0.8rem 2rem;
-  background: #1b4332; /* ← igual que btn-primary */
+  background: var(--text-primary);
   color: #fff;
   border: none;
-  border-radius: 6px; /* ← igual que btn-primary */
+  border-radius: var(--radius);
   font-family: var(--font);
   font-size: 1rem;
-  font-weight: 500; /* ← de 600 a 500, igual que btn-primary */
+  font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
   transition:
@@ -312,7 +308,7 @@ fieldset {
 }
 
 .btn-search:hover {
-  background: var(--green-hero); /* ← igual que btn-primary hover */
+  background: var(--green-hero);
   transform: translateY(-1px);
 }
 
@@ -323,9 +319,6 @@ fieldset {
   transform: none;
 }
 
-/* =========================================
-   4. FEATURED
-   ========================================= */
 .featured-section {
   width: 100%;
 }
@@ -338,6 +331,18 @@ fieldset {
   margin-bottom: 2rem;
 }
 
+h2,
+.card .content h3 {
+  font-family: var(--font);
+}
+
+h2 {
+  font-size: 1.4rem;
+  color: var(--text-primary);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+
 .properties-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
@@ -347,9 +352,118 @@ fieldset {
   padding: 0 1rem;
 }
 
-/* =========================================
-   6. RESPONSIVE
-   ========================================= */
+.card {
+  width: 100%;
+  min-width: 0;
+  background: white;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-radius: var(--radius);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.card .image {
+  position: relative;
+  height: 17rem;
+  background: linear-gradient(135deg, #e8f0ed 0%, #e8f0ed 100%);
+  background-size: cover;
+  background-position: center;
+}
+
+.property-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.badge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: var(--green-hero);
+  border-radius: var(--radius);
+  padding: 0.35rem 0.75rem;
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.card .content {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.card .content h3 {
+  font-size: 1.15rem;
+  color: var(--text-dark);
+  font-weight: 500;
+  margin-bottom: 0.75rem;
+  line-height: 1.3;
+}
+
+.card .content .location {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.card .content p {
+  color: #6b7280;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 4.5rem;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+  margin-top: auto;
+}
+
+.price {
+  font-size: 1.5rem;
+  color: var(--green-hero);
+  font-weight: 700;
+}
+
+.features {
+  display: flex;
+  gap: 1rem;
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
 @media (max-width: 1500px) {
   .properties-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -359,7 +473,6 @@ fieldset {
 }
 
 @media (max-width: 900px) {
-  /* Hero */
   .hero {
     grid-template-columns: 1fr;
     padding: 48px 24px;
@@ -379,13 +492,14 @@ fieldset {
     display: none;
   }
 
-  /* Search */
   .search-section {
     width: 92%;
     max-width: 500px;
     margin-left: auto;
     margin-right: auto;
+    margin-top: -2rem;
     padding: 2rem 1.5rem;
+    
   }
 
   .search-form {
@@ -400,7 +514,6 @@ fieldset {
     padding: 1rem;
   }
 
-  /* Grid */
   .properties-grid {
     grid-template-columns: 1fr;
     padding: 0 1.5rem;
@@ -412,7 +525,6 @@ fieldset {
     margin: 0 auto;
   }
 
-  /* Section header */
   .section-header {
     flex-direction: column;
     text-align: center;
@@ -422,142 +534,4 @@ fieldset {
   .header-featured-section-title {
     font-size: 1.6rem;
   }
-}
-/* =========================================
-   6. CARDS (PROPIEDADES)
-   ========================================= */
-.card {
-  width: 100%;
-  min-width: 0;
-  background: white;
-  border-radius: 1rem;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-}
-
-/* Image Area */
-.card .image {
-  position: relative;
-  height: 17rem;
-  background: linear-gradient(135deg, #0d9e6d 0%, #059669 100%);
-  background-size: cover;
-  background-position: center;
-}
-
-.property-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
-
-.badge {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
-  background: #0d9e6d;
-  color: white;
-  padding: 0.4rem 1rem;
-  border-radius: 2rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-/* Content Area */
-.card .content {
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-}
-
-.card .content h3 {
-  font-size: 1.3rem;
-  color: #1f2937;
-  margin-bottom: 0.8rem;
-}
-
-.card .content .location {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  color: #6b7280;
-  font-size: 0.9rem;
-}
-
-/* Busca esta parte en tu CSS */
-.card .content p {
-  color: #6b7280;
-  font-size: 0.95rem;
-  line-height: 1.5;
-  margin-bottom: 1.5rem;
-
-  /* --- CORRECCIÓN AQUÍ --- */
-  display: -webkit-box;
-  -webkit-line-clamp: 3; /* <--- ESTA ES LA CLAVE PARA LOS PUNTOS (...) */
-  line-clamp: 3; /* Puedes dejar esta por compatibilidad futura */
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  height: 4.5rem;
-}
-
-/* Footer Area */
-.footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 1rem;
-  border-top: 1px solid #e5e7eb;
-  margin-top: auto;
-}
-
-.card .content h3 {
-  font-size: 1.25rem;
-  color: var(--text-dark);
-  margin-bottom: 0.75rem;
-  line-height: 1.3;
-}
-
-.price {
-  font-size: 1.5rem;
-  color: #0d9e6d;
-  font-weight: 700;
-}
-
-.features {
-  display: flex;
-  gap: 1rem;
-}
-
-.feature {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  color: #6b7280;
-  font-size: 0.9rem;
-}
-
-h2 {
-  text-align: center;
-  font-size: 1.4rem;
-  color: var(--text-dark);
-  font-family: 'Poppins', sans-serif;
-  font-weight: 400; /* ← de 600 a 300, mucho más fino */
-  letter-spacing: 0.04em; /* ← un poco de aire entre letras */
-}
-
-.search-section h2 {
-  padding-bottom: 1.5rem;
 }
