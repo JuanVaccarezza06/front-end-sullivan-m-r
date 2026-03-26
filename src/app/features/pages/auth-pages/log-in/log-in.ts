@@ -15,6 +15,8 @@ export class LogIn {
   formulario!: FormGroup
   credential!: CredentialLogIn
 
+  showPassword = false;
+
   constructor(
     private fb: FormBuilder,
     private router: Router,

@@ -22,6 +22,7 @@ export const routes: Routes = [
   // ==========================================
   // 1. ZONA PÚBLICA (Cliente)
   // ==========================================
+  { path: 'login', component: LogIn, data: { hideShell: true } },
   { path: '', component: Home },
   { path: 'about-us', component: AboutUs },
   { path: 'contact', component: Contact },
