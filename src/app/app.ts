@@ -12,22 +12,18 @@ import { filter } from 'rxjs';
 })
 export class App {
   protected readonly title = signal('sullivan-mor');
-  hideShell = false;
+  hideShell = signal(false); // ← SIGNAL, no propiedad normal
 
   constructor(private router: Router) {
-    // Chequeo inicial (para cuando carga directo en /login)
     this.checkRoute();
 
-    // Chequeo en cada navegación
     this.router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
       .subscribe(() => this.checkRoute());
   }
 
   private checkRoute(): void {
-    const route = this.router.routerState.snapshot.root.firstChild;
-    const hideByData = route?.data?.['hideShell'] ?? false;
-    const hideByUrl = this.router.url.startsWith('/login');
-    this.hideShell = hideByData || hideByUrl;
+    const url = this.router.url;
+    this.hideShell.set(url.startsWith('/login') || url.startsWith('/auth/login'));
   }
 }

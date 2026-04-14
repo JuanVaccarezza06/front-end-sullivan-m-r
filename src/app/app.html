@@ -1,9 +1,9 @@
-@if (!hideShell) {
-<app-header></app-header>
+@if (!hideShell()) {
+  <app-header></app-header>
 }
 <main class="main">
   <router-outlet></router-outlet>
 </main>
-@if (!hideShell) {
-<app-footer></app-footer>
+@if (!hideShell()) {
+  <app-footer></app-footer>
 }

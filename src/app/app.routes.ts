@@ -22,7 +22,6 @@ export const routes: Routes = [
   // ==========================================
   // 1. ZONA PÚBLICA (Cliente)
   // ==========================================
-  { path: 'login', component: LogIn, data: { hideShell: true } },
   { path: '', component: Home },
   { path: 'about-us', component: AboutUs },
   { path: 'contact', component: Contact },
@@ -32,13 +31,15 @@ export const routes: Routes = [
   { path: 'properties', component: Properties },
   { path: 'properties/:id', component: PropertyDetail }, // URL más limpia: /properties/123
 
+  { path: 'login', component: LogIn, data: { hideShell: true } },
+
   // ==========================================
   // 2. AUTH (Login / Registro)
   // ==========================================
   {
     path: 'auth',
     children: [
-      { path: 'login', component: LogIn },
+      { path: 'login', component: LogIn, data: { hideShell: true } },
       { path: 'register', component: Register },
       { path: '', redirectTo: 'login', pathMatch: 'full' },
     ],
