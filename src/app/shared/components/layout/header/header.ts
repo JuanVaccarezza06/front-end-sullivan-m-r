@@ -1,22 +1,31 @@
-import { Component, inject } from '@angular/core';
-import { NavigationEnd, Router, RouterLink } from '@angular/router';
+import { Component, computed, effect, inject, signal } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/auth-service/auth-service';
 import { filter } from 'rxjs';
 import { UserService } from '../../../../core/services/user-service/user-service';
 import User from '../../../../core/models/actors/User';
 import UserFull from '../../../../core/models/actors/UserFull';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { StatusCard } from '../../ui/status-card/status-card';
 
 @Component({
   selector: 'app-header',
-  imports: [RouterLink],
+  imports: [RouterLink, StatusCard],
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
 export class Header {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   // Inyectamos el servicio de usuario (asegúrate de que esté importado correctamente)
   private userService = inject(UserService); 
+  private readonly queryParams = toSignal(this.route.queryParamMap, { initialValue: null });
+  private statusCleanupTimer: ReturnType<typeof setTimeout> | null = null;
+
+  readonly statusMessage = signal('');
+  readonly statusType = signal<'success' | 'error'>('success');
+  readonly hasStatusMessage = computed(() => this.statusMessage().trim().length > 0);
 
   isMenuOpen: boolean = false;
 
@@ -27,6 +36,31 @@ export class Header {
 
   // NUEVA VARIABLE: Aquí guardaremos el usuario completo traído del backend
   private currentUser: UserFull | null = null; 
+
+  readonly routeStatus = computed(() => {
+    const params = this.queryParams();
+    const message = params?.get('msg')?.trim();
+    const type = params?.get('type') as 'success' | 'error' | null;
+
+    if (!message || (type !== 'success' && type !== 'error')) {
+      return null;
+    }
+
+    return { message, type };
+  });
+
+  private readonly statusEffect = effect(() => {
+    const status = this.routeStatus();
+
+    if (!status) {
+      this.clearStatusMessage();
+      return;
+    }
+
+    this.statusMessage.set(status.message);
+    this.statusType.set(status.type);
+    this.scheduleStatusCleanup();
+  });
 
   ngOnInit(): void {
     this.loadUserFromToken();
@@ -128,6 +162,32 @@ export class Header {
     this.userEmail = '';
     this.userInitials = '';
     this.currentUser = null; // Limpiamos el usuario guardado
-    this.router.navigate([''], { state: { message: 'Cierre de sesion exitoso' } });
+    this.router.navigate([''], {
+      queryParams: { msg: 'Cierre de sesion exitoso', type: 'success' },
+    });
+  }
+
+  private scheduleStatusCleanup(): void {
+    if (this.statusCleanupTimer) {
+      clearTimeout(this.statusCleanupTimer);
+    }
+
+    this.statusCleanupTimer = setTimeout(() => {
+      this.clearStatusMessage();
+      void this.router.navigate([], {
+        queryParams: { msg: null, type: null },
+        queryParamsHandling: 'merge',
+      });
+    }, 5000);
+  }
+
+  private clearStatusMessage(): void {
+    if (this.statusCleanupTimer) {
+      clearTimeout(this.statusCleanupTimer);
+      this.statusCleanupTimer = null;
+    }
+
+    this.statusMessage.set('');
+    this.statusType.set('success');
   }
 }

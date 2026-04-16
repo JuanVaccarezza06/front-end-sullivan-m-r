@@ -136,22 +136,26 @@ export class LogIn implements OnInit {
         if (data.token) {
           this.authService.saveToken(data.token);
           this.router.navigate([''], {
-            state: { message: 'Usuario logeado correctamente.' },
+            queryParams: { msg: 'Usuario logeado correctamente.', type: 'success' },
           });
         }
       },
       error: (e) => {
         this.loginLoading = false;
-        this.loginError =
+        const message =
           e?.status === 401
             ? 'El usuario o la contraseña son incorrectos. Verificá tus datos.'
             : 'Ocurrió un error inesperado. Intentá de nuevo más tarde.';
+
+        this.router.navigate([''], {
+          queryParams: { msg: message, type: 'error' },
+        });
       },
     });
   }
 
   autoLog(): void {
-    const username = 'Sonia123#';
+    const username = 'SoniaAdmin999';
     const password = '#123Secreto';
     const credential: CredentialLogIn = { username, password };
 
@@ -161,16 +165,20 @@ export class LogIn implements OnInit {
         if (data.token) {
           this.authService.saveToken(data.token);
           this.router.navigate([''], {
-            state: { message: 'Usuario logeado correctamente.' },
+            queryParams: { msg: 'Usuario logeado correctamente.', type: 'success' },
           });
         }
       },
       error: (e) => {
         this.loginLoading = false;
-        this.loginError =
+        const message =
           e?.status === 401
             ? 'El usuario o la contraseña son incorrectos. Verificá tus datos.'
             : 'Ocurrió un error inesperado. Intentá de nuevo más tarde.';
+
+        this.router.navigate([''], {
+          queryParams: { msg: message, type: 'error' },
+        });
       },
     });
   }

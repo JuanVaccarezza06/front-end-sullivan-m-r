@@ -109,54 +109,72 @@
             </div>
           </div>
         }
-      } @else {
-        <div class="flex items-center gap-6 ml-4">
-          <a
-            routerLink="/auth/login"
-            class="group flex items-center gap-2 text-[#1b4332] hover:opacity-70 font-medium text-base cursor-pointer transition-opacity"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="22"
-              height="22"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="transition-transform group-hover:translate-x-1"
-            >
-              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
-              <polyline points="10 17 15 12 10 7"></polyline>
-              <line x1="15" y1="12" x2="3" y2="12"></line>
-            </svg>
-            <span>Iniciar sesion</span>
-          </a>
 
-          <button
-            type="button"
-            routerLink="/auth/register"
-            class="flex items-center gap-2 bg-[#1b4332] hover:opacity-90 text-white px-5 py-2.5 rounded-lg font-medium text-base transition-opacity shadow-sm"
+        @if (hasStatusMessage()) {
+          <div
+            class="absolute inset-0 z-[9999] flex items-center justify-center rounded-lg bg-white/90 px-2 backdrop-blur-[1px] animate-fade-in-down"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+            <app-status-card [message]="statusMessage()" [type]="statusType()"></app-status-card>
+          </div>
+        }
+      } @else {
+        <div class="relative ml-4">
+          <div class="flex items-center gap-4">
+            <a
+              routerLink="/auth/login"
+              class="group flex items-center gap-2 text-[#1b4332] hover:opacity-70 font-medium text-base cursor-pointer transition-opacity"
             >
-              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-              <circle cx="9" cy="7" r="4"></circle>
-              <line x1="19" y1="8" x2="19" y2="14"></line>
-              <line x1="22" y1="11" x2="16" y2="11"></line>
-            </svg>
-            <span>Registro</span>
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="transition-transform group-hover:translate-x-1"
+              >
+                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                <polyline points="10 17 15 12 10 7"></polyline>
+                <line x1="15" y1="12" x2="3" y2="12"></line>
+              </svg>
+              <span>Iniciar sesion</span>
+            </a>
+
+            <button
+              type="button"
+              routerLink="/auth/register"
+              class="flex items-center gap-2 bg-[#1b4332] hover:opacity-90 text-white px-5 py-2.5 rounded-lg font-medium text-base transition-opacity shadow-sm"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <line x1="19" y1="8" x2="19" y2="14"></line>
+                <line x1="22" y1="11" x2="16" y2="11"></line>
+              </svg>
+              <span>Registro</span>
+            </button>
+          </div>
+
+          @if (hasStatusMessage()) {
+            <div
+              class="absolute inset-0 z-[9999] flex items-center justify-center rounded-lg bg-white/90 px-2 backdrop-blur-[1px] animate-fade-in-down"
+            >
+              <app-status-card [message]="statusMessage()" [type]="statusType()"></app-status-card>
+            </div>
+          }
         </div>
       }
     </div>

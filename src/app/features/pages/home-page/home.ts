@@ -17,6 +17,7 @@ import { PropertyService } from '../../../core/services/property-service/propert
 import { ZoneService } from '../../../core/services/zone-service/zone-service';
 import PropertiesFilter from '../../../core/models/PropertiesFilter';
 import { DecimalPipe } from '@angular/common';
+import { StatusCard } from '../../../shared/components/ui/status-card/status-card';
 
 // 1. Definimos el validador (fuera de la clase del componente)
 export function atLeastOneFilterValidator(): ValidatorFn {
@@ -86,7 +87,7 @@ export class Home implements OnInit {
       this.sucessMessage = message;
       setTimeout(() => {
         this.isFromLogin = false;
-      }, 2000);
+      }, 3000);
     }
   }
 
