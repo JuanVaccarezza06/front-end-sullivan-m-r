@@ -32,6 +32,7 @@ export const routes: Routes = [
   { path: 'properties/:id', component: PropertyDetail }, // URL más limpia: /properties/123
 
   { path: 'login', component: LogIn, data: { hideShell: true } },
+  { path: 'register', component: Register, data: { hideShell: true } },
 
   // ==========================================
   // 2. AUTH (Login / Registro)
@@ -40,7 +41,7 @@ export const routes: Routes = [
     path: 'auth',
     children: [
       { path: 'login', component: LogIn, data: { hideShell: true } },
-      { path: 'register', component: Register },
+      { path: 'register', component: Register, data: { hideShell: true } },
       { path: '', redirectTo: 'login', pathMatch: 'full' },
     ],
   },

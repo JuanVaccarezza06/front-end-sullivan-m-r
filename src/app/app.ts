@@ -24,6 +24,11 @@ export class App {
 
   private checkRoute(): void {
     const url = this.router.url;
-    this.hideShell.set(url.startsWith('/login') || url.startsWith('/auth/login'));
+    this.hideShell.set(
+      url.startsWith('/login') ||
+        url.startsWith('/auth/login') ||
+        url.startsWith('/register') ||
+        url.startsWith('/auth/register'),
+    );
   }
 }

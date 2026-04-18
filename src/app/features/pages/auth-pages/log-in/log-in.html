@@ -27,25 +27,6 @@
       <p class="welcome">Bienvenido de vuelta</p>
     </div>
 
-    <!-- ── Banner de error 401 ───────────────────────────────────────────── -->
-    @if (loginError) {
-      <div class="alert-error" role="alert">
-        <svg
-          width="15"
-          height="15"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          viewBox="0 0 24 24"
-        >
-          <circle cx="12" cy="12" r="10" />
-          <line x1="12" y1="8" x2="12" y2="12" />
-          <line x1="12" y1="16" x2="12.01" y2="16" />
-        </svg>
-        {{ loginError }}
-      </div>
-    }
-
     <form [formGroup]="formulario" (submit)="onSumbit()">
       <!-- ── Usuario ────────────────────────────────────────────────────── -->
       <fieldset>
@@ -144,7 +125,9 @@
           Ingresar →
         }
       </button>
-
+      @if (statusMessage) {
+        <app-status-card [message]="statusMessage" [type]="statusType"></app-status-card>
+      }
       <div class="divider"><span>O continúa con</span></div>
 
       <div class="social-buttons">

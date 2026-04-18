@@ -10,6 +10,7 @@ import {
 import { Router, RouterLink } from '@angular/router';
 import CredentialLogIn from '../../../../core/models/auth/CredentialLogIn';
 import { AuthService } from '../../../../core/auth-service/auth-service';
+import { StatusCard } from '../../../../shared/components/ui/status-card/status-card';
 
 // ── Validadores personalizados ────────────────────────────────────────────────
 
@@ -44,7 +45,7 @@ function safePassword(control: AbstractControl): ValidationErrors | null {
 
 @Component({
   selector: 'app-log-in',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, StatusCard],
   templateUrl: './log-in.html',
   styleUrl: './log-in.css',
 })
@@ -52,9 +53,10 @@ export class LogIn implements OnInit {
   formulario!: FormGroup;
   showPassword = false;
 
-  /** null = sin error | string = mensaje a mostrar */
-  loginError: string | null = null;
   loginLoading = false;
+
+  statusMessage: string = '';
+  statusType: 'success' | 'error' = 'success';
 
   constructor(
     private fb: FormBuilder,
@@ -91,8 +93,9 @@ export class LogIn implements OnInit {
     // Al iniciar, leer si hay usuario guardado
     this.cargarUsuarioRecordado();
 
+    // Limpiar mensaje de estado al cambiar el formulario
     this.formulario.valueChanges.subscribe(() => {
-      if (this.loginError) this.loginError = null;
+      if (this.statusMessage) this.statusMessage = '';
     });
   }
 
@@ -117,7 +120,7 @@ export class LogIn implements OnInit {
     if (this.formulario.invalid) return;
 
     this.loginLoading = true;
-    this.loginError = null;
+    this.statusMessage = '';
 
     const { username, password, rememberMe } = this.formulario.value;
 
@@ -146,10 +149,8 @@ export class LogIn implements OnInit {
           e?.status === 401
             ? 'El usuario o la contraseña son incorrectos. Verificá tus datos.'
             : 'Ocurrió un error inesperado. Intentá de nuevo más tarde.';
-
-        this.router.navigate([''], {
-          queryParams: { msg: message, type: 'error' },
-        });
+        this.statusMessage = message;
+        this.statusType = 'error';
       },
     });
   }
@@ -158,6 +159,9 @@ export class LogIn implements OnInit {
     const username = 'SoniaAdmin999';
     const password = '#123Secreto';
     const credential: CredentialLogIn = { username, password };
+
+    this.loginLoading = true;
+    this.statusMessage = '';
 
     this.authService.logIn(credential).subscribe({
       next: (data) => {
@@ -175,10 +179,8 @@ export class LogIn implements OnInit {
           e?.status === 401
             ? 'El usuario o la contraseña son incorrectos. Verificá tus datos.'
             : 'Ocurrió un error inesperado. Intentá de nuevo más tarde.';
-
-        this.router.navigate([''], {
-          queryParams: { msg: message, type: 'error' },
-        });
+        this.statusMessage = message;
+        this.statusType = 'error';
       },
     });
   }

@@ -1,8 +1,8 @@
 :host {
   --green-hero: #0d7a52;
   --text-primary: #1b4332;
-  --text-dark: #374151;
-  --text-muted: #9ca3af;
+  --text-dark: #1a1a1a;
+  --text-muted: #6b7280;
   --border: #e5e7eb;
   --font: 'DM Sans', sans-serif;
   --radius: 6px;
@@ -67,7 +67,7 @@
 
 .brand-title {
   font-weight: 300;
-  line-height: 1.1;
+  line-height: 1;
   font-size: 3rem;
 }
 
@@ -104,8 +104,10 @@
 }
 
 .welcome {
-  font-size: 1rem;
+  font-size: 0.95rem;
+  font-family: var(--font);
   color: var(--text-muted);
+  line-height: 1.65;
   margin-top: 0.5rem;
 }
 
@@ -126,10 +128,10 @@ fieldset {
 }
 
 label {
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
   color: var(--text-dark);
 }
 
@@ -140,7 +142,7 @@ input[type='email'] {
   padding: 0.8rem 1rem;
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-family: var(--font);
   background: #f9fafb;
   color: var(--text-dark);
@@ -371,4 +373,10 @@ input.input-error:focus {
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+/* Status Card feedback */
+form app-status-card {
+  margin-top: 1rem;
+  display: block;
 }
