@@ -1,89 +1,78 @@
-<main class="login-wrap">
-  <a class="back-link" routerLink="/">
-    <svg
-      width="16"
-      height="16"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      viewBox="0 0 24 24"
-    >
+<main class="min-h-screen bg-white flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 2xl:px-10 2xl:py-12 relative font-sans">
+  <a
+    class="self-start mb-10 flex items-center gap-1 text-sm text-gray-500 hover:text-gray-900 transition-colors lg:absolute lg:top-6 lg:left-6 lg:mb-0"
+    routerLink="/"
+  >
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
       <path d="M19 12H5M12 5l-7 7 7 7" />
     </svg>
     Volver al inicio
   </a>
 
-  <div class="login-card">
-    <div class="brand">
-      <p class="eyebrow">Inmobiliaria</p>
-      <h1 class="brand-title">
-        <span class="line1">Sullivan</span>
-        <span class="line2">Mor</span>
+  <div class="w-full lg:max-w-md 2xl:max-w-lg">
+    <div class="text-center mb-10 2xl:mb-12">
+      <p class="text-xs uppercase tracking-widest font-medium text-emerald-700 mb-2">Inmobiliaria</p>
+      <h1 class="font-light text-5xl 2xl:text-6xl leading-none">
+        <span class="block text-slate-900">Sullivan</span>
+        <span class="block text-emerald-700">Mor</span>
       </h1>
-      <div class="brand-divider">
-        <div class="bar"></div>
-        <div class="dot"></div>
+      <div class="flex items-center justify-center gap-2 my-4 flex-row-reverse">
+        <div class="w-10 h-px bg-emerald-700"></div>
+        <div class="w-1.5 h-1.5 rounded-full bg-emerald-700"></div>
       </div>
-      <p class="welcome">Bienvenido de vuelta</p>
+      <p class="text-sm text-gray-500 leading-relaxed mt-2">Bienvenido de vuelta</p>
     </div>
 
-    <form [formGroup]="formulario" (submit)="onSumbit()">
-      <!-- ── Usuario ────────────────────────────────────────────────────── -->
-      <fieldset>
-        <label for="username">Usuario</label>
+    <form [formGroup]="formulario" (submit)="onSumbit()" class="flex flex-col gap-5 2xl:gap-6">
+      <fieldset class="flex flex-col gap-1.5 border-0 p-0 m-0">
+        <label for="username" class="text-sm font-medium text-slate-900">Usuario</label>
         <input
           id="username"
           type="text"
           placeholder="tu_usuario"
           formControlName="username"
-          [class.input-error]="u.invalid && u.touched"
+          [class.border-red-600]="u.invalid && u.touched"
+          [class.bg-red-50]="u.invalid && u.touched"
+          class="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-sm text-slate-900 placeholder:text-gray-400 transition-colors focus:outline-none focus:border-emerald-700 focus:ring-4 focus:ring-emerald-700/10 focus:bg-white"
         />
 
         @if (u.touched) {
           @if (u.hasError('required')) {
-            <p class="p-error">Este campo es obligatorio.</p>
+            <p class="text-xs text-red-600 mt-1">Este campo es obligatorio.</p>
           } @else if (u.hasError('sqlInjection') || u.hasError('unsafeChars')) {
-            <p class="p-error">El usuario contiene caracteres no permitidos.</p>
+            <p class="text-xs text-red-600 mt-1">El usuario contiene caracteres no permitidos.</p>
           } @else if (u.hasError('minlength')) {
-            <p class="p-error">Debe tener al menos 6 caracteres.</p>
+            <p class="text-xs text-red-600 mt-1">Debe tener al menos 6 caracteres.</p>
           } @else if (u.hasError('maxlength')) {
-            <p class="p-error">Máximo 30 caracteres.</p>
+            <p class="text-xs text-red-600 mt-1">Máximo 30 caracteres.</p>
           }
         }
       </fieldset>
 
-      <!-- ── Contraseña ──────────────────────────────────────────────────── -->
-      <fieldset class="password-fieldset">
-        <label for="password">Contraseña</label>
-        <div class="input-wrapper">
+      <fieldset class="flex flex-col gap-1.5 border-0 p-0 m-0">
+        <label for="password" class="text-sm font-medium text-slate-900">Contraseña</label>
+        <div class="relative">
           <input
             id="password"
             [type]="showPassword ? 'text' : 'password'"
             placeholder="Tu contraseña"
             formControlName="password"
-            [class.input-error]="p.invalid && p.touched"
+            [class.border-red-600]="p.invalid && p.touched"
+            [class.bg-red-50]="p.invalid && p.touched"
+            class="w-full px-4 py-2 pr-11 border border-gray-300 rounded-md bg-gray-50 text-sm text-slate-900 placeholder:text-gray-400 transition-colors focus:outline-none focus:border-emerald-700 focus:ring-4 focus:ring-emerald-700/10 focus:bg-white"
           />
           <button
             type="button"
-            class="eye-btn"
+            class="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-500 hover:text-gray-900 transition-colors"
             (click)="showPassword = !showPassword"
             [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
           >
-            <svg
-              width="18"
-              height="18"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-            >
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               @if (!showPassword) {
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                 <circle cx="12" cy="12" r="3" />
               } @else {
-                <path
-                  d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"
-                />
+                <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94" />
                 <path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19" />
                 <line x1="1" y1="1" x2="23" y2="23" />
               }
@@ -93,45 +82,67 @@
 
         @if (p.touched) {
           @if (p.hasError('required')) {
-            <p class="p-error">Este campo es obligatorio.</p>
+            <p class="text-xs text-red-600 mt-1">Este campo es obligatorio.</p>
           } @else if (p.hasError('sqlInjection') || p.hasError('unsafeChars')) {
-            <p class="p-error">La contraseña contiene caracteres no permitidos.</p>
+            <p class="text-xs text-red-600 mt-1">La contraseña contiene caracteres no permitidos.</p>
           } @else if (p.hasError('minlength')) {
-            <p class="p-error">Debe tener al menos 8 caracteres.</p>
+            <p class="text-xs text-red-600 mt-1">Debe tener al menos 8 caracteres.</p>
           } @else if (p.hasError('maxlength')) {
-            <p class="p-error">Máximo 64 caracteres.</p>
+            <p class="text-xs text-red-600 mt-1">Máximo 64 caracteres.</p>
           } @else if (p.hasError('pattern')) {
-            <p class="p-error">
+            <p class="text-xs text-red-600 mt-1">
               Debe incluir al menos: 1 mayúscula, 1 número y 1 carácter especial.
             </p>
           }
         }
       </fieldset>
 
-      <button type="button" (click)="autoLog()">Auto Log</button>
+      <button
+        type="button"
+        (click)="autoLog()"
+        class="px-4 py-2 rounded-md bg-gray-200 text-gray-900 text-sm font-medium hover:bg-gray-300 transition-colors"
+      >
+        Auto Log
+      </button>
 
-      <!-- ── Extras ──────────────────────────────────────────────────────── -->
-      <div class="form-extras">
-        <label class="remember">
-          <input type="checkbox" formControlName="rememberMe" /> Recordarme
+      <div class="flex justify-between items-center text-sm">
+        <label class="flex items-center gap-2 text-gray-500 cursor-pointer">
+          <input type="checkbox" formControlName="rememberMe" class="w-3.5 h-3.5 accent-emerald-700" />
+          Recordarme
         </label>
-        <a class="forgot" href="#">Olvidé mi contraseña</a>
+        <a class="text-gray-500 hover:text-emerald-700 transition-colors" href="#">Olvidé mi contraseña</a>
       </div>
 
-      <button type="submit" class="btn-submit" [disabled]="formulario.invalid || loginLoading">
+      <button
+        type="submit"
+        class="w-full px-4 py-2 2xl:py-3 rounded-md bg-gray-900 text-white font-medium transition-all hover:enabled:bg-emerald-700 hover:enabled:-translate-y-0.5 disabled:bg-gray-400 disabled:cursor-not-allowed"
+        [disabled]="formulario.invalid || loginLoading"
+      >
         @if (loginLoading) {
-          <span class="spinner"></span> Ingresando...
+          <span class="inline-block w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin mr-1"></span>
+          Ingresando...
         } @else {
           Ingresar →
         }
       </button>
-      @if (statusMessage) {
-        <app-status-card [message]="statusMessage" [type]="statusType"></app-status-card>
-      }
-      <div class="divider"><span>O continúa con</span></div>
 
-      <div class="social-buttons">
-        <button type="button" class="btn-social">
+      @if (statusMessage) {
+        <div class="mt-4">
+          <app-status-card [message]="statusMessage" [type]="statusType"></app-status-card>
+        </div>
+      }
+
+      <div class="flex items-center gap-4 text-gray-500 text-xs uppercase tracking-wider">
+        <div class="flex-1 h-px bg-gray-300"></div>
+        <span>O continúa con</span>
+        <div class="flex-1 h-px bg-gray-300"></div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 2xl:gap-4">
+        <button
+          type="button"
+          class="flex items-center justify-center gap-2 px-4 py-2 2xl:py-3 bg-white border border-gray-300 rounded-md text-sm font-medium text-slate-900 hover:border-gray-400 hover:shadow-sm transition-all"
+        >
           <svg width="18" height="18" viewBox="0 0 24 24">
             <path
               fill="#4285F4"
@@ -152,7 +163,11 @@
           </svg>
           Google
         </button>
-        <button type="button" class="btn-social">
+
+        <button
+          type="button"
+          class="flex items-center justify-center gap-2 px-4 py-2 2xl:py-3 bg-white border border-gray-300 rounded-md text-sm font-medium text-slate-900 hover:border-gray-400 hover:shadow-sm transition-all"
+        >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="#1877F2">
             <path
               d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
@@ -162,9 +177,12 @@
         </button>
       </div>
 
-      <p class="register-link">No tenés una cuenta? <a routerLink="/register">Crear cuenta</a></p>
+      <p class="text-center text-sm text-gray-500 pb-4">
+        No tenés una cuenta?
+        <a routerLink="/register" class="text-emerald-700 font-semibold hover:underline">Crear cuenta</a>
+      </p>
     </form>
   </div>
 
-  <p class="page-footer">Sullivan Mor Inmobiliaria — Más de 20 años de confianza</p>
+  <p class="absolute bottom-6 text-xs text-gray-500">Sullivan Mor Inmobiliaria — Más de 20 años de confianza</p>
 </main>

@@ -116,7 +116,6 @@ function safePhone(control: AbstractControl): ValidationErrors | null {
   selector: 'app-register',
   imports: [ReactiveFormsModule, RouterLink, StatusCard],
   templateUrl: './register.html',
-  styleUrl: './register.css',
 })
 export class Register implements OnInit {
   formulario!: FormGroup;

@@ -47,7 +47,6 @@ function safePassword(control: AbstractControl): ValidationErrors | null {
   selector: 'app-log-in',
   imports: [ReactiveFormsModule, RouterLink, StatusCard],
   templateUrl: './log-in.html',
-  styleUrl: './log-in.css',
 })
 export class LogIn implements OnInit {
   formulario!: FormGroup;
