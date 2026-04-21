@@ -8,3 +8,6 @@
 ## Angular & Logic
 - **Standard Patterns:** Use standard Angular signals/services/components (v20+ style if applicable).
 - **Libraries:** If a library (like Reactive Forms or a UI kit) simplifies the code, use it or ask to include it instead of manual implementations.
+
+## Design & UI/UX
+- **Responsive by Default:** Every visual change in HTML and CSS must be 100% responsive. Ensure layouts adapt seamlessly to all screen sizes using modern CSS techniques (Flexbox, Grid, Media Queries) without compromising simplicity.
