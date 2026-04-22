@@ -19,12 +19,13 @@
   max-width: 70rem;
   margin: 0 auto;
   font-family: var(--font);
+  padding: 1.25rem 1rem 2.5rem;
 }
 
 .header {
   text-align: center;
-  margin-bottom: 4rem;
-  margin-top: 3rem;
+  margin-bottom: 2rem;
+  margin-top: 0.5rem;
 }
 
 .header h1 {
@@ -48,13 +49,14 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .card {
   background: white;
-  border-radius: var(--radius);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 0.875rem;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
   padding: 2rem;
 }
 
@@ -108,11 +110,16 @@
 .form-group select,
 .form-group textarea {
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 0.78rem 1rem;
   border: 1px solid #d1d5db;
-  border-radius: var(--radius);
+  border-radius: 0.7rem;
   font-size: 0.875rem;
   transition: all 0.2s;
+}
+
+.form-group input,
+.form-group select {
+  min-height: 2.85rem;
 }
 
 .form-group input:focus,
@@ -130,6 +137,7 @@
 
 .btn-submit {
   width: 100%;
+  min-height: 2.9rem;
   padding: 0.75rem 1.5rem;
   background: var(--text-primary);
   color: white;
@@ -169,6 +177,11 @@ fieldset {
 .info-item {
   display: flex;
   gap: 0.75rem;
+  align-items: flex-start;
+  padding: 0.85rem;
+  border-radius: 0.75rem;
+  background: #f8faf9;
+  border: 1px solid #e7eee9;
 }
 
 .info-icon {
@@ -211,6 +224,10 @@ fieldset {
 .help-item {
   display: flex;
   gap: 0.75rem;
+  align-items: flex-start;
+  padding: 0.8rem;
+  border-radius: 0.7rem;
+  background: #f9fafb;
 }
 
 .help-item h4 {
@@ -246,18 +263,17 @@ fieldset {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .quick-card {
   background: white;
-  border-radius: var(--radius);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding-top: 1.5rem;
+  border-radius: 0.875rem;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+  padding: 1.5rem 1.1rem;
   text-align: center;
   transition: all 0.2s;
-
-  margin-bottom: 4rem;
-  max-height: 12rem;
 }
 
 .quick-card:hover {
@@ -290,21 +306,63 @@ fieldset {
 .quick-card p {
   font-size: 0.875rem;
   color: #4b5563;
-
-  margin-bottom: 5rem;
+  margin-bottom: 0;
 }
 
 @media (max-width: 768px) {
+  .container {
+    padding: 1rem 0.9rem 2rem;
+  }
+
   .main-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
   .bottom-cards {
     grid-template-columns: 1fr;
+    gap: 0.9rem;
+  }
+
+  .card {
+    padding: 1.25rem;
+  }
+
+  .header {
+    margin-top: 0.25rem;
+    margin-bottom: 1.4rem;
   }
 
   .header h1 {
-    font-size: 2rem;
+    font-size: 1.85rem;
+    line-height: 1.1;
+  }
+
+  .header p {
+    font-size: 0.94rem;
+    line-height: 1.5;
+  }
+
+  .card h2 {
+    font-size: 1.26rem;
+    margin-bottom: 1.15rem;
+  }
+
+  .quick-icon {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 0.75rem;
+  }
+
+  .quick-card h3 {
+    font-size: 0.95rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .help-item p,
+  .info-content p,
+  .guarantee-box p {
+    line-height: 1.5;
   }
 }
 
