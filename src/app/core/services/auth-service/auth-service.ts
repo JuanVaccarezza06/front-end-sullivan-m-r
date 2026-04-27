@@ -2,18 +2,19 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
 import { Observable } from 'rxjs';
-import CredentialRegister from '../models/auth/CredentialRegister';
-import TokenResponseDTO from '../models/auth/TokenResponseDTO';
-import CredentialLogIn from '../models/auth/CredentialLogIn';
-import JwtPayload from '../models/auth/JwtPayload';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
+import { environment } from '../../../../environments/environment.development';
+import TokenResponseDTO from '../../models/auth/TokenResponseDTO';
+import CredentialLogIn from '../../models/auth/CredentialLogIn';
+import CredentialRegister from '../../models/auth/CredentialRegister';
+import JwtPayload from '../../models/auth/JwtPayload';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   
-  readonly url: string = 'http://localhost:8080/auth';
+  readonly url: string = `${environment.urlAPI}/auth`;
   readonly TOKEN_KEY = 'token';
 
   constructor(
@@ -26,6 +27,8 @@ export class AuthService {
   }
 
   logIn(credential: CredentialLogIn): Observable<TokenResponseDTO> {
+console.log("Intentando auto-login con:", credential);
+
     return this.http.post<TokenResponseDTO>(`${this.url}/login`, credential);
   }
 

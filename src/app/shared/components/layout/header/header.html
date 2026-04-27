@@ -45,6 +45,8 @@
 
     <div class="relative ml-auto flex items-center gap-2 sm:gap-3">
       @if (isLogged()) {
+
+        <!-- Menu only for mobile -->
         <details class="group relative min-[900px]:hidden">
           <summary
             class="list-none [&::-webkit-details-marker]:hidden inline-flex cursor-pointer items-center gap-2 rounded-full border border-emerald-100 bg-white px-4 py-2 text-sm font-semibold text-emerald-900 shadow-sm transition hover:border-emerald-200 hover:bg-emerald-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
@@ -95,6 +97,7 @@
           </div>
         </details>
 
+        <!-- Menu to open the user menu -->
         <button
           type="button"
           (click)="toggleMenu()"
@@ -117,8 +120,8 @@
         @if (isMenuOpen) {
           <div class="fixed inset-0 z-[9998]" (click)="closeMenu()"></div>
 
-          <div class="absolute right-0 top-full z-[9999] mt-3 w-[min(20rem,calc(100vw-1rem))] overflow-hidden rounded-2xl border border-emerald-100 bg-white shadow-2xl ring-1 ring-black/5">
-            <div class="flex items-center gap-3 border-b border-emerald-100 bg-emerald-50/70 px-4 py-4">
+          <div class="absolute right-0 top-full z-[9999] mt-3 w-[min(21rem,calc(100vw-1rem))] overflow-hidden rounded-3xl border border-emerald-100/90 bg-white shadow-[0_20px_45px_rgba(15,23,42,0.14)] ring-1 ring-black/5">
+            <div class="flex items-center gap-3 border-b border-emerald-100 bg-gradient-to-r from-emerald-50 to-white px-4 py-4">
               <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-700 text-sm font-bold text-white shadow-sm">
                 {{ userInitials }}
               </div>
@@ -129,55 +132,43 @@
               </div>
             </div>
 
-            <div class="flex flex-col p-2">
+            <div class="flex flex-col gap-1 p-2.5">
+              <!-- Show admin link only if the user has admin role -->
               @if (isAdmin()) {
                 <a
                   [routerLink]="['/admin/dashboard']"
                   (click)="closeMenu()"
-                  class="mb-1 flex items-center gap-3 rounded-xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800 transition-colors hover:bg-emerald-100"
+                  class="mb-1 flex items-center gap-3 rounded-2xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800 transition-all duration-200 hover:bg-emerald-100 hover:shadow-sm"
                 >
                   <i class="pi pi-shield"></i>
                   <span>Panel de Administración</span>
                 </a>
               }
-
+              
+              <!-- Links for all logged-in users, only redirect to profile -->
               <a
-                (click)="goToProfile()"
-                class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-800"
+                routerLink="/profile"
+                (click)="closeMenu()"
+                class="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition-all duration-200 hover:bg-emerald-50 hover:text-emerald-800"
               >
                 <i class="pi pi-user"></i>
                 <span>Mi Perfil</span>
               </a>
 
               <a
-                (click)="goToEditCredentials()"
-                class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-800"
+                routerLink="/profile/edit"
+                (click)="closeMenu()"
+                class="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition-all duration-200 hover:bg-emerald-50 hover:text-emerald-800"
               >
                 <i class="pi pi-cog"></i>
                 <span>Editar Credenciales</span>
               </a>
-
-              <a
-                (click)="closeMenu()"
-                class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-800"
-              >
-                <i class="pi pi-heart"></i>
-                <span>Propiedades Favoritas</span>
-              </a>
-
-              <a
-                (click)="closeMenu()"
-                class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-800"
-              >
-                <i class="pi pi-home"></i>
-                <span>Mis Consultas</span>
-              </a>
             </div>
 
-            <div class="border-t border-emerald-100 bg-slate-50 p-2">
+            <div class="border-t border-emerald-100 bg-slate-50 p-2.5">
               <a
                 (click)="logOut()"
-                class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-red-600 transition-colors hover:bg-red-50"
+                class="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-red-600 transition-all duration-200 hover:bg-red-50"
               >
                 <i class="pi pi-sign-out"></i>
                 <span>Cerrar Sesión</span>
@@ -192,6 +183,7 @@
           </div>
         }
       } @else {
+        <!-- Menu only for mobile -->
         <details class="group relative min-[900px]:hidden">
           <summary
             class="list-none [&::-webkit-details-marker]:hidden inline-flex cursor-pointer items-center gap-2 rounded-full border border-emerald-100 bg-white px-4 py-2.5 text-sm font-semibold text-emerald-900 shadow-sm transition hover:border-emerald-200 hover:bg-emerald-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"

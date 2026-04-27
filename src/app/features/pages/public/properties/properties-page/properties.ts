@@ -10,7 +10,6 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { AuthService } from '../../../../../core/auth-service/auth-service';
 import Amenity from '../../../../../core/models/Amenity';
 import { ConfigurationType } from '../../../../../core/models/ConfigurationType';
 import OperationType from '../../../../../core/models/OperationType';
@@ -24,6 +23,7 @@ import { PropertyService } from '../../../../../core/services/property-service/p
 import { ZoneService } from '../../../../../core/services/zone-service/zone-service';
 import { AdapterItem } from '../../../../../shared/components/ui/adapter-item/adapter-item';
 import { DecimalPipe } from '@angular/common';
+import { AuthService } from '../../../../../core/services/auth-service/auth-service';
 
 @Component({
   selector: 'app-properties',
@@ -38,7 +38,7 @@ export class Properties implements OnInit {
     const min = control.get('minPrice')?.value;
     const max = control.get('maxPrice')?.value;
 
-    if (min !== null && max !== null && max > 0 && min > max) {
+    if (min !== null && max !== null && min !== '' && max !== '' && min > max) {
       return { rangeError: true };
     }
 
@@ -70,6 +70,7 @@ export class Properties implements OnInit {
   adminMode: boolean = false;
   isFilter: boolean = false;
   filterFailed: boolean = false;
+  isSearching: boolean = false;
   zoneConfiguration: boolean = false;
 
   imageNotFound!: string;
@@ -140,8 +141,8 @@ export class Properties implements OnInit {
 
         // Cambiamos a null o '' inicial para que el input salga vacío y limpio
         // Agregamos Validators.min(0) para que no pongan números negativos
-        minPrice: [null, [Validators.min(0)]],
-        maxPrice: [null, [Validators.min(0)]],
+        minPrice: [null, [Validators.min(0), Validators.pattern(/^\d+$/)]],
+        maxPrice: [null, [Validators.min(0), Validators.pattern(/^\d+$/)]],
 
         rooms: [0, [Validators.required]],
         amenities: this.fb.array([]),
@@ -343,6 +344,11 @@ export class Properties implements OnInit {
   }
 
   onSubmit() {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
     console.log('Starting onSubmit...');
 
     // 1. Safe extraction of amenities
@@ -400,8 +406,8 @@ export class Properties implements OnInit {
         typeName: this.form.get('propertyTypes')?.value ?? '',
       },
       zoneDTO: safeZoneDTO,
-      minPrice: this.form.get('minPrice')?.value ?? 0,
-      maxPrice: this.form.get('maxPrice')?.value ?? 0,
+      minPrice: this.toSafeNumber(this.form.get('minPrice')?.value),
+      maxPrice: this.toSafeNumber(this.form.get('maxPrice')?.value),
       rooms: this.form.get('rooms')?.value ?? 0,
       amenityDTOList: selectedAmenitiesDTO,
     } as PropertiesFilter;
@@ -528,5 +534,14 @@ export class Properties implements OnInit {
     
     // 4. Si existe primary, devolvemos esa. Si no, la primera de la lista (posición 0)
     return primaryImg ? primaryImg.url : sortedImages[0].url;
+  }
+
+  private toSafeNumber(value: unknown): number {
+    if (value === null || value === undefined || value === '') {
+      return 0;
+    }
+
+    const parsedValue = Number(value);
+    return Number.isFinite(parsedValue) && parsedValue >= 0 ? parsedValue : 0;
   }
 }

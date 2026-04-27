@@ -30,6 +30,8 @@ export const routes: Routes = [
   // Feature: Propiedades (Vista Cliente)
   { path: 'properties', component: Properties },
   { path: 'properties/:id', component: PropertyDetail }, // URL más limpia: /properties/123
+  { path: 'profile', component: UserProfile },
+  { path: 'profile/edit', component: UserUpdate },
 
   { path: 'login', component: LogIn, data: { hideShell: true } },
   { path: 'register', component: Register, data: { hideShell: true } },

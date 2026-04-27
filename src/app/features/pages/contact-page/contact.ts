@@ -3,11 +3,10 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute } from '@angular/router';
 import { take } from 'rxjs/operators'; // <--- Senior Tip: Import this
 import { MotiveService } from '../../../core/services/motive-service/motive-service';
-import { AuthService } from '../../../core/auth-service/auth-service';
-import { ContactService } from '../../../core/services/contact-service/contact-service';
 import { UserService } from '../../../core/services/user-service/user-service';
 import MotiveDTO from '../../../core/models/MotiveDTO';
 import { GeneralInquiryService } from '../../../core/services/general-inquiry-service/general-inquiry-service';
+import { AuthService } from '../../../core/services/auth-service/auth-service';
 
 // Models & Services
 

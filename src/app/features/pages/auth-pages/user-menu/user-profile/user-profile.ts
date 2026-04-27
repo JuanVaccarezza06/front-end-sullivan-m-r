@@ -2,8 +2,7 @@ import { Component, inject } from '@angular/core';
 import { UserService } from '../../../../../core/services/user-service/user-service';
 import UserFull from '../../../../../core/models/actors/UserFull';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../../../../core/auth-service/auth-service';
-import User from '../../../../../core/models/actors/User';
+import { AuthService } from '../../../../../core/services/auth-service/auth-service';
 
 @Component({
   selector: 'app-user-profile',
@@ -42,7 +41,6 @@ export class UserProfile {
 
     if (usernameFromToken) {
       this.loading = true;
-
       // 2. CORRECCIÓN: Usamos getUserByUsername en lugar de getByEmail
       this.userService.getUserFullByUsername(usernameFromToken).subscribe({
         next: (data) => {
@@ -69,7 +67,7 @@ export class UserProfile {
   }
 
   userEdit() {
-    return this.router.navigate([`/admin/users/edit/${this.user.id}`], {
+    return this.router.navigate(['/profile/edit'], {
       state: { userToUpdate: this.user },
     });
   }

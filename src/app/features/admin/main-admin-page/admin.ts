@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
-import { AuthService } from '../../../core/auth-service/auth-service';
+import { AuthService } from '../../../core/services/auth-service/auth-service';
 
 @Component({
   selector: 'app-admin',

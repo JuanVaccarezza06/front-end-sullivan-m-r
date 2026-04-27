@@ -1,12 +1,12 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../../../core/auth-service/auth-service';
 import { filter } from 'rxjs';
 import { UserService } from '../../../../core/services/user-service/user-service';
 import User from '../../../../core/models/actors/User';
 import UserFull from '../../../../core/models/actors/UserFull';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { StatusCard } from '../../ui/status-card/status-card';
+import { AuthService } from '../../../../core/services/auth-service/auth-service';
 
 @Component({
   selector: 'app-header',
@@ -82,21 +82,22 @@ export class Header {
         this.userEmail = payload.sub || ''; // O el campo que uses para email
         this.userInitials = this.calculateInitials(this.userName);
 
-        // 2. ESTRATEGIA OPTIMIZADA: Pedir el usuario completo al backend AHORA
-        // Asumo que tu servicio tiene un método 'getUserByUsername' o similar.
-        // Ajusta el nombre del método según tu UserService.
-        this.userService.getUserFullByUsername(this.userName).subscribe({
-          next: (user: UserFull) => {
-            // Guardamos el usuario completo en nuestra variable privada
-            this.currentUser = user;
-            
-            // Opcional: Actualizar datos visuales con la info real de la DB (más precisa que el token)
-            if(user.email) this.userEmail = user.email;
-          },
-          error: (err) => {
-            console.error('Error al cargar datos completos del usuario', err);
-          }
-        });
+        // Solo los administradores consultan el perfil completo.
+        // Los usuarios comunes no deben disparar una llamada que el backend pueda bloquear.
+        if (this.isAdmin()) {
+          this.userService.getUserFullByUsername(this.userName).subscribe({
+            next: (user: UserFull) => {
+              this.currentUser = user;
+
+              if (user.email) this.userEmail = user.email;
+            },
+            error: (err) => {
+              console.error('Error al cargar datos completos del usuario', err);
+            },
+          });
+        } else {
+          this.currentUser = null;
+        }
       }
     }
   }
@@ -106,27 +107,12 @@ export class Header {
 
   goToEditCredentials() {
     this.closeMenu();
-    // Verificamos si ya tenemos el usuario cargado
-    if (this.currentUser) {
-      this.router.navigate(['/admin/users/edit', this.currentUser.id], { 
-        state: { userToUpdate: this.currentUser } // Pasamos el objeto que ya tenemos en memoria
-      });
-    } else {
-      // Fallback: Si por alguna razón falló la carga, redirigimos normal 
-      // y que el componente de destino se encargue de buscarlo si le falta.
-      this.router.navigate(['/admin/users/profile']);
-    }
+    this.router.navigate(['/profile/edit']);
   }
 
   goToProfile() {
     this.closeMenu();
-    if (this.currentUser) {
-      this.router.navigate(['/admin/users/profile'], { 
-        state: { user: this.currentUser } 
-      });
-    } else {
-      this.router.navigate(['/admin/users/profile']);
-    }
+    this.router.navigate(['/profile']);
   }
 
   calculateInitials(name: string): string {
@@ -178,7 +164,7 @@ export class Header {
         queryParams: { msg: null, type: null },
         queryParamsHandling: 'merge',
       });
-    }, 5000);
+    }, 1000);
   }
 
   private clearStatusMessage(): void {

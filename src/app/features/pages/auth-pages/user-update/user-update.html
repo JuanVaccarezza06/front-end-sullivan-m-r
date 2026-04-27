@@ -1,254 +1,331 @@
-<div class="min-h-screen bg-gray-50 p-4 md:p-8 flex justify-center">
-  <div class="w-full max-w-2xl space-y-6">
+<div class="min-h-screen bg-gradient-to-b from-gray-50 to-white pb-12">
+  <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
     
-    <div>
-      <button routerLink="/admin/users/profile" class="text-gray-500 hover:text-gray-700 flex items-center gap-2 mb-4 text-sm font-medium transition-colors">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
-        Volver al perfil
+    <!-- Header Navigation -->
+    <div class="mt-6 mb-8">
+      <button 
+        routerLink="/profile" 
+        class="inline-flex items-center gap-2 text-sm font-medium text-slate-600 transition-colors hover:text-slate-900">
+        <i class="pi pi-arrow-left text-xs"></i>
+        <span>Volver al perfil</span>
       </button>
+    </div>
 
-      <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm flex items-center gap-5">
-        <div class="relative">
-          <div class="w-16 h-16 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center text-white text-xl font-bold shadow-md">
-            {{ userInitials() }}
-          </div>
-          <div class="absolute bottom-0 right-0 bg-green-600 w-6 h-6 rounded-full flex items-center justify-center text-white border-2 border-white">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
-          </div>
+    <!-- Hero Section -->
+    <section class="relative overflow-hidden rounded-3xl border border-emerald-950/5 bg-emerald-950 shadow-[0_24px_60px_rgba(15,23,42,0.12)] mb-8">
+      <div class="absolute inset-0 opacity-[0.08] pattern-dots"></div>
+
+      <div class="relative z-10 flex flex-col gap-4 px-6 py-8 sm:flex-row sm:items-center sm:gap-6 sm:px-8 lg:px-10">
+        <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 text-2xl font-semibold text-white ring-1 ring-white/10 backdrop-blur-sm">
+          {{ userInitials() }}
         </div>
 
-        <div>
-          <h1 class="text-xl font-bold text-gray-900">Editar Credenciales</h1>
-          <p class="text-gray-500 text-sm">Actualiza tu información personal y seguridad</p>
+        <div class="min-w-0">
+          <h1 class="text-2xl font-semibold tracking-tight text-white sm:text-3xl">Editar Perfil</h1>
+          <p class="mt-1 text-sm text-emerald-50/80">Actualiza tu información personal y credenciales de acceso</p>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="flex gap-4">
-      <button 
+    <!-- Tabs Navigation -->
+    <div class="mb-8 flex gap-3 border-b border-gray-200">
+      <button
         (click)="switchTab('personal')"
-        class="flex-1 py-3 px-4 rounded-lg font-medium text-sm transition-colors duration-200 border"
-        [class.bg-green-700]="activeTab() === 'personal'"
-        [class.text-white]="activeTab() === 'personal'"
-        [class.border-green-700]="activeTab() === 'personal'"
-        [class.bg-white]="activeTab() !== 'personal'"
-        [class.text-gray-600]="activeTab() !== 'personal'"
-        [class.border-gray-200]="activeTab() !== 'personal'"
-        [class.hover:bg-gray-50]="activeTab() !== 'personal'">
+        class="relative px-4 py-3 text-sm font-semibold transition-colors duration-200"
+        [class.text-emerald-700]="activeTab() === 'personal'"
+        [class.text-slate-500]="activeTab() !== 'personal'"
+      >
+        <i class="pi pi-user mr-2"></i>
         Datos Personales
+        
+        @if (activeTab() === 'personal') {
+          <span class="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-700"></span>
+        }
       </button>
 
-      <button 
+      <button
         (click)="switchTab('password')"
-        class="flex-1 py-3 px-4 rounded-lg font-medium text-sm transition-colors duration-200 border"
-        [class.bg-green-700]="activeTab() === 'password'"
-        [class.text-white]="activeTab() === 'password'"
-        [class.border-green-700]="activeTab() === 'password'"
-        [class.bg-white]="activeTab() !== 'password'"
-        [class.text-gray-600]="activeTab() !== 'password'"
-        [class.border-gray-200]="activeTab() !== 'password'"
-        [class.hover:bg-gray-50]="activeTab() !== 'password'">
+        class="relative px-4 py-3 text-sm font-semibold transition-colors duration-200"
+        [class.text-emerald-700]="activeTab() === 'password'"
+        [class.text-slate-500]="activeTab() !== 'password'"
+      >
+        <i class="pi pi-lock mr-2"></i>
         Cambiar Contraseña
+        
+        @if (activeTab() === 'password') {
+          <span class="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-700"></span>
+        }
       </button>
     </div>
 
-    <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+    <!-- Content Section -->
+    <section class="overflow-hidden rounded-3xl border border-gray-200/80 bg-white shadow-[0_18px_40px_rgba(15,23,42,0.06)]">
       
+      <!-- Personal Data Tab -->
       @if (activeTab() === 'personal') {
-        <h2 class="text-lg font-bold text-gray-900 mb-6">Información Personal</h2>
-        
-        <form [formGroup]="personalForm" (ngSubmit)="savePersonalData()" class="space-y-5">
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="space-y-1.5">
-              <label class="text-sm font-medium text-gray-700">Nombre</label>
-              <div class="relative">
-                <input 
-                  type="text" 
-                  formControlName="firstName" 
-                  class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-gray-700 text-sm transition-all" 
-                  placeholder="Nombre">
-              </div>
-              @if (personalForm.get('firstName')?.hasError('required') && personalForm.get('firstName')?.touched) {
-                <span class="text-xs text-red-500">Requerido</span>
-              }
-            </div>
-
-            <div class="space-y-1.5">
-              <label class="text-sm font-medium text-gray-700">Apellido</label>
-              <div class="relative">
-                <input 
-                  type="text" 
-                  formControlName="surname" 
-                  class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-gray-700 text-sm transition-all" 
-                  placeholder="Apellido">
-              </div>
-              @if (personalForm.get('surname')?.hasError('required') && personalForm.get('surname')?.touched) {
-                <span class="text-xs text-red-500">Requerido</span>
-              }
-            </div>
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-sm font-medium text-gray-700">Correo electrónico</label>
-            <div class="relative">
-              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-              </span>
-              <input type="email" formControlName="email" class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-gray-700 text-sm transition-all" placeholder="tucorreo@email.com">
-            </div>
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-sm font-medium text-gray-700">Teléfono</label>
-            <div class="relative">
-              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-              </span>
-              <input type="tel" formControlName="numberPhone" class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-gray-700 text-sm transition-all" placeholder="+54 ...">
-            </div>
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-sm font-medium text-gray-700">Nombre de usuario</label>
-            <div class="relative">
-              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"/></svg>
-              </span>
-              <input type="text" formControlName="username" class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-gray-700 text-sm transition-all" placeholder="Ej: juanmartinez23">
-            </div>
-          </div>
-
-          <div class="pt-4 flex gap-3">
-            <button 
-                type="submit" 
-                [disabled]="isSubmitting()"
-                class="flex-1 bg-green-700 hover:bg-green-800 disabled:bg-green-700/60 disabled:cursor-not-allowed text-white font-medium py-2.5 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm shadow-green-700/20">
-              @if (isSubmitting()) {
-                <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Guardando...
-              } @else {
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                  Guardar Cambios
-              }
-            </button>
-            <button type="button" [disabled]="isSubmitting()" class="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors">
-              Cancelar
-            </button>
-          </div>
-
-        </form>
-      }
-
-      @if (activeTab() === 'password') {
-        <h2 class="text-lg font-bold text-gray-900 mb-4">Cambiar Contraseña</h2>
-        
-        <p class="text-sm text-gray-500 mb-6">Asegúrate de usar una contraseña segura que no uses en otro sitio</p>
-
-        <div class="mb-6 p-4 bg-orange-50 border border-orange-100 rounded-lg flex items-start gap-3">
-          <svg class="text-orange-500 mt-0.5 shrink-0" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
-          <div>
-            <h4 class="text-sm font-semibold text-orange-800">Importante</h4>
-            <p class="text-sm text-orange-700 mt-0.5">Después de cambiar tu contraseña, deberás iniciar sesión nuevamente.</p>
-          </div>
+        <div class="border-b border-gray-100 px-6 py-6 sm:px-8 lg:px-10">
+          <h2 class="text-xl font-semibold text-slate-900">Información Personal</h2>
+          <p class="mt-1 text-sm text-slate-500">Mantén actualizada tu información de contacto y perfil</p>
         </div>
 
-        <form [formGroup]="passwordForm" (ngSubmit)="updatePassword()" class="space-y-5">
-          
-          <div class="space-y-1.5">
-            <label class="text-sm font-medium text-gray-700">Contraseña actual</label>
-            <div class="relative">
-              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-              </span>
-              <input 
-                type="password" 
-                formControlName="currentPassword" 
-                class="w-full pl-10 pr-10 py-2.5 rounded-lg border focus:ring-1 outline-none text-gray-700 text-sm transition-all"
-                [class.border-red-500]="passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched"
-                [class.border-gray-200]="!passwordForm.get('currentPassword')?.invalid"
-                [class.focus:border-green-500]="!passwordForm.get('currentPassword')?.invalid"
-                [class.focus:ring-green-500]="!passwordForm.get('currentPassword')?.invalid"
-                placeholder="Tu contraseña actual">
-            </div>
+        <div class="px-6 py-8 sm:px-8 lg:px-10">
+          <form [formGroup]="personalForm" (ngSubmit)="savePersonalData()" class="space-y-6">
             
-            @if (passwordForm.get('currentPassword')?.touched) {
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <!-- FirstName -->
+              <div class="space-y-2">
+                <label class="text-sm font-semibold uppercase tracking-[0.18em] text-slate-600">Nombre</label>
+                <input
+                  type="text"
+                  formControlName="firstName"
+                  placeholder="Tu nombre"
+                  class="w-full rounded-2xl border border-gray-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 transition-colors placeholder:text-slate-400 focus:border-emerald-300 focus:bg-white focus:outline-none focus:ring-0"
+                  [class.border-red-500]="personalForm.get('firstName')?.invalid && personalForm.get('firstName')?.touched"
+                  [class.bg-red-50]="personalForm.get('firstName')?.invalid && personalForm.get('firstName')?.touched"
+                >
+                @if (personalForm.get('firstName')?.touched && personalForm.get('firstName')?.invalid) {
+                  @if (personalForm.get('firstName')?.hasError('required')) {
+                    <p class="text-xs text-red-600 mt-1">Este campo es obligatorio.</p>
+                  }
+                  @if (personalForm.get('firstName')?.hasError('minlength')) {
+                    <p class="text-xs text-red-600 mt-1">Mínimo 3 caracteres.</p>
+                  }
+                  @if (personalForm.get('firstName')?.hasError('maxlength')) {
+                    <p class="text-xs text-red-600 mt-1">Máximo 100 caracteres.</p>
+                  }
+                  @if (personalForm.get('firstName')?.hasError('sqlInjection')) {
+                    <p class="text-xs text-red-600 mt-1">Caracteres no permitidos detectados.</p>
+                  }
+                }
+              </div>
+
+              <!-- Surname -->
+              <div class="space-y-2">
+                <label class="text-sm font-semibold uppercase tracking-[0.18em] text-slate-600">Apellido</label>
+                <input
+                  type="text"
+                  formControlName="surname"
+                  placeholder="Tu apellido"
+                  class="w-full rounded-2xl border border-gray-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 transition-colors placeholder:text-slate-400 focus:border-emerald-300 focus:bg-white focus:outline-none focus:ring-0"
+                  [class.border-red-500]="personalForm.get('surname')?.invalid && personalForm.get('surname')?.touched"
+                  [class.bg-red-50]="personalForm.get('surname')?.invalid && personalForm.get('surname')?.touched"
+                >
+                @if (personalForm.get('surname')?.touched && personalForm.get('surname')?.invalid) {
+                  @if (personalForm.get('surname')?.hasError('required')) {
+                    <p class="text-xs text-red-600 mt-1">Este campo es obligatorio.</p>
+                  }
+                  @if (personalForm.get('surname')?.hasError('minlength')) {
+                    <p class="text-xs text-red-600 mt-1">Mínimo 3 caracteres.</p>
+                  }
+                  @if (personalForm.get('surname')?.hasError('maxlength')) {
+                    <p class="text-xs text-red-600 mt-1">Máximo 100 caracteres.</p>
+                  }
+                  @if (personalForm.get('surname')?.hasError('sqlInjection')) {
+                    <p class="text-xs text-red-600 mt-1">Caracteres no permitidos detectados.</p>
+                  }
+                }
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div class="space-y-2">
+              <label class="text-sm font-semibold uppercase tracking-[0.18em] text-slate-600">Correo electrónico</label>
+              <input
+                type="email"
+                formControlName="email"
+                placeholder="tu@email.com"
+                class="w-full rounded-2xl border border-gray-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 transition-colors placeholder:text-slate-400 focus:border-emerald-300 focus:bg-white focus:outline-none focus:ring-0"
+                [class.border-red-500]="personalForm.get('email')?.invalid && personalForm.get('email')?.touched"
+                [class.bg-red-50]="personalForm.get('email')?.invalid && personalForm.get('email')?.touched"
+              >
+              @if (personalForm.get('email')?.touched && personalForm.get('email')?.invalid) {
+                @if (personalForm.get('email')?.hasError('required')) {
+                  <p class="text-xs text-red-600 mt-1">Este campo es obligatorio.</p>
+                }
+                @if (personalForm.get('email')?.hasError('email')) {
+                  <p class="text-xs text-red-600 mt-1">Formato de email inválido.</p>
+                }
+                @if (personalForm.get('email')?.hasError('sqlInjection')) {
+                  <p class="text-xs text-red-600 mt-1">Contiene caracteres no permitidos.</p>
+                }
+              }
+            </div>
+
+            <!-- Phone -->
+            <div class="space-y-2">
+              <label class="text-sm font-semibold uppercase tracking-[0.18em] text-slate-600">Teléfono</label>
+              <input
+                type="tel"
+                formControlName="numberPhone"
+                placeholder="+54 (223) 123-4567"
+                class="w-full rounded-2xl border border-gray-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 transition-colors placeholder:text-slate-400 focus:border-emerald-300 focus:bg-white focus:outline-none focus:ring-0"
+                [class.border-red-500]="personalForm.get('numberPhone')?.invalid && personalForm.get('numberPhone')?.touched"
+                [class.bg-red-50]="personalForm.get('numberPhone')?.invalid && personalForm.get('numberPhone')?.touched"
+              >
+              @if (personalForm.get('numberPhone')?.touched && personalForm.get('numberPhone')?.invalid) {
+                @if (personalForm.get('numberPhone')?.hasError('required')) {
+                  <p class="text-xs text-red-600 mt-1">Este campo es obligatorio.</p>
+                }
+                @if (personalForm.get('numberPhone')?.hasError('minlength')) {
+                  <p class="text-xs text-red-600 mt-1">Mínimo 3 caracteres.</p>
+                }
+                @if (personalForm.get('numberPhone')?.hasError('unsafePhoneChars')) {
+                  <p class="text-xs text-red-600 mt-1">Solo números, espacios, +, -, ( y ).</p>
+                }
+              }
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex gap-3 border-t border-gray-100 pt-6">
+              <button
+                type="submit"
+                [disabled]="personalForm.invalid || isSubmitting()"
+                class="inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-emerald-800 hover:shadow-md disabled:bg-emerald-700/60 disabled:cursor-not-allowed disabled:shadow-none"
+              >
+                @if (isSubmitting()) {
+                  <i class="pi pi-spin pi-spinner text-sm"></i>
+                  <span>Guardando...</span>
+                } @else {
+                  <i class="pi pi-save text-sm"></i>
+                  <span>Guardar cambios</span>
+                }
+              </button>
+
+              <button
+                type="button"
+                [disabled]="isSubmitting()"
+                routerLink="/profile"
+                class="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <span>Cancelar</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      }
+
+      <!-- Password Change Tab -->
+      @if (activeTab() === 'password') {
+        <div class="border-b border-gray-100 px-6 py-6 sm:px-8 lg:px-10">
+          <h2 class="text-xl font-semibold text-slate-900">Cambiar Contraseña</h2>
+          <p class="mt-1 text-sm text-slate-500">Asegúrate de usar una contraseña segura que no uses en otro sitio</p>
+        </div>
+
+        <div class="px-6 py-8 sm:px-8 lg:px-10">
+          <!-- Warning Alert -->
+          <div class="mb-6 flex gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+            <i class="pi pi-exclamation-triangle text-amber-600 text-lg shrink-0 mt-0.5"></i>
+            <div>
+              <h3 class="text-sm font-semibold text-amber-900">Importante</h3>
+              <p class="mt-1 text-sm text-amber-800">Después de cambiar tu contraseña, deberás iniciar sesión nuevamente.</p>
+            </div>
+          </div>
+
+          <form [formGroup]="passwordForm" (ngSubmit)="updatePassword()" class="space-y-6">
+            
+            <!-- Current Password -->
+            <div class="space-y-2">
+              <label class="text-sm font-semibold uppercase tracking-[0.18em] text-slate-600">Contraseña actual</label>
+              <input
+                type="password"
+                formControlName="currentPassword"
+                placeholder="Tu contraseña actual"
+                class="w-full rounded-2xl border border-gray-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 transition-colors placeholder:text-slate-400 focus:border-emerald-300 focus:bg-white focus:outline-none focus:ring-0"
+                [class.border-red-500]="passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched"
+                [class.bg-red-50]="passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched"
+              >
+              @if (passwordForm.get('currentPassword')?.touched && passwordForm.get('currentPassword')?.invalid) {
                 @if (passwordForm.get('currentPassword')?.hasError('required')) {
-                    <span class="text-xs text-red-500">La contraseña actual es requerida.</span>
+                  <p class="text-xs text-red-600 mt-1">Este campo es obligatorio.</p>
                 }
                 @if (passwordForm.get('currentPassword')?.hasError('invalidPassword')) {
-                    <span class="text-xs text-red-600 font-bold flex items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
-                        La contraseña actual es incorrecta.
-                    </span>
+                  <p class="text-xs text-red-600 mt-1 font-semibold flex items-center gap-1">
+                    <i class="pi pi-info-circle text-xs"></i>
+                    La contraseña actual es incorrecta.
+                  </p>
                 }
-            }
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-sm font-medium text-gray-700">Nueva contraseña</label>
-            <div class="relative">
-              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-              </span>
-              <input 
-                type="password" 
-                formControlName="newPassword" 
-                class="w-full pl-10 pr-10 py-2.5 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-gray-700 text-sm transition-all" 
-                placeholder="Mínimo 6 caracteres">
-            </div>
-            @if (passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.hasError('minlength')) {
-                <span class="text-xs text-red-500">Debe tener al menos 6 caracteres.</span>
-            }
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-sm font-medium text-gray-700">Confirmar nueva contraseña</label>
-            <div class="relative">
-              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-              </span>
-              <input 
-                type="password" 
-                formControlName="confirmPassword" 
-                class="w-full pl-10 pr-10 py-2.5 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-gray-700 text-sm transition-all" 
-                placeholder="Repite la nueva contraseña">
-            </div>
-            
-            @if (passwordForm.errors?.['passwordMismatch'] && passwordForm.get('confirmPassword')?.touched) {
-                <span class="text-xs text-red-600 font-medium flex items-center gap-1">
-                    Las contraseñas no coinciden.
-                </span>
-            }
-          </div>
-
-          <div class="pt-4 flex gap-3">
-            <button 
-                type="submit" 
-                [disabled]="passwordForm.invalid || isSubmitting()"
-                class="flex-1 bg-green-700 hover:bg-green-800 disabled:bg-green-700/60 disabled:cursor-not-allowed text-white font-medium py-2.5 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm shadow-green-700/20">
-              
-              @if (isSubmitting()) {
-                <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Actualizando...
-              } @else {
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                Actualizar Contraseña
               }
-            </button>
-            <button type="button" [disabled]="isSubmitting()" class="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors">
-              Cancelar
-            </button>
-          </div>
+            </div>
 
-        </form>
+            <!-- New Password -->
+            <div class="space-y-2">
+              <label class="text-sm font-semibold uppercase tracking-[0.18em] text-slate-600">Nueva contraseña</label>
+              <input
+                type="password"
+                formControlName="newPassword"
+                placeholder="Mínimo 8 caracteres (mayúscula, número y símbolo)"
+                class="w-full rounded-2xl border border-gray-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 transition-colors placeholder:text-slate-400 focus:border-emerald-300 focus:bg-white focus:outline-none focus:ring-0"
+                [class.border-red-500]="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched"
+                [class.bg-red-50]="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched"
+              >
+              @if (passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.invalid) {
+                @if (passwordForm.get('newPassword')?.hasError('required')) {
+                  <p class="text-xs text-red-600 mt-1">Este campo es obligatorio.</p>
+                }
+                @if (passwordForm.get('newPassword')?.hasError('minlength')) {
+                  <p class="text-xs text-red-600 mt-1">Debe tener al menos 8 caracteres.</p>
+                }
+                @if (passwordForm.get('newPassword')?.hasError('maxlength')) {
+                  <p class="text-xs text-red-600 mt-1">Máximo 30 caracteres.</p>
+                }
+                @if (passwordForm.get('newPassword')?.hasError('pattern')) {
+                  <p class="text-xs text-red-600 mt-1">Debe incluir: 1 mayúscula, 1 número y 1 carácter especial.</p>
+                }
+                @if (passwordForm.get('newPassword')?.hasError('unsafeChars')) {
+                  <p class="text-xs text-red-600 mt-1">Contiene caracteres no permitidos.</p>
+                }
+              }
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="space-y-2">
+              <label class="text-sm font-semibold uppercase tracking-[0.18em] text-slate-600">Confirmar contraseña</label>
+              <input
+                type="password"
+                formControlName="confirmPassword"
+                placeholder="Repite la nueva contraseña"
+                class="w-full rounded-2xl border border-gray-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 transition-colors placeholder:text-slate-400 focus:border-emerald-300 focus:bg-white focus:outline-none focus:ring-0"
+                [class.border-red-500]="(passwordForm.errors?.['passwordMismatch'] || passwordForm.get('confirmPassword')?.invalid) && passwordForm.get('confirmPassword')?.touched"
+                [class.bg-red-50]="(passwordForm.errors?.['passwordMismatch'] || passwordForm.get('confirmPassword')?.invalid) && passwordForm.get('confirmPassword')?.touched"
+              >
+              @if (passwordForm.get('confirmPassword')?.touched) {
+                @if (passwordForm.get('confirmPassword')?.hasError('required')) {
+                  <p class="text-xs text-red-600 mt-1">Este campo es obligatorio.</p>
+                }
+                @if (passwordForm.errors?.['passwordMismatch']) {
+                  <p class="text-xs text-red-600 mt-1 font-semibold">Las contraseñas no coinciden.</p>
+                }
+              }
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex gap-3 border-t border-gray-100 pt-6">
+              <button
+                type="submit"
+                [disabled]="passwordForm.invalid || isSubmitting()"
+                class="inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-emerald-800 hover:shadow-md disabled:bg-emerald-700/60 disabled:cursor-not-allowed disabled:shadow-none"
+              >
+                @if (isSubmitting()) {
+                  <i class="pi pi-spin pi-spinner text-sm"></i>
+                  <span>Actualizando...</span>
+                } @else {
+                  <i class="pi pi-save text-sm"></i>
+                  <span>Actualizar contraseña</span>
+                }
+              </button>
+
+              <button
+                type="button"
+                [disabled]="isSubmitting()"
+                routerLink="/admin/users/profile"
+                class="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <span>Cancelar</span>
+              </button>
+            </div>
+          </form>
+        </div>
       }
-    </div>
+    </section>
   </div>
 </div>

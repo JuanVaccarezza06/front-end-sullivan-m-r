@@ -11,7 +11,38 @@ import {
 import { UserService } from '../../../../core/services/user-service/user-service';
 import { Router, RouterLink } from '@angular/router';
 import UserFull from '../../../../core/models/actors/UserFull';
-import { AuthService } from '../../../../core/auth-service/auth-service';
+import { AuthService } from '../../../../core/services/auth-service/auth-service';
+
+function noSQLInjection(control: AbstractControl): ValidationErrors | null {
+  const value: string = control.value ?? '';
+  if (!value) return null;
+  const SQL_PATTERN = /(['";`]|--|SELECT|INSERT|UPDATE|DELETE|DROP|UNION|\/\*|\*\/|xp_)/i;
+  if (SQL_PATTERN.test(value)) return { sqlInjection: true };
+  return null;
+}
+
+function safeTextField(control: AbstractControl): ValidationErrors | null {
+  const value: string = control.value ?? '';
+  if (!value) return null;
+  const SQL_PATTERN = /(['";`]|--|SELECT|INSERT|UPDATE|DELETE|DROP|UNION|\/\*|\*\/|xp_)/i;
+  if (SQL_PATTERN.test(value)) return { sqlInjection: true };
+  return null;
+}
+
+function safePassword(control: AbstractControl): ValidationErrors | null {
+  const value: string = control.value ?? '';
+  if (!value) return null;
+  const isValid = /^[a-zA-Z0-9!@#$%^&*()\-_+=<>?{}[\]~]+$/.test(value);
+  if (!isValid) return { unsafeChars: true };
+  return null;
+}
+
+function safePhone(control: AbstractControl): ValidationErrors | null {
+  const value: string = control.value ?? '';
+  if (!value) return null;
+  if (!/^\+?[0-9\s\-()]+$/.test(value)) return { unsafePhoneChars: true };
+  return null;
+}
 
 // 1. Validador personalizado (Clean Architecture: fuera de la clase)
 const passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
@@ -66,40 +97,52 @@ export class UserUpdate implements OnInit {
     if (state?.userToUpdate) {
       this.currentUser.set(state.userToUpdate);
     } else {
-      console.error('User para actualizar nulo');
-      // Opcional: Redirigir si no hay usuario
-      // this.router.navigate(['/error']);
+      const usernameFromToken = this.authService.getUsername();
+
+      if (usernameFromToken) {
+        this.userService.getUserFullByUsername(usernameFromToken).subscribe({
+          next: (user) => {
+            this.currentUser.set(user);
+            this.personalForm.patchValue(user);
+          },
+          error: (error) => {
+            console.error('User para actualizar nulo', error);
+          },
+        });
+      } else {
+        console.error('User para actualizar nulo');
+      }
     }
 
-    // 2. Inicialización del Formulario Personal con validadores de TU lógica
+    // 2. Inicialización del Formulario Personal con validadores de seguridad
     this.personalForm = this.fb.group({
-      firstName: ['', [Validators.required, Validators.maxLength(20), Validators.minLength(3)]],
-      surname: ['', [Validators.required, Validators.maxLength(20), Validators.minLength(3)]],
+      firstName: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100), safeTextField, noSQLInjection]],
+      surname: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100), safeTextField, noSQLInjection]],
       email: [
         '',
-        [Validators.required, Validators.email, Validators.maxLength(254), Validators.minLength(6)],
+        [Validators.required, Validators.email, Validators.minLength(6), Validators.maxLength(254), noSQLInjection],
       ],
       numberPhone: [
         '',
         [
           Validators.required,
-          Validators.pattern(/^\+?[0-9\s\-]+$/),
-          Validators.maxLength(20),
           Validators.minLength(3),
+          Validators.maxLength(20),
+          safePhone,
         ],
       ],
-      username: [''], // Mantenido por visualización, aunque la lógica original no lo validaba igual
+      username: [''],
     });
 
-    // 2. Configuración del Formulario Password con Validador Grupal
+    // 2. Configuración del Formulario Password con Validador Grupal y requisitos fuertes
     this.passwordForm = this.fb.group(
       {
         currentPassword: ['', Validators.required],
-        newPassword: ['', [Validators.required, Validators.minLength(6)]],
+        newPassword: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(30), Validators.pattern(/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_+=<>?{}[\]~]).+$/), safePassword, noSQLInjection]],
         confirmPassword: ['', Validators.required],
       },
       { validators: passwordMatchValidator },
-    ); // <--- IMPORTANTE: Validador al grupo
+    );
 
     // 4. Patch de valores si existe el usuario
     if (this.currentUser()) {
@@ -124,7 +167,7 @@ export class UserUpdate implements OnInit {
       this.userService.update(userFormValues, userEmail).subscribe({
         next: (data) => {
           console.log('Update done', data);
-          this.router.navigate(['admin/user-info']);
+          this.router.navigate(['/profile']);
         },
         error: (e) => {
           console.error('Error updating user', e);

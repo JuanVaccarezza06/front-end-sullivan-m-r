@@ -3,18 +3,17 @@ import { Injectable } from '@angular/core';
 import Property from '../../models/properties/Property';
 import { Observable } from 'rxjs';
 import PropertiesFilter from '../../models/PropertiesFilter';
-import { AuthService } from '../../auth-service/auth-service';
 import PropertyPost from '../../models/properties/PropertyPost';
 import { HatoasPageResponse } from '../../models/HatoasPageResponse';
 import OperationType from '../../models/OperationType';
 import PropertyType from '../../models/PropertyType';
-import Currency from '../../models/Currency';
+import { environment } from '../../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PropertyService {
-  readonly API_URL = 'http://localhost:8080/property';
+  readonly API_URL = `${environment.urlAPI}/property`;
 
   readonly TOKEN_KEY = 'token';
 

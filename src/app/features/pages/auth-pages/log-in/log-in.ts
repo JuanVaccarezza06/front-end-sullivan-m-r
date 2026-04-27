@@ -9,8 +9,8 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import CredentialLogIn from '../../../../core/models/auth/CredentialLogIn';
-import { AuthService } from '../../../../core/auth-service/auth-service';
 import { StatusCard } from '../../../../shared/components/ui/status-card/status-card';
+import { AuthService } from '../../../../core/services/auth-service/auth-service';
 
 // ── Validadores personalizados ────────────────────────────────────────────────
 
@@ -137,9 +137,10 @@ export class LogIn implements OnInit {
         this.loginLoading = false;
         if (data.token) {
           this.authService.saveToken(data.token);
-          this.router.navigate([''], {
-            queryParams: { msg: 'Usuario logeado correctamente.', type: 'success' },
-          });
+          this.router.navigate(['']);
+        } else {
+          this.statusMessage = 'Respuesta inesperada del servidor. Intentá de nuevo más tarde.';
+          this.statusType = 'error';
         }
       },
       error: (e) => {
@@ -155,21 +156,18 @@ export class LogIn implements OnInit {
   }
 
   autoLog(): void {
-    const username = 'SoniaAdmin999';
+    const username = 'SoyAdministrador';
     const password = '#123Secreto';
     const credential: CredentialLogIn = { username, password };
 
     this.loginLoading = true;
     this.statusMessage = '';
-
     this.authService.logIn(credential).subscribe({
       next: (data) => {
         this.loginLoading = false;
         if (data.token) {
           this.authService.saveToken(data.token);
-          this.router.navigate([''], {
-            queryParams: { msg: 'Usuario logeado correctamente.', type: 'success' },
-          });
+          this.router.navigate(['']);
         }
       },
       error: (e) => {

@@ -17,7 +17,6 @@ import { PropertyService } from '../../../core/services/property-service/propert
 import { ZoneService } from '../../../core/services/zone-service/zone-service';
 import PropertiesFilter from '../../../core/models/PropertiesFilter';
 import { DecimalPipe } from '@angular/common';
-import { StatusCard } from '../../../shared/components/ui/status-card/status-card';
 
 // 1. Definimos el validador (fuera de la clase del componente)
 export function atLeastOneFilterValidator(): ValidatorFn {
@@ -46,10 +45,6 @@ export function atLeastOneFilterValidator(): ValidatorFn {
 export class Home implements OnInit {
   form!: FormGroup;
 
-  // With this variables I can control the messages from login page
-  sucessMessage: string = '';
-  isFromLogin: boolean = false;
-
   // Image not found for the properties main images not found
   imageNotFound!: string;
 
@@ -68,27 +63,12 @@ export class Home implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const state = this.router.lastSuccessfulNavigation?.extras?.state as { message?: string };
-    let message = state?.message || undefined;
-
-    this.isFromAuthPage(message); // It validate if we have to show the message from any auth page
-
     this.formInitializer();
 
     this.loadAvailablesZones();
     this.loadAvailablesOperationTypes();
     this.loadAvailablePropertyTypes();
     this.loadFeaturedProperties();
-  }
-
-  isFromAuthPage(message?: string) {
-    if (message) {
-      this.isFromLogin = true;
-      this.sucessMessage = message;
-      setTimeout(() => {
-        this.isFromLogin = false;
-      }, 3000);
-    }
   }
 
   loadFeaturedProperties() {

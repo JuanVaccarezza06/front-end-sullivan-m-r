@@ -26,7 +26,7 @@
             @if (isFilter) {
               <div class="header-properties">
                 <p>Propiedades que cumplen con el filtro aplicado recientemente</p>
-                <button class="btn-link" (click)="clearFilter()">Limpiar filtro</button>
+                <button type="button" class="btn-link" (click)="clearFilter()">Limpiar filtro</button>
               </div>
             } @else {
               <p>Se estan mostrando {{ numberOfPropertiesLoadInArray }} propiedades</p>
@@ -156,7 +156,7 @@
             <h3>No encontramos propiedades</h3>
             <p>Intenta ajustar los filtros o reinicia la búsqueda para ver más opciones.</p>
 
-            <button class="btn-reload" (click)="clearFilter()">
+            <button type="button" class="btn-reload" (click)="clearFilter()">
               <!-- Button for come back to properties -->
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -205,8 +205,7 @@
         <!-- Clean filter button -->
         <button
           class="btn-link"
-          [disabled]="adminMode"
-          [disabled]="!isFilter"
+          [disabled]="adminMode || !isFilter"
           (click)="clearFilter()"
         >
           Limpiar filtro
@@ -214,7 +213,7 @@
       </div>
     </div>
 
-    <form class="filter-form" [formGroup]="form">
+    <form class="filter-form" [formGroup]="form" (submit)="onSubmit()">
       <fieldset>
         <!-- Type operation fieldset -->
         <legend>Tipo de operación</legend>
@@ -270,6 +269,7 @@
               formControlName="minPrice"
               placeholder="Desde"
               min="0"
+              step="1"
               class="form-control"
             />
           </div>
@@ -282,6 +282,7 @@
               formControlName="maxPrice"
               placeholder="Hasta"
               min="0"
+              step="1"
               class="form-control"
             />
           </div>
@@ -337,7 +338,7 @@
             <button type="button" class="btn-submit btn-edit" (click)="startSave()">Guardar</button>
           }
         }
-        <button type="submit" class="btn-submit" (click)="onSubmit()" [disabled]="adminMode">
+        <button type="submit" class="btn-submit" [disabled]="adminMode || form.invalid || isSearching">
           Aplicar filtros
         </button>
       </div>

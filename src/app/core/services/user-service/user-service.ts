@@ -5,12 +5,13 @@ import UserFull from '../../models/actors/UserFull';
 import User from '../../models/actors/User';
 import { HatoasPageResponse } from '../../models/HatoasPageResponse';
 import Role from '../../models/auth/Role';
+import { environment } from '../../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  readonly API_URL = 'http://localhost:8080/users';
+  readonly API_URL = `${environment.urlAPI}/users`;
 
   readonly TOKEN_KEY = 'token';
 
@@ -84,6 +85,7 @@ export class UserService {
     // SOLUCIÓN AQUÍ: Envolvemos la variable con encodeURIComponent
     // Sonia123#  --->  Sonia123%23
     const safeUsername = encodeURIComponent(username);
+    console.log("Username codificado para la URL:", safeUsername);
     // 4. Petición GET
     return this.http.get<UserFull>(`${this.API_URL}/find-full-by-username/${safeUsername}`);
   }

@@ -8,9 +8,9 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../../../core/auth-service/auth-service';
 import CredentialRegister from '../../../../core/models/auth/CredentialRegister';
 import { StatusCard } from '../../../../shared/components/ui/status-card/status-card';
+import { AuthService } from '../../../../core/services/auth-service/auth-service';
 
 // ── Validadores personalizados ────────────────────────────────────────────────
 
